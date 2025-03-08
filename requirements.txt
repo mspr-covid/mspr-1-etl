@@ -1,0 +1,12 @@
+pandas
+numpy
+matplotlib
+seaborn
+missingno
+requests
+scikit-learn
+psycopg2-binary
+python-dotenv
+fastapi
+pydantic
+uvicorn
