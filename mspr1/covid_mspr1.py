@@ -854,7 +854,7 @@ conn.close()
 
 print("✅ Données chargées dans PostgreSQL")
 
-path_to_export_csv = os.getenv("EXPORT_CSV_PATH")
+EXPORT_CSV_PATH = os.getenv("EXPORT_CSV_PATH")
 
-df.to_csv(path_to_export_csv, index=False, header=True)
+df.to_csv(EXPORT_CSV_PATH, index=False, header=True)
 
