@@ -8,5 +8,14 @@ scikit-learn
 psycopg2-binary
 python-dotenv
 fastapi
+passlib
 pydantic
 uvicorn
+python-jose
+datetime
+psycopg2
+typing
+dotenv
+
+
+
