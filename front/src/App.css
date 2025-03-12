@@ -1,3 +1,7 @@
+
+
+
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,38 +9,113 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/*==========IMPORT POLICES==========*/
+
+/*==========CHARTE GRAPHIQUE==========*/
+
+:root {
+  /*COULEURS*/
+  --background-color: #F8F1E4 ;
+  --secondary-color:#121211;
+  --third-color :#17A2B8;
+
+    /*notifications*/
+  --alert:#FD7E14;
+  --error:#9B1C21;
+  --sucess:#17A2B8;
+
+
+  /*POLICES*/
+  --text-color: #0000;
+
+  /* Titres */
+  --title-font-family: "Cursive", sans-serif;
+  --title-font-family-bold: "Cursive", sans-serif, bold;
+  --title-font-family-italic: "Cursive", sans-serif, italic;
+
+  --title-font-size: 1.2rem;
+
+  /* Générique */
+  --main-font-size: 0.8rem;
+  --main-font-family-sansSerif: "Verdana", "Geneva", "Tahoma", sans-serif;
+
+  /* Espace */
+  --spacing-little: 0.12rem;
+  --spacing-medium: 0.3rem;
+  --spacing-big: 0.75rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/*========== CSS BALISE HTML==========*/
+
+* {
+  padding: 0rem;
+  margin: 0rem;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+body {
+  margin: 0rem;
+  background-color: var(--background-color);
 }
 
-.card {
-  padding: 2em;
+h1 {
+  font-family: var(--title-font-family);
+  font-size: calc(1.5 * --title-font-size);
+  color: var(--main-color);
+  margin: 2.5rem;
+  display: flex;
+  justify-content: center;
 }
 
-.read-the-docs {
-  color: #888;
+h2 {
+  font-family: var(--title-font-family);
+  font-size: var(--title-font-size);
+  color: var(--main-color);
+  margin: 0.5rem;
 }
+
+h3 {
+  font-family: var(--title-font-family);
+  font-size: var(--title-font-size);
+  color: var(--main-color);
+  margin: 0.5rem;
+}
+
+p {
+  font-family: var(--title-font-family);
+  font-size: var(--title-font-size);
+  color: var(--text-color);
+  margin: 0.5rem;
+}
+ /* BUTTON */
+
+button {
+  padding: 0.5rem;
+  background-color: var(--third-color);
+  cursor: pointer;
+
+  /* texte */
+  font-family: var(--title-font-family);
+  color: var(--background-color);
+  text-shadow: -0.13rem color var(--text-color);
+  text-decoration: none;
+  /* border */
+  border-radius: 1rem;
+  cursor: pointer;
+}
+
+
+button:hover {
+  border: none;
+  color: var(--background-color);
+  background-color:var(--secondary-color);
+}
+
+ul,
+li,
+a {
+  text-decoration: none;
+}
+
+
+
+

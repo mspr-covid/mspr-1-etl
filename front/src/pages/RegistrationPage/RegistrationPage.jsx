@@ -22,8 +22,8 @@ export default function RegistrationPage({ handleSignUp }) {
   });
 
   const [loading, setLoading] = useState(false);
-  
-/* This function updates the form state by creating a new object with all existing form values and modifying only the field that changed */
+
+  /* This function updates the form state by creating a new object with all existing form values and modifying only the field that changed */
   const handleChange = (e) => {
     setRegisterForm({ ...registerForm, [e.target.name]: e.target.value });
   };
@@ -63,7 +63,7 @@ export default function RegistrationPage({ handleSignUp }) {
         minLength: 2,
         errorMessage: "Le nom d'utilisateur doit contenir au moins 2 caractères",
       },
-      
+
       {
         name: "mail",
         value: mail,
@@ -139,8 +139,8 @@ export default function RegistrationPage({ handleSignUp }) {
   return (
     <div className="backgroundRegistration">
       <div className="cardRegistration">
-       
-        <h3>Créer votre profil</h3>
+
+        <h1>Créer votre profil</h1>
         <Form
           method="post"
           onSubmit={handleSubmit}
@@ -151,17 +151,19 @@ export default function RegistrationPage({ handleSignUp }) {
             type="text"
             id="username"
             name="username"
+            placeholder="Nom d'utilisateur"
             aria-label="Entrez un nom d'utilisateur"
             value={registerForm.username}
             onChange={handleChange}
             required
           />
-           
-          <label htmlFor="mail">Mail</label>
+
+          <label htmlFor="email">Email</label>
           <input
-            type="mail"
-            id="mail"
-            name="mail"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Votre email"
             value={registerForm.mail}
             onChange={handleChange}
             aria-label=" Entrez une adresse e-mail valide"
@@ -176,6 +178,7 @@ export default function RegistrationPage({ handleSignUp }) {
             type="password"
             id="password"
             name="password"
+            placeholder="Entrez votre mot de passe"
             value={registerForm.password}
             onChange={handleChange}
             aria-label=" Entrer un mot de passe valide"
@@ -188,6 +191,7 @@ export default function RegistrationPage({ handleSignUp }) {
             type="password"
             id="password2"
             name="password2"
+            placeholder="Entrez à nouveau votre mot de passe"
             value={registerForm.password2}
             onChange={handleChange}
             aria-label=" Entrez un mot de passe identique au précédent"
@@ -196,6 +200,7 @@ export default function RegistrationPage({ handleSignUp }) {
             <div className="error">{formErrors.password2}</div>
           )}
           <button
+            className="buttonregistration"
             type="submit"
             aria-label="Valider votre compte"
             onSubmit={handleSubmit}

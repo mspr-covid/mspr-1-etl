@@ -160,9 +160,9 @@ export default function ConnectionPage() {
     return (
         <div className="background-ConnectionPage">
             <div className="connectionCard">
-                <h3>Connexion</h3>
+                <h1>Connexion</h1>
 
-                <Form method="post" className="styles.formconnection" onSubmit={handleSubmit}>
+                <Form method="post" className="formconnection" onSubmit={handleSubmit}>
                     <label htmlFor="email">Email</label>
                     <input
                         type="email"
@@ -176,9 +176,9 @@ export default function ConnectionPage() {
                     />
                     {formErrors.email && <div className="error">{formErrors.email}</div>}
 
-                    <label htmlFor="username">Username</label>
+                    <label htmlFor="username">Nom d'utilisateur</label>
                     <input
-                        placeholder="username"
+                        placeholder="Nom d'utilisateur"
                         type="text"
                         id="username"
                         name="username"
@@ -202,7 +202,7 @@ export default function ConnectionPage() {
                     />
                   
                     {formErrors.password && <div className="error">{formErrors.password}</div>}
-                    
+                <div className="button-form">
                     <button
                         className="buttonconnection"
                         type="submit"
@@ -221,6 +221,7 @@ export default function ConnectionPage() {
                             Créer un compte
                         </button>
                     </Link>
+                </div>
                 </Form>
                 <h4>Mot de passe oublié ?</h4>
             </div>

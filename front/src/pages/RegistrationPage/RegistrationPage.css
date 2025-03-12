@@ -1,0 +1,79 @@
+.backgroundRegistration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.cardRegistration {
+    background:white;
+    padding: var(--spacing-big);
+    border: 0.8px var(--third-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 30rem;
+    height: fit-content;
+    height: 32rem;
+    text-align: center;
+}
+
+.formRegistration label {
+    display: block;
+    flex-direction: row;
+    font-family: var(--title-font-family);
+    margin: var(--spacing-big);
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    text-align:left;
+
+}
+
+.formRegistration input {
+    width: 90%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: var(--main-font-size);
+    
+}
+
+.formRegistration input:focus {
+    outline: none;
+    border-color: var(--third-color);
+    box-shadow: 0 0 5px rgba(23, 162, 184, 0.5);
+}
+
+h1{
+    color: var(--third-color);
+    margin: 2rem 2rem 1.5rem 2rem;
+}
+
+h3 {
+    font-family: var(--title-font-family);
+    font-size: var(--title-font-size);
+    color: var(--third-color);
+    margin: 1.45rem;
+}
+    
+.buttonregistration {
+    padding: 0.75rem;
+    align-items: center;
+    margin-top: 0.5rem;
+    border: none;
+    border : 5rem;
+    color: white;
+    width: 10rem;
+    
+}
+
+.error{
+    color:var(--error);    
+}
+
+h4 {
+    margin-top: 1.5rem;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    text-align: center;
+}
