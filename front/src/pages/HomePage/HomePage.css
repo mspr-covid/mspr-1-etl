@@ -1,0 +1,46 @@
+.container-homepage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+
+
+.homepage button {
+  padding: 0.75rem;
+  align-items: center;
+  border: none;
+  font-size: 1.5rem;
+  text-align: center;
+  width: 12rem;
+  height: 3rem;
+  color: var(--background-color);
+  box-shadow: 0 0.375rem 0.75rem rgba(0, 4, 2, 0.2);;
+}
+
+.homepage button:hover {
+  padding: 0.75rem;
+  border: none;
+  font-size: 1.2rem;
+  width: 12rem;
+  height: 3rem;
+  color: var(--background-color);
+  background-color:var(--secondary-color);
+}
+
+.container-homepage video {
+  max-width: 50%;
+  padding : 0 2rem 2rem 3rem;
+  object-fit: cover;
+}
+
+.container-homepage h1 {
+  font-size: 1.6rem;
+  padding: 0 2rem;
+  color: var(--secondary-color);
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: fit-content;
+  position: relative;
+}
+
