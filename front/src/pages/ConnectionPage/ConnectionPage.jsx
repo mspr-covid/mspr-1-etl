@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Form, Link, useNavigate } from "react-router-dom";
 import "./ConnectionPage.css";
-const ApiUrl = 'http://localhost:8000';
+
+const ApiUrl = '';
 
 export default function ConnectionPage() {
     /* State to store the data in the form */
@@ -108,14 +109,13 @@ export default function ConnectionPage() {
     /* Function to let user log - adaptée pour l'API FastAPI */
     const handleLogin = async (dataForm) => {
         try {
-            // Format adapté à l'API FastAPI
+            // Format adapté à l'API FastAPI - seuls username et password sont nécessaires
             const loginData = {
-                email: dataForm.email,
                 username: dataForm.username,
                 password: dataForm.password
             };
 
-            const response = await fetch(`${ApiUrl}/login`, {
+            const response = await fetch(`${ApiUrl}/api/user/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(loginData)
@@ -123,7 +123,7 @@ export default function ConnectionPage() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                return { success: false, error: "Identifiant, email ou mot de passe incorrect" };
+                return { success: false, error: errorData.detail || "Identifiants incorrects" };
             }
 
             const data = await response.json();
@@ -144,6 +144,7 @@ export default function ConnectionPage() {
     /* Function to be able to send the data */
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         if (validInputs()) {
             const result = await handleLogin(connectionForm);
@@ -154,6 +155,8 @@ export default function ConnectionPage() {
                 setError("form", result.error);
             }
             setLoading(false);
+        } else {
+            setLoading(false);
         }
     };
 
@@ -163,6 +166,8 @@ export default function ConnectionPage() {
                 <h1>Connexion</h1>
 
                 <Form method="post" className="formconnection" onSubmit={handleSubmit}>
+                    {formErrors.form && <div className="error">{formErrors.form}</div>}
+
                     <label htmlFor="email">Email</label>
                     <input
                         type="email"
@@ -188,7 +193,7 @@ export default function ConnectionPage() {
                         required
                     />
                     {formErrors.username && <div className="error">{formErrors.username}</div>}
-                     
+
                     <label htmlFor="password">Mot de passe</label>{" "}
                     <input
                         type="password"
@@ -200,28 +205,28 @@ export default function ConnectionPage() {
                         onChange={handleChange}
                         required
                     />
-                  
-                    {formErrors.password && <div className="error">{formErrors.password}</div>}
-                <div className="button-form">
-                    <button
-                        className="buttonconnection"
-                        type="submit"
-                        aria-label="Connexion"
-                        disabled={loading}
-                    >
-                        {loading ? 'Chargement...' : 'Se connecter'}
-                    </button>
 
-                    <Link to="/registration">
-                        <button
-                            className="buttonCreateProfil"
-                            type="button"
-                            aria-label="Créer un profil"
-                        >
-                            Créer un compte
-                        </button>
-                    </Link>
-                </div>
+                    {formErrors.password && <div className="error">{formErrors.password}</div>}
+                    <div className="button-form">
+                        <Link to="/data">
+                            <button
+                                className="buttonconnection"
+                                type="submit"
+                                aria-label="Connexion"
+                                disabled={loading}> Se connecter
+                            </button>
+                        </Link>
+
+                        <Link to="/registration">
+                            <button
+                                className="buttonCreateProfil"
+                                type="button"
+                                aria-label="Créer un profil"
+                            >
+                                Créer un compte
+                            </button>
+                        </Link>
+                    </div>
                 </Form>
                 <h4>Mot de passe oublié ?</h4>
             </div>
