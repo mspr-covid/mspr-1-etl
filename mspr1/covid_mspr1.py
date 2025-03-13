@@ -41,7 +41,7 @@ print('Ma config db : ',DB_CONFIG)
 # In[39]:
 
 
-df = pd.read_csv("/Users/mohameddjebali/Desktop/mspr/data/worldometer_data_raw.csv")
+df = pd.read_csv('/Users/laura.b/Documents/EPSI/project/mspr-1-etl/data/worldometer_data_raw.csv')
 
 
 # # Analyse du dataset
@@ -756,6 +756,18 @@ cursor = conn.cursor()
 
 # Créer les tables si elles n'existent pas déjà
 cursor.execute("""
+CREATE TABLE IF NOT EXISTS t_users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ); 
+""")
+
+
+
+cursor.execute("""
     CREATE TABLE IF NOT EXISTS worldometer (
     id SERIAL PRIMARY KEY, 
     continent VARCHAR(100) NOT NULL,
@@ -803,6 +815,7 @@ cursor.execute("""
 for index, row in df.iterrows():
     try:
         # Extraire les valeurs depuis chaque ligne du DataFrame
+
         country = row['country']
         continent = row['continent']
         who_region = row['who_region']
@@ -813,8 +826,20 @@ for index, row in df.iterrows():
         total_recovered = row['total_recovered']
         serious_critical = row['serious_critical']
         active_cases = row['active_cases']
+        username = ['username']
+        email = ['email']
+        password_hash = ['password_hash']
+        date_created = ['date_created']
+
         
         # Créer les requêtes SQL pour insérer les données dans les différentes tables
+
+        t_users_sql = """
+            INSERT INTO t_users (username, email, password_hash)
+            VALUES (%s, %s, %s);
+        """
+
+        
         worldometer_sql = """
             INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -836,6 +861,7 @@ for index, row in df.iterrows():
         """
         
         # Exécuter les requêtes d'insertion avec les valeurs de la ligne
+        cursor.execute(t_users_sql, (username, email, password_hash))   
         cursor.execute(countries_sql, (country, continent, who_region, population))
         cursor.execute(health_statistics_sql, (country, total_cases, total_deaths, total_recovered, serious_critical))
         cursor.execute(testing_statistics_sql, (country, total_tests))
@@ -854,7 +880,5 @@ conn.close()
 
 print("✅ Données chargées dans PostgreSQL")
 
-EXPORT_CSV_PATH = os.getenv("EXPORT_CSV_PATH")
 
-df.to_csv(EXPORT_CSV_PATH, index=False, header=True)
 

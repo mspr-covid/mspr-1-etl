@@ -5,7 +5,7 @@ import "./RegistrationPage.css";
 
 export default function RegistrationPage({ handleSignUp }) {
   const navigate = useNavigate();
-
+  
   const [registerForm, setRegisterForm] = useState({
     username: "",
     email: "",
@@ -45,15 +45,16 @@ export default function RegistrationPage({ handleSignUp }) {
 
   const validEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(String(mail).toLowerCase());
+    return regex.test(String(email).toLowerCase());
   };
+
   const validPassword = (password) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     return regex.test(String(password));
   };
 
   const validInputs = () => {
-    const { username, mail, password, password2 } =
+    const { username, email, password, password2 } =
       registerForm;
     const fields = [
       {
@@ -63,10 +64,9 @@ export default function RegistrationPage({ handleSignUp }) {
         minLength: 2,
         errorMessage: "Le nom d'utilisateur doit contenir au moins 2 caractères",
       },
-
       {
-        name: "mail",
-        value: mail,
+        name: "email",
+        value: email,
         message: "Un mail est requis",
         errorMessage: "Veuillez donner un mail valide",
       },
@@ -92,23 +92,23 @@ export default function RegistrationPage({ handleSignUp }) {
     fields.forEach(
       ({ name, value, message, errorMessage, minLength, match }) => {
         if (value.trim() === "") {
-          setError(name, message);
-          allValid = false;
-        } else if (minLength && value.length < minLength) {
-          setError(name, errorMessage);
-          allValid = false;
-        } else if (name === "mail" && !validMail(value)) {
-          setError(name, errorMessage);
-          allValid = false;
-        } else if (name === "password" && !validPassword(value)) {
-          setError(name, errorMessage);
-          allValid = false;
-        } else if (match !== undefined && value !== match) {
-          setError(name, errorMessage);
-          allValid = false;
-        } else {
-          setSuccess(name);
-        }
+        setError(name, message);
+        allValid = false;
+      } else if (minLength && value.length < minLength) {
+        setError(name, errorMessage);
+        allValid = false;
+        } else if (name === "email" && !validEmail(value)) {
+        setError(name, errorMessage);
+        allValid = false;
+      } else if (name === "password" && !validPassword(value)) {
+        setError(name, errorMessage);
+        allValid = false;
+      } else if (match !== undefined && value !== match) {
+        setError(name, errorMessage);
+        allValid = false;
+      } else {
+        setSuccess(name);
+      }
       }
     );
     return allValid;
@@ -116,23 +116,30 @@ export default function RegistrationPage({ handleSignUp }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const formData = {
       username: registerForm.username,
-      lastname: registerForm.lastname,
-      firstname: registerForm.firstname,
-      mail: registerForm.mail,
+      email: registerForm.email,
       password: registerForm.password,
     };
 
     if (validInputs() === true) {
-      const result = await handleSignUp({ formData });
+      try {
+        const result = await handleSignUp({ formData });
 
-      if (result.success) {
-        window.location.href = "/connection";
-      } else {
-        setError("form", result.error);
+        if (result.success) {
+          window.location.href = "/connection";
+        } else {
+          setError("form", result.error || "Erreur lors de l'inscription");
+        }
+      } catch (error) {
+        setError("form", "Erreur de connexion au serveur");
+      } finally {
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
   };
 
@@ -146,6 +153,10 @@ export default function RegistrationPage({ handleSignUp }) {
           onSubmit={handleSubmit}
           className="formRegistration"
         >
+          {formErrors.form && (
+            <div className="error form-error">{formErrors.form}</div>
+          )}
+          
           <label htmlFor="username">Nom d'utilisateur</label>
           <input
             type="text"
@@ -164,13 +175,13 @@ export default function RegistrationPage({ handleSignUp }) {
             id="email"
             name="email"
             placeholder="Votre email"
-            value={registerForm.mail}
+            value={registerForm.email}
             onChange={handleChange}
             aria-label=" Entrez une adresse e-mail valide"
             required
           />
-          {formErrors.mail !== "" && (
-            <div className="error">{formErrors.mail}</div>
+          {formErrors.email !== "" && (
+            <div className="error">{formErrors.email}</div>
           )}
 
           <label htmlFor="password">Mot de passe</label>
@@ -203,9 +214,9 @@ export default function RegistrationPage({ handleSignUp }) {
             className="buttonregistration"
             type="submit"
             aria-label="Valider votre compte"
-            onSubmit={handleSubmit}
+            disabled={loading}
           >
-            Valider
+            {loading ? 'Chargement...' : 'Valider'}
           </button>
         </Form>
       </div>
