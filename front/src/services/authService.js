@@ -3,7 +3,7 @@ const ApiUrl = "";
 
 export const handleSignUp = async ({ formData }) => {
   try {
-    const response = await fetch(`${ApiUrl}/api/user/add`, {
+    const response = await fetch(`${ApiUrl}/api/user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,8 +21,8 @@ export const handleSignUp = async ({ formData }) => {
     }
     
     if (response.status === 401) {
-      alert("Le pseudo existe déjà");
-      return { success: false, error: "Le pseudo existe déjà" };
+      alert("Login invalide");
+      return { success: false, error: "Login invalide" };
     }
     
     if (response.status !== 201) {

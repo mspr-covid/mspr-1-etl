@@ -16,6 +16,7 @@ datetime
 psycopg2
 typing
 dotenv
+asyncpg
 
 
 

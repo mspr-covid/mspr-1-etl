@@ -1,122 +1,140 @@
-import React, { useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
-import GrafanaPanel from "@/components/GrafanaPanel";
-import "./DataPage.css";
+import React, { useState, useEffect } from 'react';
+import CovidPieChart from "../../components/CovidPieChart/CovidPieChart.jsx";
+import './DataPage.css'; 
 
 const DataPage = () => {
-  const [data, setData] = useState([]);
-  const [country, setCountry] = useState("France");
-  const [prediction, setPrediction] = useState(null);
+  const [covidStats, setCovidStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [regionFilter, setRegionFilter] = useState('');
 
-  // Données fictives pour chaque pays
-  const mockDataByCountry = {
-    France: [
-      { date: "Jan 2023", cases: 1200 },
-      { date: "Fév 2023", cases: 1800 },
-      { date: "Mar 2023", cases: 2400 },
-      { date: "Avr 2023", cases: 1900 },
-      { date: "Mai 2023", cases: 1300 },
-      { date: "Juin 2023", cases: 800 }
-    ],
-    USA: [
-      { date: "Jan 2023", cases: 5200 },
-      { date: "Fév 2023", cases: 6800 },
-      { date: "Mar 2023", cases: 8400 },
-      { date: "Avr 2023", cases: 7900 },
-      { date: "Mai 2023", cases: 5300 },
-      { date: "Juin 2023", cases: 4800 }
-    ],
-    China: [
-      { date: "Jan 2023", cases: 3200 },
-      { date: "Fév 2023", cases: 4800 },
-      { date: "Mar 2023", cases: 7400 },
-      { date: "Avr 2023", cases: 6900 },
-      { date: "Mai 2023", cases: 4300 },
-      { date: "Juin 2023", cases: 3800 }
-    ],
-    Brazil: [
-      { date: "Jan 2023", cases: 2200 },
-      { date: "Fév 2023", cases: 3800 },
-      { date: "Mar 2023", cases: 5400 },
-      { date: "Avr 2023", cases: 4900 },
-      { date: "Mai 2023", cases: 3300 },
-      { date: "Juin 2023", cases: 2800 }
-    ]
-  };
-
-  // Simuler un chargement de données
+  // Récupérer les statistiques avec un filtre
   useEffect(() => {
-    // Simuler un délai de chargement
-    const timer = setTimeout(() => {
-      setData(mockDataByCountry[country] || []);
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [country]);
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        let url = 'http://127.0.0.1:8081/covid'; // URL directe vers votre API
+        
+        if (regionFilter) {
+          url += `?region=${encodeURIComponent(regionFilter)}`; 
+        }
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setCovidStats(data);
+        setError(null);
+      } catch (error) {
+        console.error('Erreur de chargement des statistiques COVID:', error);
+        setError(`Impossible de charger les données: ${error.message}`);
+        
+        // Données de secours pour le développement
+        setCovidStats([
+          {
+            country: "France",
+            who_region: "Europe",
+            total_cases: 38000000,
+            total_deaths: 164000,
+            total_recovered: 37000000,
+            serious_critical: 836000
+          },
+          {
+            country: "USA",
+            who_region: "Americas",
+            total_cases: 103000000,
+            total_deaths: 1120000,
+            total_recovered: 100000000,
+            serious_critical: 1880000
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Fonction pour simuler une prédiction
-  const handlePredict = () => {
-    // Simuler un délai de traitement
-    setTimeout(() => {
-      // Générer une prédiction aléatoire basée sur les dernières données
-      const lastCases = mockDataByCountry[country]?.[5]?.cases || 1000;
-      const randomFactor = 0.8 + Math.random() * 0.4; // entre 0.8 et 1.2
-      const predictedCases = Math.round(lastCases * randomFactor);
-      
-      setPrediction(predictedCases);
-    }, 500);
+    fetchStats();
+  }, [regionFilter]);
+
+  const handleRegionChange = (event) => {
+    setRegionFilter(event.target.value);
   };
 
   return (
     <div className="data-page-container">
-      <h1 className="title">Statistiques COVID-19</h1>
+      <h1 className="data-title">Tableau de bord des statistiques COVID-19</h1>
       
-      <div className="controls">
-        <select
-          value={country}
-          onChange={(e) => setCountry(e.target.value)}
-          className="dropdown"
+      <div className="filter-container">
+        <label htmlFor="region-filter">Filtrer par région OMS:</label>
+        <iframe src="http://localhost:3000/d-solo/cef5sbqc4do8wb/comparaison-des-cas-et-des-deces-par-region-oms?orgId=1&from=1704063600000&to=1767308399000&timezone=browser&panelId=1&__feature.dashboardSceneSolo" width="450" height="200" frameborder="0"></iframe>
+        <select 
+    
+          id="region-filter"
+          onChange={handleRegionChange} 
+          value={regionFilter}
+          className="region-select"
         >
-          <option value="France">France</option>
-          <option value="USA">USA</option>
-          <option value="China">Chine</option>
-          <option value="Brazil">Brésil</option>
+          <option value="">Toutes les régions</option>
+          <option value="Africa">Afrique</option>
+          <option value="Americas">Amériques</option>
+          <option value="Europe">Europe</option>
+          <option value="South-East Asia">Asie du Sud-Est</option>
+          <option value="Western Pacific">Pacifique occidental</option>
+          <option value="Eastern Mediterranean">Méditerranée orientale</option>
         </select>
-        <button
-          className="predict-button"
-          onClick={handlePredict}
-        >
-          Générer Prédiction
-        </button>
       </div>
       
-      {prediction && <p className="prediction-text">Prévision : {prediction} cas</p>}
-      
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="cases" stroke="#17A2B8" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-      
-      <div className="grafana-section">
-        <h2 className="grafana-title">Tableau de Bord Grafana</h2>
-        <div className="dashboard-grid">
-          <GrafanaPanel
-            dashboardId="abc123"
-            panelId="1"
-            height="300px"
-          />
-          <GrafanaPanel
-            dashboardId="abc123"
-            panelId="2"
-            timeFrom="now-24h"
-          />
+      {error && (
+        <div className="error-message">
+          {error}
         </div>
-      </div>
+      )}
+      
+      {loading ? (
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>Chargement des données...</p>
+        </div>
+      ) : (
+        <>
+          {covidStats.length === 0 ? (
+            <div className="no-data-message">
+              Aucune donnée disponible pour la région sélectionnée.
+            </div>
+          ) : (
+            <div className="stats-grid">
+              {covidStats.map((stat, index) => (
+                <div key={index} className="country-card">
+                  <h3 className="country-title">
+                    {stat.country} 
+                    {stat.who_region && <span className="region-badge">{stat.who_region}</span>}
+                  </h3>
+                  <div className="chart-container">
+                    <CovidPieChart stats={stat} />
+                  </div>
+                  <div className="stats-summary">
+                    <div className="stat-item">
+                      <span className="stat-label">Cas totaux:</span>
+                      <span className="stat-value">{stat.total_cases?.toLocaleString() || "N/A"}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Décès:</span>
+                      <span className="stat-value deaths">{stat.total_deaths?.toLocaleString() || "N/A"}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Guérisons:</span>
+                      <span className="stat-value recovered">{stat.total_recovered?.toLocaleString() || "N/A"}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

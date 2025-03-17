@@ -1,17 +1,18 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import DictCursor
+from passlib.context import CryptContext
 from typing import Generator
-from dotenv import load_dotenv
 import os
+import jwt
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
 
-
-
-app = FastAPI()
-
+# Charger les variables d'environnement
 load_dotenv()
-
 
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
@@ -21,7 +22,39 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT"),
 }
 
-class WorldometerEntry(BaseModel):
+SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+# Initialisation de FastAPI
+app = FastAPI()
+
+# Middleware CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET","POST","DELETE"],
+    allow_headers=["*"],
+)
+
+# Configuration du hachage des mots de passe
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Gestion des tokens
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
+
+# Modèles Pydantic
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+class CovidEntry(BaseModel):
     country: str
     continent: str
     who_region: str
@@ -32,6 +65,7 @@ class WorldometerEntry(BaseModel):
     serious_critical: int
     total_tests: int
 
+# Connexion à la BDD
 def get_db_connection() -> Generator[psycopg2.extensions.connection, None, None]:
     conn = psycopg2.connect(**DB_CONFIG, cursor_factory=DictCursor)
     try:
@@ -39,8 +73,66 @@ def get_db_connection() -> Generator[psycopg2.extensions.connection, None, None]
     finally:
         conn.close()
 
-@app.get("/worldometer")
-def get_all_entries(conn=Depends(get_db_connection)):
+# Générer un token JWT
+def create_access_token(data: dict, expires_delta: timedelta = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+# Vérifier le token JWT
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload["sub"]
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expiré")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Token invalide")
+
+# Route pour inscrire un utilisateur
+@app.post("/api/user", status_code=201)
+def register_user(user: UserCreate):
+    conn = psycopg2.connect(**DB_CONFIG)
+    conn.autocommit = True
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM t_users WHERE username = %s OR email = %s", (user.username, user.email))
+            if cur.fetchone():
+                raise HTTPException(status_code=400, detail="Is de connexion ")
+
+            hashed_password = pwd_context.hash(user.password)
+            cur.execute("INSERT INTO t_users (username, email, password_hash) VALUES (%s, %s, %s)",
+                        (user.username, user.email, hashed_password))
+
+        return {"message": "Utilisateur créé avec succès"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+# Route pour se connecter et récupérer un token
+@app.post("/api/login", status_code=200)
+def login_user(form_data: OAuth2PasswordRequestForm = Depends()):
+    conn = psycopg2.connect(**DB_CONFIG)
+    conn.autocommit = True
+    try:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, password_hash FROM t_users WHERE username = %s", (form_data.username,))
+            user = cur.fetchone()
+            if not user or not pwd_context.verify(form_data.password, user["password_hash"]):
+                raise HTTPException(status_code=400, detail="Identifiants invalides")
+
+            access_token = create_access_token(data={"sub": form_data.username})
+            return {"access_token": access_token, "token_type": "bearer"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+# Route GET pour récupérer toutes les entrées (nécessite authentification)
+@app.get("/covid")
+def get_all_entries(conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
     with conn.cursor() as cur:
         cur.execute("""
             SELECT c.country, c.continent, c.who_region, c.population, 
@@ -57,8 +149,9 @@ def get_all_entries(conn=Depends(get_db_connection)):
     
     return {"data": [dict(row) for row in data]}
 
-@app.get("/worldometer/{country}")
-def get_entry_by_country(country: str, conn=Depends(get_db_connection)):
+# Route GET pour récupérer une entrée par pays
+@app.get("/covid/{country}")
+def get_entry_by_country(country: str, conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
     with conn.cursor() as cur:
         cur.execute("""
             SELECT c.country, c.continent, c.who_region, c.population, 
@@ -76,8 +169,9 @@ def get_entry_by_country(country: str, conn=Depends(get_db_connection)):
     
     return {"data": dict(data)}
 
-@app.post("/worldometer")
-def add_entry(entry: WorldometerEntry, conn=Depends(get_db_connection)):
+# Route POST pour ajouter une entrée (nécessite authentification)
+@app.post("/covid")
+def add_entry(entry: CovidEntry, conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
     with conn.cursor() as cur:
         try:
             cur.execute("BEGIN;")  
@@ -85,7 +179,7 @@ def add_entry(entry: WorldometerEntry, conn=Depends(get_db_connection)):
                 INSERT INTO t_countries (country, continent, who_region, population)
                 VALUES (%s, %s, %s, %s)
                 ON CONFLICT (country) DO UPDATE 
-                SET continent = EXCLUDED.continent,j
+                SET continent = EXCLUDED.continent,
                     who_region = EXCLUDED.who_region,
                     population = EXCLUDED.population
             """, (entry.country, entry.continent, entry.who_region, entry.population))
@@ -113,18 +207,3 @@ def add_entry(entry: WorldometerEntry, conn=Depends(get_db_connection)):
             raise HTTPException(status_code=500, detail=str(e))
     
     return {"message": "Entry added successfully"}
-
-@app.delete("/worldometer/{country}")
-def delete_entry(country: str, conn=Depends(get_db_connection)):
-    with conn.cursor() as cur:
-        try:
-            cur.execute("BEGIN;") 
-            cur.execute("DELETE FROM t_health_statistics WHERE country = %s", (country,))
-            cur.execute("DELETE FROM t_tests WHERE country = %s", (country,))
-            cur.execute("DELETE FROM t_countries WHERE country = %s", (country,))
-            conn.commit()
-        except Exception as e:
-            conn.rollback()
-            raise HTTPException(status_code=500, detail=str(e))
-    
-    return {"message": "Entry deleted successfully"}

@@ -1,11 +1,8 @@
-
-
-
-
+/*==========ROOT STYLES==========*/
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
 }
 
@@ -14,20 +11,19 @@
 /*==========CHARTE GRAPHIQUE==========*/
 
 :root {
-  /*COULEURS*/
-  --background-color: #F8F1E4 ;
-  --secondary-color:#121211;
-  --third-color :#17A2B8;
+  /* COULEURS */
+  --background-color: #F8F1E4;
+  --secondary-color: #121211;
+  --third-color: #04696F;
 
-    /*notifications*/
-  --alert:#FD7E14;
-  --error:#9B1C21;
-  --sucess:#17A2B8;
+  /* Notifications */
+  --alert: #FD7E14;
+  --error: #9B1C21;
+  --success: #04696F;
 
-
-  /*POLICES*/
-  --text-color: #0000;
-
+  /* POLICES */
+  --text-color: #000; /* Fixed text color from transparent to black */
+  
   /* Titres */
   --title-font-family: "Cursive", sans-serif;
   --title-font-family-bold: "Cursive", sans-serif, bold;
@@ -45,77 +41,67 @@
   --spacing-big: 0.75rem;
 }
 
-/*========== CSS BALISE HTML==========*/
+/*========== CSS GLOBAL ==========*/
 
 * {
-  padding: 0rem;
-  margin: 0rem;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box; /* Added box-sizing for more consistent layout */
 }
 
 body {
-  margin: 0rem;
+  margin: 0;
   background-color: var(--background-color);
+  font-family: var(--main-font-family-sansSerif); /* Defined default font */
+}
+
+/* TITLES */
+h1, h2, h3 {
+  font-family: var(--title-font-family);
+  color: var(--secondary-color); /* Use the secondary color for consistency */
 }
 
 h1 {
-  font-family: var(--title-font-family);
-  font-size: calc(1.5 * --title-font-size);
-  color: var(--main-color);
+  font-size: calc(1.5 * var(--title-font-size)); /* Fixed typo: used var() correctly */
   margin: 2.5rem;
-  display: flex;
-  justify-content: center;
+  text-align: center; /* Centered the heading */
 }
 
-h2 {
-  font-family: var(--title-font-family);
+h2, h3 {
   font-size: var(--title-font-size);
-  color: var(--main-color);
-  margin: 0.5rem;
+  margin: var(--spacing-medium);
 }
 
-h3 {
-  font-family: var(--title-font-family);
-  font-size: var(--title-font-size);
-  color: var(--main-color);
-  margin: 0.5rem;
-}
-
+/* PARAGRAPH */
 p {
-  font-family: var(--title-font-family);
-  font-size: var(--title-font-size);
+  font-family: var(--main-font-family-sansSerif);
+  font-size: var(--main-font-size);
   color: var(--text-color);
-  margin: 0.5rem;
+  margin: var(--spacing-medium);
 }
- /* BUTTON */
 
+/* BUTTON STYLES */
 button {
-  padding: 0.5rem;
+  padding: var(--spacing-medium);
   background-color: var(--third-color);
-  cursor: pointer;
-
-  /* texte */
-  font-family: var(--title-font-family);
   color: var(--background-color);
-  text-shadow: -0.13rem color var(--text-color);
-  text-decoration: none;
-  /* border */
+  font-family: var(--title-font-family);
+  text-shadow: -0.13rem var(--text-color); /* Fixed text-shadow to use actual color */
   border-radius: 1rem;
   cursor: pointer;
+  border: none; /* Added border: none to remove default button borders */
+  transition: background-color 0.3s ease, color 0.3s ease; /* Added transition effect for hover */
 }
-
 
 button:hover {
-  border: none;
+  background-color: var(--secondary-color);
   color: var(--background-color);
-  background-color:var(--secondary-color);
 }
 
+/* LIST STYLES */
 ul,
 li,
 a {
   text-decoration: none;
 }
-
-
-
 

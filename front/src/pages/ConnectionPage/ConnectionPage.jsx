@@ -226,9 +226,9 @@ export default function ConnectionPage() {
                                 Créer un compte
                             </button>
                         </Link>
+                        <h4>Mot de passe oublié ?</h4>
                     </div>
                 </Form>
-                <h4>Mot de passe oublié ?</h4>
             </div>
         </div>
     );

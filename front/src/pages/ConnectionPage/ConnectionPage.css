@@ -1,31 +1,48 @@
+/* Style du formulaire de connexion */
 .background-ConnectionPage {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    padding: 1rem; /* Ajoute un padding pour les petits écrans */
+}
+
+/* Ajout d'une animation d'entrée pour la carte de connexion */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .connectionCard {
-    background:white;
+    background: white;
     padding: var(--spacing-big);
-    border: 0.8px var(--third-color);
-    border-radius: 12px;
+    border: 1px solid var(--third-color);
+    border-radius: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 30rem;
+    width: 100%;
+    max-width: 30rem;
     height: fit-content;
-    height: 29rem;
+    max-height: 29rem;
     text-align: center;
+    animation: fadeInUp 0.5s ease-out; /* Animation d'entrée */
+}
+
+.formconnection {
+    width: 100%;
 }
 
 .formconnection label {
     display: block;
-    flex-direction: row;
     font-family: var(--title-font-family);
-    margin: var(--spacing-big);
-    margin-bottom: 0.5rem;
+    margin: var(--spacing-big) 0 0.5rem 5%;
     color: var(--secondary-color);
-    text-align:left;
-
+    text-align: left;
 }
 
 .formconnection input {
@@ -35,53 +52,105 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: var(--main-font-size);
-    
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Ajout de transition */
 }
 
 .formconnection input:focus {
     outline: none;
+    cursor: pointer;
     border-color: var(--third-color);
-    box-shadow: 0 0 5px rgba(23, 162, 184, 0.5);
+    box-shadow: 0 0 5px var(--third-color);
 }
 
-h1{
-    color: var(--third-color);
-    margin: 2rem 2rem 1.5rem 2rem;
-}
-
-h3 {
-    font-family: var(--title-font-family);
-    font-size: var(--title-font-size);
-    color: var(--third-color);
-    margin: 1.45rem;
-}
-
+/* Centre les boutons */
 .button-form {
     display: flex;
-    flex-wrap: wrap;
-    flex-direction:row;
     justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem auto;
     gap: 3rem;
+    width: 100%;
+}
 
-    }
-    
 .buttonconnection, .buttonCreateProfil {
     padding: 0.75rem;
     display: inline-block;
     border: none;
-    border : 5rem;
+    border-radius: 8px;
     color: white;
     width: 10rem;
-    
+    background-color: var(--third-color);
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    cursor: pointer;
+    font-size: 1rem;
 }
 
-.error{
-    color:var(--error);    
+.buttonconnection:hover, .buttonCreateProfil:hover {
+    background-color: var(--secondary-color);
 }
 
-h4 {
+/* Effet de clic sur les boutons */
+.buttonconnection:active, .buttonCreateProfil:active {
+    transform: scale(0.98);
+}
+
+.error {
+    color: var(--error);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: left;
+    margin-left: 5%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animation d'affichage des erreurs */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Souligne le h4 */
+.connectionCard h4 {
     margin-top: 1.5rem;
     color: var(--secondary-color);
     font-size: 0.9rem;
     text-align: center;
+    text-decoration: underline;
+    padding-bottom: 0.5rem;
+}
+
+/* Media queries pour le responsive design */
+@media screen and (max-width: 768px) {
+    .connectionCard {
+        padding: var(--spacing-medium);
+    }
+    
+    .button-form {
+        gap: 1.5rem; /* Réduit l'espace entre les boutons */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .connectionCard {
+        border-radius: 12px; /* Plus petit rayon sur petit écran */
+        padding: var(--spacing-little);
+    }
+    
+    .button-form {
+        flex-direction: column; /* Empiler les boutons */
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .buttonconnection, .buttonCreateProfil {
+        width: 80%; /* Boutons plus larges */
+        max-width: 10rem;
+    }
+    
+    .formconnection label,
+    .formconnection input,
+    .error {
+        margin-left: 2.5%; 
+        width: 95%; /* Élargit les inputs */
+    }
 }
