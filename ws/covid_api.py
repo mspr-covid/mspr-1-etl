@@ -207,3 +207,46 @@ def add_entry(entry: CovidEntry, conn=Depends(get_db_connection), current_user: 
             raise HTTPException(status_code=500, detail=str(e))
     
     return {"message": "Entry added successfully"}
+
+# Route PUT pour mettre à jour une entrée complète
+@app.put("/covid/{country}")
+def update_entry(country: str, entry: CovidEntry, conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
+    with conn.cursor() as cur:
+        cur.execute("""
+            UPDATE t_countries SET continent = %s, who_region = %s, population = %s WHERE country = %s
+        """, (entry.continent, entry.who_region, entry.population, country))
+
+        cur.execute("""
+            UPDATE t_health_statistics SET total_cases = %s, total_deaths = %s, total_recovered = %s, serious_critical = %s WHERE country = %s
+        """, (entry.total_cases, entry.total_deaths, entry.total_recovered, entry.serious_critical, country))
+
+        cur.execute("""
+            UPDATE t_tests SET total_tests = %s WHERE country = %s
+        """, (entry.total_tests, country))
+        
+        conn.commit()
+    return {"message": "Entry updated successfully"}
+
+# Route PATCH pour modifier partiellement une entrée
+@app.patch("/covid/{country}")
+def partial_update_entry(country: str, entry: dict, conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
+    with conn.cursor() as cur:
+        for key, value in entry.items():
+            if key in ["continent", "who_region", "population"]:
+                cur.execute(f"UPDATE t_countries SET {key} = %s WHERE country = %s", (value, country))
+            elif key in ["total_cases", "total_deaths", "total_recovered", "serious_critical"]:
+                cur.execute(f"UPDATE t_health_statistics SET {key} = %s WHERE country = %s", (value, country))
+            elif key == "total_tests":
+                cur.execute("UPDATE t_tests SET total_tests = %s WHERE country = %s", (value, country))
+        conn.commit()
+    return {"message": "Entry partially updated successfully"}
+
+# Route DELETE pour supprimer une entrée
+@app.delete("/covid/{country}")
+def delete_entry(country: str, conn=Depends(get_db_connection), current_user: str = Depends(get_current_user)):
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM t_tests WHERE country = %s", (country,))
+        cur.execute("DELETE FROM t_health_statistics WHERE country = %s", (country,))
+        cur.execute("DELETE FROM t_countries WHERE country = %s", (country,))
+        conn.commit()
+    return {"message": "Entry deleted successfully"}
