@@ -12,11 +12,8 @@ passlib
 pydantic
 uvicorn
 python-jose
-datetime
-psycopg2
-typing
-dotenv
 asyncpg
-
-
+PyJWT
+passlib[bcrypt]
+python-multipart
 
