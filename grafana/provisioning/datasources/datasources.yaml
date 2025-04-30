@@ -5,9 +5,9 @@ datasources:
     type: postgres
     access: proxy
     url: db:5432
-    database: covid_db
-    user: mohameddjebali
+    database: DB_NAME
+    user: DB_USER
     secureJsonData:
-      password: /Namouster5996/
+      password: DB_PASSWORD
     jsonData:
       sslmode: disable
