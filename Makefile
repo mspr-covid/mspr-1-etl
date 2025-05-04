@@ -2,7 +2,7 @@
 
 # Lancer l'application (Docker)
 up:
-	docker compose up --build
+	docker compose up --build -d
 
 # Stopper les containers
 down:

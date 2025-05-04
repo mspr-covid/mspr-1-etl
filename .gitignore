@@ -30,3 +30,4 @@ dist-ssr
 *.sln
 *.sw?
 *.pyc
+grafana/provisioning/datasources/datasources.yaml
