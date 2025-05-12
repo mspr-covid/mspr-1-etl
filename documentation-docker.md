@@ -1,6 +1,6 @@
-# 🐳 Docker & Automatisation – Documentation Technique
+# 📚 Docker & Automatisation – Documentation Technique
 
-## 🔰 Pourquoi Docker ?
+## 🐳 Pourquoi Docker ?
 
 Suite à notre projet d'application mettant en place un **ETL** (extract, transform load), nous avons souhaité uniformiser notre environnement de développement en intégrant une partie **devOPS**. Il était essentiel que **tous les développeurs disposent du même environnement**. C'est pourquoi nous avons intégré **Docker** pour :
 
