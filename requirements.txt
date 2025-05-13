@@ -16,4 +16,5 @@ asyncpg
 PyJWT
 passlib[bcrypt]
 python-multipart
+pytest
 
