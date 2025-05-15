@@ -1,6 +1,4 @@
 name: Integration Test Workflow
-# This workflow will run on every push and pull request to the main branch
-# It will set up a Python environment, install dependencies, and run tests
 on: [push, pull_request]
 
 jobs:
@@ -8,15 +6,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: "3.12"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
+
       - name: Run tests
         run: pytest
+
       - name: Run tests with coverage
-        run: pytest --cov=ws --cov-report=term-missing.
+        run: pytest --cov=ws --cov-report=term-missing
+
       - name: Discord Notification
-      - uses: tenzin1308/discord-notification@v1.0.0
+        uses: emvakar/discord-notification-action@v2
+        with:
+          title: "Test Workflow"
+          status: "success"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
