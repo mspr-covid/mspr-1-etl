@@ -9,3 +9,15 @@ Un décorateur @pytest.mark.token permet de cibler les tests liés aux tokens. C
 ⚠️ Remarque : Pour que pytest reconnaisse ce marqueur personnalisé, il faut l'enregistrer dans le fichier pytest.ini :
 
 ## Prérequis
+
+Pour pouvoir exécuter les tests, on peut lancer la commande :
+
+```bash
+make up
+```
+
+qui est un alias pour lancer les services docker habituellement lancés avec la commande :
+
+```bash
+docker compose up --build
+```

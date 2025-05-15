@@ -13,11 +13,18 @@ RUN apk add --no-cache make build-base
 # Crée le répertoire pour l'application au sein du conteneur
 WORKDIR /app
 
-# Copie les fichiers nécessaires dans le conteneur
-COPY . .
+# Copie le fichier requirements.txt dans le conteneur (Pour optimiser le cache)
+# Il est préférable de le faire avant de copier le reste du code pour éviter de reconstruire l'image à chaque changement de code
+# et ainsi profiter du cache Docker.
+# Cela permet de ne pas avoir à réinstaller les dépendances si elles n'ont pas changé.
+COPY requirements.txt .
 
 # Installe les dépendances de l'application
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copie les fichiers nécessaires dans le conteneur
+COPY . .
+
 # Commande pour lancer l'API et le script Python
 CMD python mspr1/covid_mspr1.py && uvicorn ws.covid_api:app --host 0.0.0.0 --port 8000
+
