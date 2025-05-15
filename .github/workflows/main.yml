@@ -4,8 +4,19 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+
+      # On stocke les dépendances dans le cache pour éviter de les télécharger à chaque fois. Ça va accélerer
+      #le workflow si on n'a pas changé les dépendances.
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -15,8 +26,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest
+      # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
+      # si on a des erreurs. On améliorera ça tout petit à petit.
+      - name: Run flake8 linter (non bloquant)
+        run: |
+          pip install flake8
+          flake8 . || true
 
       - name: Run tests with coverage
         run: pytest --cov=ws --cov-report=term-missing
