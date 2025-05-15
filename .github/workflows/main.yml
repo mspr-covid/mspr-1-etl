@@ -1,4 +1,6 @@
-name: Test IA model
+name: Integration Test Workflow
+# This workflow will run on every push and pull request to the main branch
+# It will set up a Python environment, install dependencies, and run tests
 on: [push, pull_request]
 
 jobs:
