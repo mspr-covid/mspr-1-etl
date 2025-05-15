@@ -26,4 +26,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Commande pour lancer l'API et le script Python
-CMD sh -c "python mspr1/covid_mspr1.py & uvicorn ws.covid_api:app --host 0.0.0.0 --port 8000"
+CMD python mspr1/covid_mspr1.py && uvicorn ws.covid_api:app --host 0.0.0.0 --port 8000
