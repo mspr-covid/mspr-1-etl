@@ -21,10 +21,9 @@ jobs:
       - name: Run tests with coverage
         run: pytest --cov=ws --cov-report=term-missing
 
-      # - name: Discord Notification
-      #   uses: tenzin1308/discord-notification@v1.0.0
-      #   with:
-      #     discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     github-repo-owner: ${{ github.repository_owner }}
-      #     github-repo-name: ${{ github.event.repository.name }}
+      - name: Discord Notification
+        uses: emvakar/discord-notification-action@v2
+        with:
+          title: "Test Workflow"
+          status: "success"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
