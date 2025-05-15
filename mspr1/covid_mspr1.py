@@ -905,6 +905,7 @@ DROP TABLE IF EXISTS testing_statistics CASCADE;
 DROP TABLE IF EXISTS worldometer CASCADE;
    """)          
 
+
 # Commit et fermeture
 conn.commit()
 cursor.close()
