@@ -1,6 +1,4 @@
 name: Integration Test Workflow
-# This workflow will run on every push and pull request to the main branch
-# It will set up a Python environment, install dependencies, and run tests
 on: [push, pull_request]
 
 jobs:
@@ -29,4 +27,4 @@ jobs:
           discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-repo-owner: ${{ github.repository_owner }}
-          github-repo-name: ${{ github.event.repository.name }ts terminés sur la branche `${{ github.ref_name }}` par `${{ github.actor }}`
+          github-repo-name: ${{ github.event.repository.name }}
