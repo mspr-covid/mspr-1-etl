@@ -3,9 +3,16 @@ from unittest.mock import MagicMock
 from unittest.mock import ANY
 
 
+from unittest.mock import MagicMock
+from unittest.mock import ANY
+
+
 import jwt
 from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient
 from datetime import timedelta
+from ws.covid_api import app, create_access_token
+from ws.covid_api import get_db
 from ws.covid_api import app, create_access_token
 from ws.covid_api import get_db
 import os
@@ -13,6 +20,8 @@ import os
 # Ici, on va supposer que la clé est définie dns les variables d'environnement
 SECRET_KEY = os.getenv("SECRET_KEY", "supersecretkey")
 ALGORITHM = "HS256"
+client = TestClient(app)
+
 client = TestClient(app)
 
 
