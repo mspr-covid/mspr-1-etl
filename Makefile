@@ -8,6 +8,17 @@ up:
 down:
 	docker compose down
 
+# Lancer un shell dans le container Docker du back-end (pour sortir du container, on peut utiliser exit)
+shell-b:
+	docker exec -it covid_mspr sh       
+
+#Lancer un shell dans le container Docker de la base de données (pour sortir du container, on peut utiliser exit)
+shell-db:
+	docker exec -it postgres_db sh
+#Lancer un shell dans le container Docker du service Grafana (pour sortir du container, on peut utiliser exit)
+shell-g:
+	docker exec -it grafana sh
+
 # Lancer seulement l'API en local (hors Docker)
 run-api:
 	uvicorn ws.covid_api:app --reload
