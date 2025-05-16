@@ -2,10 +2,8 @@ services:
   db:
     image: postgres:16
     container_name: postgres_db
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     volumes:
@@ -22,8 +20,6 @@ services:
     # On les redéfinit ici pour être sûr qu'elles soient bien prises en compte.
     env_file:
       - .env
-    environment:
-      DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase
     ports:
       - "8000:8000"
     networks:
@@ -31,10 +27,8 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    environment:
-      - DB_NAME=${DB_NAME}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
+    env_file:
+      - .env
     container_name: grafana
     ports:
       - "3000:3100"
