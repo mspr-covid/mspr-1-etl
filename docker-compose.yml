@@ -6,7 +6,6 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-
     ports:
       - "5432:5432"
     volumes:
@@ -19,6 +18,10 @@ services:
     container_name: covid_mspr
     depends_on:
       - db
+    # Parfois, il ne semble pas récupérer les variables d'environnement du .env
+    # On les redéfinit ici pour être sûr qu'elles soient bien prises en compte.
+    env_file:
+      - .env
     environment:
       DATABASE_URL: postgres://myuser:mypassword@db:5432/mydatabase
     ports:
