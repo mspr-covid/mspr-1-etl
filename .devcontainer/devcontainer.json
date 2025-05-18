@@ -1,0 +1,9 @@
+{
+	"name": "MSPR ETL - Dev Container",
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "backend",
+	"workspaceFolder": "/app",
+	"runServices": ["db", "grafana", "backend"],
+	"forwardPorts": [8000, 5432, 3000],
+	"postCreateCommand": "pip install --no-cache-dir -r requirements.txt && apk add git"
+}

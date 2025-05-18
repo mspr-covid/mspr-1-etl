@@ -8,7 +8,7 @@
 FROM python:3.13-alpine
 
 # Installe make et les dépendances nécessaires
-RUN apk add --no-cache make build-base
+RUN apk add --no-cache make build-base git openssh
 
 # Crée le répertoire pour l'application au sein du conteneur
 WORKDIR /app
