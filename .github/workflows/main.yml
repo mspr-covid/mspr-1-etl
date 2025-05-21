@@ -12,7 +12,7 @@ jobs:
 
       - name: Build Docker image
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
-        run: docker build -t covid-mspr:test -f ../../Dockerfile ../../
+        run: docker build -t covid-mspr:test -f Dockerfile .
 
   # Le second job lance les tests. Il dépend du job build (il s’exécute que si le build est OK)
   test:
