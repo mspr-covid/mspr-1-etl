@@ -14,6 +14,43 @@ jobs:
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
         run: docker build -t covid-mspr:test -f Dockerfile .
 
+      - name: Create .env file
+        run: |
+          echo "DB_NAME=test" >> .env
+          echo "DB_USER=test" >> .env
+          echo "DB_PASSWORD=test" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "SECRET_KEY=test" >> .env
+
+  # Ici on lancer toute l'infra Docker
+  start-services:
+    name: Run Docker Infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create .env file
+        run: |
+          echo "DB_NAME=covid_db" >> .env
+          echo "DB_USER=postgres" >> .env
+          echo "DB_PASSWORD=password" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=5432" >> .env
+          echo "SECRET_KEY=supersecretkey" >> .env
+
+      - name: Start Docker Compose services
+        run: docker-compose up -d
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "⏳ Waiting for PostgreSQL..."
+          for i in {1..10}; do
+            docker exec postgres_db pg_isready -U postgres && exit 0
+            sleep 3
+          done
+          echo "PostgreSQL not ready" && exit 1
+
   # Le second job lance les tests. Il dépend du job build (il s’exécute que si le build est OK)
   test:
     name: Run Tests and Linter
