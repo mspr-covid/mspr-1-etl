@@ -395,7 +395,17 @@ for index, row in df.iterrows():
             VALUES (%s, %s);
         """
         
+        delete_duplicate_entry = """
+            DELETE FROM countries
+            WHERE id NOT IN (
+            SELECT MIN(id)
+            FROM countries
+            GROUP BY country
+            );
+        """
+        
         cursor.execute(countries_sql, (country, continent, who_region, population))
+        cursor.execute(delete_duplicate_entry)
         cursor.execute(health_statistics_sql, (country, total_cases, total_deaths, total_recovered, serious_critical))
         cursor.execute(testing_statistics_sql, (country, total_tests))
         cursor.execute(worldometer_sql, (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical))
