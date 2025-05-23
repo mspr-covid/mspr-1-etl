@@ -14,11 +14,12 @@ jobs:
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
         run: docker build -t covid-mspr:test -f Dockerfile .
 
-  # Ici, après avoir construit notre image, on lance toute l'infra Docker dans ce second job.
+  # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
   start-services:
-    name: Run Docker Infrastructure
+    name: Run Docker Infrastructure and Tests
     runs-on: ubuntu-latest
     needs: [build]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -49,41 +50,15 @@ jobs:
           done
           echo "PostgreSQL not ready" && exit 1
 
-  # Le second job lance les tests. Il dépend du job build et start-services
-  test:
-    name: Run Tests and Linter
-    runs-on: ubuntu-latest
-    needs: [build, start-services]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      # On stocke les dépendances dans le cache pour éviter de les télécharger à chaque fois.
-      # Ça va accélerer le workflow si on n'a pas changé les dépendances.
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
         run: |
-          pip install flake8
-          flake8 . || true
+          docker exec covid_mspr pip install flake8
+          docker exec covid_mspr flake8 . || true
 
-      - name: Run integration tests
+      - name: Run tests with coverage
+        # important : on lance les tests dans le conteneur backend où l'app est configurée
         run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
       - name: Discord Notification
