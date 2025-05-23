@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock
-from unittest.mock import ANY
+
 
 
 import jwt
@@ -17,7 +17,6 @@ client = TestClient(app)
 
 
 #Test de la méthode qui est située dans le fichier ws/covid_api.py
-# TODO : crypt est depérécié, Mettre à jour avec un autre module (hashlib ?)
 @pytest.mark.token
 def test_create_access_token():
     # Données de test pour le token
