@@ -34,6 +34,7 @@ jobs:
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+
       # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github, 
       # on lance les services Docker. On utilise docker compose pour ça.
       - name: Start Docker Compose services
@@ -48,25 +49,11 @@ jobs:
           done
           echo "PostgreSQL not ready" && exit 1
 
-  # Le second job lance les tests. Il dépend du job build (il s’exécute que si le build est OK)
+  # Le second job lance les tests. Il dépend du job build et start-services
   test:
     name: Run Tests and Linter
     runs-on: ubuntu-latest
     needs: [build, start-services]
-    # On lance le service Postgres pour les tests
-    services:
-      db:
-        image: postgres:15
-        env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        # ports non nécessaires, on expose pas en dehors du job
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
@@ -96,13 +83,8 @@ jobs:
           pip install flake8
           flake8 . || true
 
-      - name: Run tests with coverage
-        env:
-          DB_HOST: localhost           # important : hostname pour se connecter au service DB
-          DB_USER: ${{ secrets.POSTGRES_USER }}
-          DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          DB_NAME: ${{ secrets.POSTGRES_DB }}
-        run: pytest --cov=ws --cov-report=term-missing
+      - name: Run integration tests
+        run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
