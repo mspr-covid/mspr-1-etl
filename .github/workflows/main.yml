@@ -40,7 +40,7 @@ jobs:
           echo "SECRET_KEY=supersecretkey" >> .env
 
       - name: Start Docker Compose services
-        run: docker-compose up -d
+        run: docker compose up -d
 
       - name: Wait for PostgreSQL to be ready
         run: |
