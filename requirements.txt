@@ -20,3 +20,4 @@ pytest
 httpx
 pytest-mock # for mocking HTTP requests in tests - temporaire
 pytest-cov
+psycopg2
