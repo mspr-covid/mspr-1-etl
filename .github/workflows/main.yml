@@ -14,31 +14,27 @@ jobs:
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
         run: docker build -t covid-mspr:test -f Dockerfile .
 
-      - name: Create .env file
-        run: |
-          echo "DB_NAME=test" >> .env
-          echo "DB_USER=test" >> .env
-          echo "DB_PASSWORD=test" >> .env
-          echo "DB_HOST=db" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "SECRET_KEY=test" >> .env
-
-  # Ici on lancer toute l'infra Docker
+  # Ici, après avoir construit notre image, on lancer toute l'infra Docker dans ce second job.
   start-services:
     name: Run Docker Infrastructure
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Create .env file
+      # On ne pousse pas nos variables d'environnement dans le repo. On les stocke donc dans les secrets de GitHub.
+      - name: Create .env file from secrets
         run: |
-          echo "DB_NAME=covid_db" >> .env
-          echo "DB_USER=postgres" >> .env
-          echo "DB_PASSWORD=password" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "DB_HOST=db" >> .env
-          echo "DB_PORT=5432" >> .env
-          echo "SECRET_KEY=supersecretkey" >> .env
-
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+      # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github, 
+      # on lance les services Docker. On utilise docker compose pour ça.
       - name: Start Docker Compose services
         run: docker compose up -d
 
@@ -55,7 +51,7 @@ jobs:
   test:
     name: Run Tests and Linter
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, start-services]
     steps:
       - uses: actions/checkout@v2
       # On stocke les dépendances dans le cache pour éviter de les télécharger à chaque fois. Ça va accélerer
