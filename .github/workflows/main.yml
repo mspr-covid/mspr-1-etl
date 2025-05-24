@@ -116,12 +116,9 @@ jobs:
       - name: Pull Docker Image To Scan
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
 
-      - name: Install Docker Scout CLI plugin
+      - name: Installer Docker Scout CLI
         run: |
-          curl -sSfL https://github.com/docker/scout-cli/releases/latest/download/docker-scout_linux_amd64 -o docker-scout
-          chmod +x docker-scout
-          sudo mkdir -p /usr/local/lib/docker/cli-plugins
-          sudo mv docker-scout /usr/local/lib/docker/cli-plugins/docker-scou
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
 
       - name: Run Docker Scout quickview
         run: |
