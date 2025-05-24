@@ -98,6 +98,10 @@ jobs:
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
+  # Ce job lié à des notifcation de sécurité via des webhook Discord.
+  # Il génére un rapport de sécurité avec Trivy, un scanner de vulnérabilités pour les images Docker.
+  # et envoie le rapport sur un salon Discord.
+  # Ensuite, on déclenche une notifcation pour informer l'équipe d'une nouvelle PR et de son état.
   notification-integration:
     name: Security Report
     runs-on: ubuntu-latest
