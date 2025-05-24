@@ -116,16 +116,25 @@ jobs:
       - name: Pull Docker Image To Scan
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
 
-      - name: Run Trivy security scan and save report
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/app aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 --format table --output trivy-report.txt ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+      - name: Run Docker Scout scan and save report
+        uses: docker/scout-action@v1
+        with:
+          image: ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+          output-format: json
+          output-file: scout-report.json
 
-      - name: Send Trivy report to Discord
-        run: |
-          curl -H "Content-Type: multipart/form-data" \
-          -F "payload_json={\"content\":\"Rapport de sécurité Trivy\"}" \
-          -F "file=@trivy-report.txt" \
-          "${{ secrets.DISCORD_SECURITY_WEBHOOK }}"
+      # Pour afficher le contenu du rapport dans les logs
+      - name: Show Docker Scout report content
+        run: cat scout-report.json
+
+      # Envoi du message spécifique Docker Scout sur un webhook Discord dédié
+      - name: Discord Notification Docker Scout
+        uses: emvakar/discord-notification-action@v2
+        with:
+          title: "Docker Scout Scan Report"
+          message: "Scan Docker Scout effectué avec succès sur l'image `${{ secrets.DOCKER_USERNAME }}/covid-mspr:test`."
+          status: "success"
+          webhook: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
