@@ -47,14 +47,14 @@
 		"name": "Land",
 		"cases": "Gesamtfälle",
 		"deaths": "Gesamtzahl der Todesfälle",
-		"recovered": "Genesene",
+		"recovered": "Gesamtzahl der Genesenen",
 		"active": "Aktive",
 		"critical": "Kritische Fälle",
 		"population": "Bevölkerung",
 		"continent": "Kontinent",
 		"date": "Letzte Aktualisierung",
 		"who_region": "WHO-Region",
-		"toal_tests": "Gesamt-Tests",
+		"total_tests": "Gesamt-Tests",
 		"actions": "Aktionen"
 	},
 	"manage": {
@@ -111,6 +111,6 @@
 		"show_highest_cases": "Länder mit den meisten Fällen anzeigen"
 	},
 	"covid": {
-		"dashboard": "COVID-Dashboard"
+		"dashboard": "COVID Dashboard"
 	}
 }
