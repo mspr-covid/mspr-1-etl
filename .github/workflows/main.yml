@@ -118,29 +118,29 @@ jobs:
 
       - name: Run Docker Scout quickview
         run: |
-          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --json > quickview.json
-          cat quickview.json
+          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > quickview.txt
+          cat quickview.txt
 
       - name: Run Docker Scout recommendations
         run: |
-          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --json > recommendations.json
-          cat recommendations.json
+          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > recommendations.txt
+          cat recommendations.txt
 
       - name: Send Docker Scout quickview to Discord
         run: |
-          content=$(jq -r tostring quickview.json)
+          content=$(jq -Rs '.' quickview.txt) # encode en JSON une string brute
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"\`\`\`json\n${content}\n\`\`\`\"}" \
-               ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+                -X POST \
+                -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
+                ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
 
       - name: Send Docker Scout recommendations to Discord
         run: |
-          content=$(jq -r tostring recommendations.json)
+          content=$(jq -Rs '.' recommendations.txt)
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"\`\`\`json\n${content}\n\`\`\`\"}" \
-               ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+                -X POST \
+                -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
+                ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
