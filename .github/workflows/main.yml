@@ -56,6 +56,14 @@ jobs:
         run: |
           docker exec covid_mspr pip install flake8
           docker exec covid_mspr flake8 . || true
+        #test temporaire
+      - name: Debug DB connection env
+        run: docker exec covid_mspr env | grep DB_
+        #test temporaire
+      - name: Test DB connection manually
+        run: docker exec covid_mspr psql -h db -U $DB_USER -d $DB_NAME -c '\dt'
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Run tests with coverage
         # important : on lance les tests dans le conteneur backend où l'app est configurée
