@@ -52,6 +52,12 @@ jobs:
           done
           echo "PostgreSQL not ready" && exit 1
 
+      - name: Create database if not exists
+        run: |
+          echo "📦 Creating database if not exists..."
+          docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -c "SELECT 'CREATE DATABASE \"${{ secrets.DB_NAME }}\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}')\gexec"
+
+
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
