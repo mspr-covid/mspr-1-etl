@@ -125,7 +125,7 @@ jobs:
           curl -H "Content-Type: multipart/form-data" \
           -F "payload_json={\"content\":\"Rapport de sécurité Trivy\"}" \
           -F "file=@trivy-report.txt" \
-          ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+          "${{ secrets.DISCORD_SECURITY_WEBHOOK }}"
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
