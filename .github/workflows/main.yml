@@ -35,11 +35,13 @@ jobs:
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-
+        working-directory: ${{ github.workspace }}
       # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github, 
       # on lance les services Docker. On utilise docker compose pour ça.
       - name: Start Docker Compose services
         run: docker compose up -d
+        working-directory: ${{ github.workspace }}
+
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -56,14 +58,6 @@ jobs:
         run: |
           docker exec covid_mspr pip install flake8
           docker exec covid_mspr flake8 . || true
-        #test temporaire
-      - name: Debug DB connection env
-        run: docker exec covid_mspr env | grep DB_
-        #test temporaire
-      - name: Test DB connection manually
-        run: docker exec covid_mspr psql -h db -U $DB_USER -d $DB_NAME -c '\dt'
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
 
       - name: Run tests with coverage
         # important : on lance les tests dans le conteneur backend où l'app est configurée
