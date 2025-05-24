@@ -47,7 +47,7 @@
 		"name": "Country",
 		"cases": "Total Cases",
 		"deaths": "Total Deaths",
-		"recovered": "Recovered",
+		"recovered": "Total Recovered",
 		"critical": "Serious Critical",
 		"population": "Population",
 		"continent": "Continent",

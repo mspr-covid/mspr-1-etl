@@ -45,11 +45,11 @@
 	},
 	"country": {
 		"name": "Pays",
-		"cases": "Cas Totaux",
-		"deaths": "Total des Décès",
-		"recovered": "Guéris",
+		"cases": "Total des cas",
+		"deaths": "Total des décès",
+		"recovered": "Total des guéris",
 		"active": "Actifs",
-		"critical": "Cas Critiques",
+		"critical": "Cas critiques",
 		"population": "Population",
 		"continent": "Continent",
 		"date": "Dernière mise à jour",
@@ -96,7 +96,7 @@
 		"informations": "Informations générales sur le pays",
 		"demography": "Démographie",
 		"health_statistics": "Statistiques de santé",
-		"test": "Tests réalisés"
+		"tests": "Tests réalisés"
 	},
 	"buttons": {
 		"submit": "Soumettre",
