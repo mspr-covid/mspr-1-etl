@@ -4,25 +4,25 @@ on: [push, pull_request]
 
 jobs:
   # le premier job est un build. On construit notre image Docker pour tester que le Dockerfile fonctionne
-  build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # build:
+  #   name: Build Docker Image
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+  #     - name: Cache Docker layers
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: /tmp/.buildx-cache
+  #         key: ${{ runner.os }}-buildx-${{ github.sha }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-buildx-
 
-      - name: Build Docker image
-        run: |
-          docker build --cache-from=type=local,src=/tmp/.buildx-cache \
-                       --cache-to=type=local,dest=/tmp/.buildx-cache \
-                       -t covid-mspr:test -f Dockerfile .
+  #     - name: Build Docker image
+  #       run: |
+  #         docker build --cache-from=type=local,src=/tmp/.buildx-cache \
+  #                      --cache-to=type=local,dest=/tmp/.buildx-cache \
+  #                      -t covid-mspr:test -f Dockerfile .
 
   # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
   start-services:
