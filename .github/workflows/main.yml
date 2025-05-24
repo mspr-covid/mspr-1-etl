@@ -28,8 +28,7 @@ jobs:
   start-services:
     name: Run Docker Infrastructure and Tests
     runs-on: ubuntu-latest
-    needs: [build]
-
+    
     steps:
       - uses: actions/checkout@v2
 
