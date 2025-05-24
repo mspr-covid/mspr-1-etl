@@ -80,7 +80,6 @@ jobs:
         if: failure()
         run: docker logs covid_mspr
 
-
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
