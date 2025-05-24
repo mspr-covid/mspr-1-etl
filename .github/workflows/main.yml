@@ -136,7 +136,7 @@ jobs:
           curl -H "Content-Type: application/json" \
                 -X POST \
                 -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
-                ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+                "${{ secrets.DISCORD_SECURITY_WEBHOOK }}"
 
       - name: Send Docker Scout recommendations to Discord
         run: |
@@ -144,7 +144,7 @@ jobs:
           curl -H "Content-Type: application/json" \
                 -X POST \
                 -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
-                ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+                "${{ secrets.DISCORD_SECURITY_WEBHOOK }}"
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
