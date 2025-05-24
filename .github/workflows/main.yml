@@ -58,6 +58,9 @@ jobs:
           docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -d postgres -c \
           "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE \"${{ secrets.DB_NAME }}\"; END IF; END \$\$;"
 
+      - name: Initialize database tables
+        run: docker exec covid_mspr python /app/mspr1/covid_mspr1.py
+
       - name: Wait for FastAPI to be ready
         run: |
           echo "⏳ Waiting for FastAPI (localhost:8000)..."
