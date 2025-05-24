@@ -116,25 +116,31 @@ jobs:
       - name: Pull Docker Image To Scan
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
 
-      - name: Run Docker Scout scan and save report
-        uses: docker/scout-action@v1
-        with:
-          image: ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
-          output-format: json
-          output-file: scout-report.json
+      - name: Run Docker Scout quickview
+        run: |
+          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --json > quickview.json
+          cat quickview.json
 
-      # Pour afficher le contenu du rapport dans les logs
-      - name: Show Docker Scout report content
-        run: cat scout-report.json
+      - name: Run Docker Scout recommendations
+        run: |
+          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --json > recommendations.json
+          cat recommendations.json
 
-      # Envoi du message spécifique Docker Scout sur un webhook Discord dédié
-      - name: Discord Notification Docker Scout
-        uses: emvakar/discord-notification-action@v2
-        with:
-          title: "Docker Scout Scan Report"
-          message: "Scan Docker Scout effectué avec succès sur l'image `${{ secrets.DOCKER_USERNAME }}/covid-mspr:test`."
-          status: "success"
-          webhook: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+      - name: Send Docker Scout quickview to Discord
+        run: |
+          content=$(jq -r tostring quickview.json)
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"\`\`\`json\n${content}\n\`\`\`\"}" \
+               ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+
+      - name: Send Docker Scout recommendations to Discord
+        run: |
+          content=$(jq -r tostring recommendations.json)
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"\`\`\`json\n${content}\n\`\`\`\"}" \
+               ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
 
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
