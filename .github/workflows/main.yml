@@ -92,3 +92,29 @@ jobs:
           title: "Test Workflow"
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+  Security-report:
+    name: Security Report
+    runs-on: ubuntu-latest
+    needs: [start-services]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Trivy security scan and save report
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/app aquasec/trivy image --severity HIGH,CRITICAL --exit-code 1 --format table --output trivy-report.txt covid-mspr:test
+
+      - name: Send Trivy report to Discord
+        run: |
+          curl -H "Content-Type: multipart/form-data" \
+          -F "payload_json={\"content\":\"Rapport de sécurité Trivy\"}" \
+          -F "file=@trivy-report.txt" \
+          ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+
+      - name: Discord Notification
+        uses: emvakar/discord-notification-action@v2
+        with:
+          title: "Security Report"
+          status: "success"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
