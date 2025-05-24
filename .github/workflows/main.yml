@@ -58,6 +58,20 @@ jobs:
           docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -d postgres -c \
           "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE \"${{ secrets.DB_NAME }}\"; END IF; END \$\$;"
 
+      - name: Wait for FastAPI to be ready
+        run: |
+          echo "⏳ Waiting for FastAPI (covid_mspr)..."
+          for i in {1..10}; do
+            docker exec covid_mspr curl -s http://localhost:8000/docs > /dev/null && exit 0
+            sleep 3
+          done
+          echo "FastAPI not ready" && exit 1
+
+      - name: Show FastAPI logs if tests fail
+        if: failure()
+        run: docker logs covid_mspr
+
+
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
