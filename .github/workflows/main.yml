@@ -1,4 +1,4 @@
-name: Integration Test Workflow
+name: Mspr Integration Workflow
 
 on: [push, pull_request]
 
@@ -12,7 +12,13 @@ jobs:
 
       - name: Build Docker image
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
-        run: docker build -t covid-mspr:test -f Dockerfile .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test -f Dockerfile .
+      # On pousse l'image Docker sur Docker Hub pour pouvoir l'utiliser dans les autres jobs (pour le rapport de sécurité)
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
 
   # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
   start-services:
@@ -74,7 +80,6 @@ jobs:
         if: failure()
         run: docker logs covid_mspr
 
-
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
@@ -86,9 +91,68 @@ jobs:
         # important : on lance les tests dans le conteneur backend où l'app est configurée
         run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
+  # Ce job est lié à des notifcation de sécurité via des webhook Discord.
+  # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
+  # et envoie le rapport sur un salon Discord.
+  notification-security:
+    name: Security Report
+    runs-on: ubuntu-latest
+    needs: [start-services]
+
+    env:
+      DISCORD_SECURITY_WEBHOOK: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker Image To Scan
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+
+      - name: Installer Docker Scout CLI
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+
+      - name: Run Docker Scout quickview
+        run: |
+          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > quickview.txt
+          cat quickview.txt
+
+      - name: Run Docker Scout recommendations
+        run: |
+          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > recommendations.txt
+          cat recommendations.txt
+
+      - name: Send Docker Scout quickview to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat quickview.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+
+      - name: Send Docker Scout recommendations to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat recommendations.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+  # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
+  # On s'appuie sur un workflow externe pour envoyer la notification.
+  # Le dépot est ici : https://github.com/emvakar/discord-notification-action
+  notification-integration:
+    name: Integration Notification
+    runs-on: ubuntu-latest
+    needs: [start-services]
+    steps:
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
-          title: "Test Workflow"
+          title: "Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}"
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}

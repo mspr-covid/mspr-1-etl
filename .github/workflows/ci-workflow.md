@@ -1,107 +1,104 @@
-# 🛠️ Détail du fichier GitHub Actions : `integration.yml`
+# Intégration Continue – Workflow GitHub Actions
 
-Ce fichier configure un workflow d’intégration continue (CI) pour :
+Ici, on décrit comment fonctionne le workflow GitHub Actions mis en place pour ce projet. Il s'exécute automatiquement à chaque `push` ou `pull_request` sur le dépôt. Ce sont nos délencheurs.
 
-- Installer les dépendances
+---
+
+## Objectifs du workflow
+
+- Construire l'image Docker du backend et la pousser sur un registry
+- Lancer les conteneurs nécessaires à l'application (FastAPI + PostgreSQL + Grafana)
+- Vérifier que les services sont bien disponibles
+- Initialiser la base de données
+- Lancer les tests automatiques avec `pytest`
 - Vérifier la qualité du code avec `flake8`
-- Exécuter les tests avec `pytest` et mesurer la couverture
-- Notifier l’équipe via un webhook vers un salon Discord
+- Scanner l'image Docker à la recherche de failles de sécurité avec Docker Scout
+- Envoyer des notifications sur Discord via des webhooks. Une notification pour le rapport de sécurité et une
+autre pour informer le statut d'une PR.
 
-## 🧾 Déclencheurs
+---
 
-```yaml
-name: Integration Test Workflow
-on: [push, pull_request]
-```
+## 1. Job `build`
 
-- name: Nom du workflow affiché dans l'interface GitHub Actions
-- on: Déclenche ce workflow à chaque push ou pull_request sur n’importe quelle branche
+Ce job s'occupe de :
 
-## Job de test
+- Cloner le projet
+- Construire une image Docker taguée `:test` à partir du Dockerfile
+- Se connecter à Docker Hub
+- Pousser l'image vers le Docker Hub. On se servira de cette image dans le job qui scanne le projet 
+et lancer un rapport de sécurité
 
-```yaml
-jobs:
-  test:
-    runs-on: ubuntu-latest
-```
+Ça permet de s'assurer que l'image peut être construite correctement à chaque commit.
+On évite des régressions de ce côté.
 
-- jobs: Déclare une liste de tâches à exécuter (ici, la tâche 'test' est executé).
-- runs-on: Le job s’exécute sur une machine virtuelle Ubuntu fournie par GitHub.
+---
 
-- uses: actions/checkout@v2
-- Récupère le code source de la branche sur laquelle le workflow est déclenché.
+## 2. Job `start-services`
 
-## 💾 Mise en cache de pip
+Ce job dépend du précédent (`needs: build`) et fait plusieurs actions :
 
-```yaml
-- name: Cache pip
-  uses: actions/cache@v3
-  with:
-    path: ~/.cache/pip
-    key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-    restore-keys: |
-      ${{ runner.os }}-pip-
-```
+- Création d'un fichier `.env` à partir des secrets stockés dans GitHub
+- Lancement des services avec `docker compose up -d`
+- Vérification que PostgreSQL est prêt
+- Création de la base de données si elle n'existe pas déjà
+- Exécution d'un script Python pour initialiser les tables
+- Vérification que FastAPI est bien lancé
+- Installation de `flake8` dans le conteneur backend pour executer un linter (non bloquant pour le moment)
+- Lancement des tests unitaires et d'intégrations avec `pytest` et on lance un calcul de la couverture de code
 
-Met en cache les paquets pip pour accélérer les exécutions futures.
-Le cache est lié au runner et au hash du fichier requirements.txt.
+---
 
-## 🐍 Définition de la version de Python
+## 3. Job `notification-security`
 
-```yaml
-- name: Set up Python
-  uses: actions/setup-python@v2
-  with:
-    python-version: "3.12"
-```
+Ce job exécute un scan de sécurité sur l'image Docker construite. On utilise la CLI de Docker Scout. Ce qu'il fait :
 
-Installe Python 3.12 sur le runner.
+- On récupère l'image `covid-mspr:test` depuis Docker Hub (On l'avait poussée à l'étape du build)
+- On installe la CLI Docker Scout
+- On lance deux commandes :
+  - `docker scout quickview` : vue d'ensemble rapide
+  - `docker scout recommendations` : recommandations pour corriger les failles
+- Et on envoit automatiquement dans des salons Discord via des webhooks
 
-## 📦 Installation des dépendances
+Les rapports sont lisibles directement depuis Discord, dans des blocs de code.
 
-```yaml
-- name: Install dependencies
-  run: pip install -r requirements.txt
-```
+---
 
-Installe les dépendances du projet nécessaires.
+## 4. Job `notification-integration`
 
-## Linter flake8 (non bloquant)
+Une fois que tout s'est bien passé, ce job envoie une notification dans un autre salon Discord pour prévenir que le workflow a réussi et que la PR peut-être relue
 
-```yaml
-- name: Run flake8 linter (non bloquant)
-  run: |
-    pip install flake8
-    flake8 . || true
-```
+La notification contient le nom de la branche et l'utilisateur qui a déclenché le workflow.
 
-flake8 est un outil de linting pour vérifier le respect des conventions de style.
-|| true permet de ne pas échouer le pipeline même si flake8 détecte des erreurs.
-(Le but est simplement de nous informer et nous metterons à jour au fur et à mesure)
+---
 
-## 🧪 Tests avec couverture
+## Secrets utilisés dans GitHub
 
-```yaml
-- name: Run tests with coverage
-  run: pytest --cov=ws --cov-report=term-missing
-```
+Voici la liste des secrets utilisés dans notre pipeline :
 
-Lance les tests avec pytest tout en mesurant la couverture de code.
+- `DOCKER_USERNAME` : identifiant Docker Hub
+- `DOCKER_PASSWORD` : mot de passe Docker Hub
+- `DISCORD_SECURITY_WEBHOOK` : webhook Discord pour les rapports de sécurité
+- `DISCORD_WEBHOOK` : webhook Discord pour les notifications de succès
+- `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT` : infos pour se connecter à la base
+- `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` : variables PostgreSQL internes
+- `SECRET_KEY` : clé secrète de l'application
 
---cov=ws : mesure la couverture du dossier ws.
+---
 
---cov-report=term-missing : affiche les lignes non couvertes directement dans le terminal.
+## Résumé du déroulement
 
-## 🔔 Notification Discord
+Pour résumer, les grandes étapes sont : 
 
-```yaml
-- name: Discord Notification
-  uses: emvakar/discord-notification-action@v2
-  with:
-    title: "Test Workflow"
-    status: "success"
-    webhook: ${{ secrets.DISCORD_WEBHOOK }}
-```
+1. Le projet est cloné
+2. L'image Docker est construite et poussée
+3. Les conteneurs sont lancés et vérifiés
+4. La base de données est préparée
+5. Les tests et le linter sont exécutés
+6. Le rapport de sécurité est généré et envoyé
+7. Une notification Discord est envoyée pour résumer l'exécution
 
-Envoie une notification sur Discord dans le salon #integration à la fin du workflow.
-Le webhook est stocké dans les secrets du dépôt (DISCORD_WEBHOOK).
+---
+
+## Remarque
+
+Cette pipeline est conçu pour être facilement extensible. Il est possible d'ajouter d'autres outils de qualité ou des déploiements automatiques par la suite si besoin.
