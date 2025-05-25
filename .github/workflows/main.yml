@@ -149,6 +149,9 @@ jobs:
                 -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
                 "$DISCORD_SECURITY_WEBHOOK"
 
+      # Pour l'envoie de cette notification, on utilise un workflow déjà existant
+      # qui envoie une notification Discord à chaque fois qu'une PR est ouverte ou mise à jour.
+      #https://github.com/emvakar/discord-notification-action
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
