@@ -149,6 +149,6 @@ jobs:
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
-          title: "Pull request déclenchée par ${{ github.actor }} sur `${{ github.ref_name }}`"
+          title: "Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}"
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
