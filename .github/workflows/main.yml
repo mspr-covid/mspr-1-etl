@@ -92,10 +92,9 @@ jobs:
         run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
   # Ce job lié à des notifcation de sécurité via des webhook Discord.
-  # Il génére un rapport de sécurité avec Trivy, un scanner de vulnérabilités pour les images Docker.
+  # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
   # et envoie le rapport sur un salon Discord.
-  # Ensuite, on déclenche une notifcation pour informer l'équipe d'une nouvelle PR et de son état.
-  notification-integration:
+  notification-security:
     name: Security Report
     runs-on: ubuntu-latest
     needs: [start-services]
@@ -142,10 +141,12 @@ jobs:
             -X POST \
             -d "{\"content\": ${content} }" \
             "$DISCORD_SECURITY_WEBHOOK"
-
-      # Pour l'envoie de cette notification, on utilise un workflow déjà existant
-      # qui envoie une notification Discord à chaque fois qu'une PR est ouverte ou mise à jour.
-      #https://github.com/emvakar/discord-notification-action
+  # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
+  notifiation-integration:
+    name: Integration Notification
+    runs-on: ubuntu-latest
+    needs: [start-services]
+    steps:
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
