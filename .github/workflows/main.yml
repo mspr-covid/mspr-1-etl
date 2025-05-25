@@ -141,6 +141,7 @@ jobs:
             -X POST \
             -d "{\"content\": ${content} }" \
             "$DISCORD_SECURITY_WEBHOOK"
+            
   # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
   notifiation-integration:
     name: Integration Notification
