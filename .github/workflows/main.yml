@@ -128,19 +128,20 @@ jobs:
 
       - name: Send Docker Scout quickview to Discord
         run: |
-          content=$(jq -Rs '.' quickview.txt) # encode en JSON une string brute
+          content=$(printf '```\n%s\n```' "$(cat quickview.txt)" | jq -Rs .)
           curl -H "Content-Type: application/json" \
-                -X POST \
-                -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
-                "$DISCORD_SECURITY_WEBHOOK"
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
 
       - name: Send Docker Scout recommendations to Discord
         run: |
-          content=$(jq -Rs '.' recommendations.txt)
+          content=$(printf '```\n%s\n```' "$(cat recommendations.txt)" | jq -Rs .)
           curl -H "Content-Type: application/json" \
-                -X POST \
-                -d "{\"content\": \"\`\`\`\n${content}\n\`\`\`\"}" \
-                "$DISCORD_SECURITY_WEBHOOK"
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
 
       # Pour l'envoie de cette notification, on utilise un workflow déjà existant
       # qui envoie une notification Discord à chaque fois qu'une PR est ouverte ou mise à jour.
