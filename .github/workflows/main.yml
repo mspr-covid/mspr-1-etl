@@ -181,14 +181,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install flyctl
-        run: curl -L https://fly.io/install.sh | sh
-
-      - name: Add flyctl to PATH
-        run: echo "${HOME}/.fly/bin" >> $GITHUB_PATH
-
-      - name: Authenticate with Fly.io
-        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
+      - name: Install and configure flyctl
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          export PATH="$HOME/.fly/bin:$PATH"
+          flyctl auth token save ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deploy to Fly.io
-        run: flyctl deploy --remote-only
+        run: |
+          export PATH="$HOME/.fly/bin:$PATH"
+          flyctl deploy --remote-only
+
