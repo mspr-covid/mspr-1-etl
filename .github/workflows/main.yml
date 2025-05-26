@@ -203,14 +203,13 @@ jobs:
     needs: [deploy]
 
     steps:
-      - name: Discord Notification
-        uses: emvakar/discord-notification-action@v2
-        with:
-          title: "✅ Déploiement effectué"
-          description: "Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs"
-          status: "success"
-          webhook: ${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}
-
+      - name: Discord Notification via curl
+        run: |
+          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès.\nL'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs" '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
 
 
 
