@@ -173,6 +173,9 @@ jobs:
           echo "==> Contenu du répertoire :"
           ls -la
           
+      - name: Debug FLY_APP_NAME
+        run: echo "FLY_APP_NAME = ${{ secrets.FLY_APP_NAME }}"
+
       - name: Deploy to Fly.io
         uses: superfly/flyctl-actions@v1
         with:
