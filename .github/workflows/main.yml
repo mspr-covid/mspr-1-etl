@@ -1,4 +1,4 @@
-name: Integration Test Workflow
+name: Mspr Integration Workflow
 
 on: [push, pull_request]
 
@@ -12,12 +12,20 @@ jobs:
 
       - name: Build Docker image
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
-        run: docker build -t covid-mspr:test -f Dockerfile .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test -f Dockerfile .
+      # On pousse l'image Docker sur Docker Hub pour pouvoir l'utiliser dans les autres jobs (pour le rapport de sécurité)
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-  # Ici, après avoir construit notre image, on lancer toute l'infra Docker dans ce second job.
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+
+  # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
   start-services:
-    name: Run Docker Infrastructure
+    name: Run Docker Infrastructure and Tests
     runs-on: ubuntu-latest
+    needs: [build]
+
     steps:
       - uses: actions/checkout@v2
 
@@ -33,10 +41,13 @@ jobs:
           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+        working-directory: ${{ github.workspace }}
       # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github, 
       # on lance les services Docker. On utilise docker compose pour ça.
       - name: Start Docker Compose services
         run: docker compose up -d
+        working-directory: ${{ github.workspace }}
+
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -46,44 +57,123 @@ jobs:
             sleep 3
           done
           echo "PostgreSQL not ready" && exit 1
+      
+      - name: Create database if not exists
+        run: |
+          echo "📦 Creating database if not exists..."
+          docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -d postgres -c \
+          "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE \"${{ secrets.DB_NAME }}\"; END IF; END \$\$;"
 
-  # Le second job lance les tests. Il dépend du job build (il s’exécute que si le build est OK)
-  test:
-    name: Run Tests and Linter
-    runs-on: ubuntu-latest
-    needs: [build, start-services]
-    steps:
-      - uses: actions/checkout@v2
-      # On stocke les dépendances dans le cache pour éviter de les télécharger à chaque fois. Ça va accélerer
-      #le workflow si on n'a pas changé les dépendances.
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+      - name: Initialize database tables
+        run: docker exec covid_mspr python /app/mspr1/covid_mspr1.py
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.12"
+      - name: Wait for FastAPI to be ready
+        run: |
+          echo "⏳ Waiting for FastAPI (localhost:8000)..."
+          for i in {1..10}; do
+            curl -s http://localhost:8000/docs > /dev/null && exit 0
+            sleep 3
+          done
+          echo "FastAPI not ready" && exit 1
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Show FastAPI logs if tests fail
+        if: failure()
+        run: docker logs covid_mspr
+
       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
       # si on a des erreurs. On améliorera ça tout petit à petit.
       - name: Run flake8 linter (non bloquant)
         run: |
-          pip install flake8
-          flake8 . || true
+          docker exec covid_mspr pip install flake8
+          docker exec covid_mspr flake8 . || true
 
       - name: Run tests with coverage
-        run: pytest --cov=ws --cov-report=term-missing
+        # important : on lance les tests dans le conteneur backend où l'app est configurée
+        run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
+  # Ce job est lié à des notifcation de sécurité via des webhook Discord.
+  # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
+  # et envoie le rapport sur un salon Discord.
+  notification-security:
+    name: Security Report
+    runs-on: ubuntu-latest
+    needs: [start-services]
+
+    env:
+      DISCORD_SECURITY_WEBHOOK: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker Image To Scan
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+
+      - name: Installer Docker Scout CLI
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+
+      - name: Run Docker Scout quickview
+        run: |
+          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > quickview.txt
+          cat quickview.txt
+
+      - name: Run Docker Scout recommendations
+        run: |
+          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > recommendations.txt
+          cat recommendations.txt
+
+      - name: Send Docker Scout quickview to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat quickview.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+
+      - name: Send Docker Scout recommendations to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat recommendations.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+  # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
+  # On s'appuie sur un workflow externe pour envoyer la notification.
+  # Le dépot est ici : https://github.com/emvakar/discord-notification-action
+  notification-integration:
+    name: Integration Notification
+    runs-on: ubuntu-latest
+    needs: [start-services]
+    steps:
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
-          title: "Test Workflow"
+          title: "Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}"
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
+  
+  deploy:
+    name: Deploy to Fly.io
+    runs-on: ubuntu-latest
+    needs: [start-services, notification-security, notification-integration]
+    # La ligne du dessous sert à ne déployer que sur la branche master
+    if: github.ref == 'refs/heads/master'  
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install flyctl
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          echo "${HOME}/.fly/bin" >> $GITHUB_PATH
+
+      - name: Authenticate with Fly.io
+        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Deploy to Fly.io
+        run: flyctl deploy --remote-only

@@ -1,14 +1,19 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
+
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from typing import Generator
 import os
 import jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
 from database.Database import Database
+import psycopg2
+
+
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -19,6 +24,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Initialisation de FastAPI
 app = FastAPI()
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 
 # Middleware CORS
 app.add_middleware(
@@ -67,7 +75,7 @@ def get_db() -> Generator:
 # Générer un token JWT
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.now(UTC) + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -87,14 +95,16 @@ def register_user(user: UserCreate, cursor=Depends(get_db)):
     try:
         cursor.execute("SELECT id FROM t_users WHERE username = %s OR email = %s", (user.username, user.email))
         if cursor.fetchone():
-            raise HTTPException(status_code=400, detail="Utilisateur déjà existant")
+            raise HTTPException(status_code=400, detail="Nom d'utilisateur ou email incorrect")
 
         hashed_password = pwd_context.hash(user.password)
         cursor.execute("INSERT INTO t_users (username, email, password_hash) VALUES (%s, %s, %s)",
                        (user.username, user.email, hashed_password))
         return {"message": "Utilisateur créé avec succès"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except psycopg2.Error as e:
+        if e.pgcode == "23505":
+            raise HTTPException(status_code=400, detail="Nom d'utilisateur ou email incorrect")
+        raise HTTPException(status_code=500, detail="Erreur serveur")
 
 # Route pour se connecter et récupérer un token
 @app.post("/api/login", status_code=200)
