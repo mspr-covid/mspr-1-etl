@@ -1,17 +1,12 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import missingno as mno
-from sklearn.model_selection import train_test_split
-
-
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
+from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
@@ -21,7 +16,7 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT"),
 }
 
-df = pd.read_csv('data/worldometer_data_raw.csv')
+df = pd.read_csv('../data/worldometer_data_raw.csv')
 
 df.head()
 
