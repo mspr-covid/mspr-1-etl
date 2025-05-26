@@ -176,7 +176,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
-    if: github.ref == 'refs/heads/master'  
+    # if: github.ref == 'refs/heads/master'  
 
     steps:
       - uses: actions/checkout@v2
@@ -207,8 +207,10 @@ jobs:
         uses: emvakar/discord-notification-action@v2
         with:
           title: "✅ Déploiement effectué"
-          description: "Déploiement effectué avec succès 🔗 [Voir l'application](https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs)"
+          description: "Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs"
           status: "success"
           webhook: ${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}
+
+
 
 
