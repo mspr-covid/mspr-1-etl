@@ -1,17 +1,16 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import missingno as mno
+import psycopg2
+import os
 from sklearn.model_selection import train_test_split
 
 
-import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-import os
+
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 DB_CONFIG = {
     "dbname": os.getenv("DB_NAME"),
@@ -21,7 +20,7 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT"),
 }
 
-df = pd.read_csv('data/worldometer_data_raw.csv')
+df = pd.read_csv('../data/worldometer_data_raw.csv')
 
 df.head()
 
@@ -29,7 +28,9 @@ df.info()
 
 df.columns
 
-df = df[['Continent', 'WHO Region','Country/Region', 'Population', 'TotalCases', 'NewCases','TotalDeaths', 'NewDeaths', 'TotalRecovered', 'NewRecovered','ActiveCases', 'Serious,Critical', 'Tot Cases/1M pop', 'Deaths/1M pop','TotalTests', 'Tests/1M pop']]
+df = df[['Continent', 'WHO Region', 'Country/Region', 'Population', 'TotalCases',
+         'NewCases', 'TotalDeaths', 'NewDeaths', 'TotalRecovered', 'NewRecovered',
+         'ActiveCases', 'Serious,Critical', 'Tot Cases/1M pop', 'Deaths/1M pop', 'TotalTests', 'Tests/1M pop']]
 
 mno.matrix(df, figsize=(15,5))
 
@@ -122,7 +123,8 @@ df
 plt.figure(figsize=(10, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="coolwarm")
 
-df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", "NewCases","Tests/1M pop","NewDeaths"], errors='ignore')
+df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", "NewCases",
+                      "Tests/1M pop", "NewDeaths"], errors='ignore')
 
 df.head()
 
