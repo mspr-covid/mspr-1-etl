@@ -160,7 +160,7 @@ jobs:
   deploy:
     name: Deploy to Fly.io
     runs-on: ubuntu-latest
-    needs: [start-services]
+    needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
     if: github.ref == 'refs/heads/master'  
 
@@ -173,7 +173,7 @@ jobs:
           echo "${HOME}/.fly/bin" >> $GITHUB_PATH
 
       - name: Authenticate with Fly.io
-        run: flyctl auth token ${{ secrets.FLY_API_TOKEN }}
+        run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
 
       - name: Deploy to Fly.io
         run: flyctl deploy --remote-only
