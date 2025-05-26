@@ -162,15 +162,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
-    if: github.ref == 'refs/heads/master'  
+    # if: github.ref == 'refs/heads/master'  
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install flyctl
-        run: |
-          curl -L https://fly.io/install.sh | sh
-          echo "${HOME}/.fly/bin" >> $GITHUB_PATH
+        run: curl -L https://fly.io/install.sh | sh
+
+      - name: Add flyctl to PATH
+        run: echo "${HOME}/.fly/bin" >> $GITHUB_PATH
 
       - name: Authenticate with Fly.io
         run: flyctl auth login --access-token ${{ secrets.FLY_API_TOKEN }}
