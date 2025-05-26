@@ -3,15 +3,13 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'covid-appapp-little-tree-2636'
+app = 'covid-app'
 primary_region = 'cdg'
 
 [build]
 
 [env]
   PORT = '8080'
-  app = 'covid app'
-  primary_region = 'cdg'
 
 [http_service]
   internal_port = 8080
