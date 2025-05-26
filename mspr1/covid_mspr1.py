@@ -24,7 +24,10 @@ df.info()
 
 df.columns
 
-df = df[['Continent', 'WHO Region','Country/Region', 'Population', 'TotalCases', 'NewCases','TotalDeaths', 'NewDeaths', 'TotalRecovered', 'NewRecovered','ActiveCases', 'Serious,Critical', 'Tot Cases/1M pop', 'Deaths/1M pop','TotalTests', 'Tests/1M pop']]
+df = df[['Continent', 'WHO Region', 'Country/Region', 'Population', 'TotalCases', 
+         'NewCases', 'TotalDeaths', 'NewDeaths', 'TotalRecovered', 'NewRecovered',
+         'ActiveCases', 'Serious,Critical', 'Tot Cases/1M pop', 'Deaths/1M pop',
+         'TotalTests', 'Tests/1M pop']]
 
 mno.matrix(df, figsize=(15,5))
 
@@ -117,13 +120,12 @@ df
 plt.figure(figsize=(10, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="coolwarm")
 
-df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", "NewCases","Tests/1M pop","NewDeaths"], errors='ignore')
+df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", 
+                      "NewCases", "Tests/1M pop", "NewDeaths"], errors='ignore')
 
 df.head()
 
-
 mno.matrix(df, figsize=(15,5))
-
 
 plt.figure(figsize=(10, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".2f", cmap="coolwarm")
@@ -371,7 +373,8 @@ for index, row in df.iterrows():
 
         
         worldometer_sql = """
-            INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
+            INSERT INTO worldometer (continent, who_region, country, 
+            population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
         """
         
@@ -381,7 +384,8 @@ for index, row in df.iterrows():
         """
         
         health_statistics_sql = """
-            INSERT INTO health_statistics (country, total_cases, total_deaths, total_recovered, serious_critical)
+            INSERT INTO health_statistics (country, total_cases, total_deaths, 
+            total_recovered, serious_critical)
             VALUES (%s, %s, %s, %s, %s);
         """
         
@@ -415,6 +419,3 @@ cursor.close()
 conn.close()
 
 print("✅ Données chargées dans PostgreSQL")
-
-
-
