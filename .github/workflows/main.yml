@@ -167,6 +167,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Log current directory before deploy
+        run: |
+          echo "==> Répertoire courant : $(pwd)"
+          echo "==> Contenu du répertoire :"
+          ls -la
+          
       - name: Deploy to Fly.io
         uses: superfly/flyctl-actions@v1
         with:
