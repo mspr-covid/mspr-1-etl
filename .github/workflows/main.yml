@@ -162,19 +162,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
-    # if: github.ref == 'refs/heads/master'  
+    if: github.ref == 'refs/heads/master'  
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Log current directory before deploy
-        run: |
-          echo "==> Répertoire courant : $(pwd)"
-          echo "==> Contenu du répertoire :"
-          ls -la
-
-      - name: Debug FLY_APP_NAME
-        run: echo "FLY_APP_NAME = ${{ secrets.FLY_APP_NAME }}"
 
       - name: Deploy to Fly.io
         uses: superfly/flyctl-actions@v1
@@ -188,10 +179,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy]
 
+    # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
+    # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
     steps:
       - name: Discord Notification via curl
         run: |
-          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès.\nL'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs" '{"content": $txt}')
+          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/docs" '{"content": $txt}')
           curl -H "Content-Type: application/json" \
                -X POST \
                -d "$content" \
