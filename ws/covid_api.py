@@ -1,4 +1,7 @@
-from fastapi import FastAPI, HTTPException, Depends, status
+import os
+import jwt
+import psycopg2
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import RedirectResponse
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
@@ -8,14 +11,9 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from typing import Generator
-import os
-import jwt
 from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
 from database.Database import Database
-import psycopg2
-
-
 
 # Charger les variables d'environnement
 load_dotenv()
