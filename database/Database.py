@@ -1,9 +1,10 @@
 import psycopg2
+import os
 from psycopg2.extras import DictCursor
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
+
 
 class Database:
     def __init__(self):

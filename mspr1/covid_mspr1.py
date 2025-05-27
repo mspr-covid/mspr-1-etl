@@ -3,12 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import missingno as mno
-from sklearn.model_selection import train_test_split
-
-
 import psycopg2
-from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 import os
+import psycopg2
+import time
+from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,24 +35,22 @@ mno.matrix(df, figsize=(15,5))
 plt.figure(figsize=(10, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="coolwarm")
 
-# plt.figure(figsize=(19,9))
-# sns.boxplot(data=df,palette='Accent')
+# plt.figure(figsize=(19, 9))
+# sns.boxplot(data=df, palette='Accent')
 # plt.title("Données Statistiques du dataset d'origine sans nettoyage")
 # plt.show()
 
 # df.boxplot(column=['Population'],
-# figsize=(9,5))
+# figsize=(9, 5))
 # plt.title("Données Statistiques de la colonne Population")
 # plt.show()
 
 # valid_columns = df[['NewCases', 'NewDeaths', 'NewRecovered']].dropna(axis=1, how='all').columns
 # df.boxplot(column=valid_columns, figsize=(9, 5))
 
-# df.boxplot(column=['NewCases','NewDeaths','NewRecovered'], figsize=(9,5))
+# df.boxplot(column=['NewCases', 'NewDeaths', 'NewRecovered'], figsize=(9, 5))
 # plt.title("Données Statistiques sur les nouveax morts, cas et sauvées")
 # plt.show()
-
-
 
 # df.boxplot(column=['TotalDeaths'], figsize=(9,5))
 # plt.title("Données Statistiques de la colonne TotalDeaths")
@@ -66,7 +63,6 @@ sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="cool
 # df.boxplot(column=['TotalTests'], figsize=(9,5))
 # plt.title("Données Statistiques de la colonne TotalDeaths")
 # plt.show()
-
 
 # df.boxplot(column=['Tests/1M pop'], figsize=(9,5))
 # plt.title("Données Statistiques de la colonne TotalDeaths")
@@ -92,11 +88,11 @@ df.describe()
 
 df.isna().sum()
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 df.isna().sum()
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 mask_population = df['Population'].isnull() | (df['Population'] == '')
 mask_continent = df['Continent'].isnull() | (df['Continent'] == '')
@@ -126,14 +122,12 @@ df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", "NewC
 
 df.head()
 
-
-mno.matrix(df, figsize=(15,5))
-
+mno.matrix(df, figsize=(15, 5))
 
 plt.figure(figsize=(10, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".2f", cmap="coolwarm")
 
-mno.matrix(df, figsize=(15,9))
+mno.matrix(df, figsize=(15, 9))
 
 df['WHO Region'] = df['WHO Region'].fillna("Non classé")
 
@@ -167,7 +161,6 @@ missing_total_deaths_after = df['TotalDeaths'].isnull().sum()
 print(f"Number of missing 'TotalDeaths' values before filling: {missing_total_deaths_before}")
 print(f"Number of missing 'TotalDeaths' values after filling: {missing_total_deaths_after}")
 
-
 def fill_missing_total_recovered(row):
     if pd.isnull(row['TotalRecovered']):
         return int(round(row['TotalCases'] - (row['TotalDeaths'] + row['ActiveCases'])))
@@ -185,7 +178,7 @@ selected_rows
 df['NewTotalCases'] = df['TotalDeaths'] + df['TotalRecovered'] + df['ActiveCases']
 df
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 if df['NewTotalCases'].equals(df['TotalCases']):
     print("Les colonnes sont identiques")
@@ -199,17 +192,15 @@ else:
     diff_rows = df[df['NewTotalCases'] != df['TotalCases']][['NewTotalCases', 'TotalCases']]
     print(diff_rows.head())
 
-
 df = df.drop(columns=['TotalCases'])
 df
 
 df['Serious,Critical'] = df.groupby('Continent')['Serious,Critical'] \
                              .transform(lambda x: x.fillna(x.median()))
-
 df['TotalTests'] = df.groupby('Continent')['TotalTests'] \
                      .transform(lambda x: x.fillna(x.median()))
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 plt.figure(figsize=(8, 7))
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".2f", cmap="coolwarm")
@@ -230,7 +221,7 @@ columns_mapping = {
     "TotalTests": "total_tests",
     "Population": "population",
     "Continent": "continent",
-    "ActiveCases":"active_cases"
+    "ActiveCases": "active_cases"
 }
 df = df.rename(columns=columns_mapping)
 df
@@ -239,7 +230,7 @@ df = df.drop_duplicates()
 
 df.head()
 
-sns.heatmap(df.select_dtypes('number').corr(),annot=True, cmap="coolwarm")
+sns.heatmap(df.select_dtypes('number').corr(), annot=True, cmap="coolwarm")
 
 X = df  
 X_train, X_test = train_test_split(
@@ -250,10 +241,6 @@ X_train, X_test = train_test_split(
 
 print(f"Taille de X_train: {X_train.shape}")
 print(f"Taille de X_test: {X_test.shape}")
-
-
-import psycopg2
-import time
 
 def checkpostgres(max_retries=5):
     print("🔍 Vérification de la connexion à PostgreSQL...", flush=True)
@@ -310,8 +297,6 @@ CREATE TABLE IF NOT EXISTS t_users (
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     ); 
 """)
-
-
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS worldometer (
@@ -424,6 +409,3 @@ cursor.close()
 conn.close()
 
 print("✅ Données chargées dans PostgreSQL")
-
-
-
