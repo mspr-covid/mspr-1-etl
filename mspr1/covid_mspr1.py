@@ -4,6 +4,7 @@ import seaborn as sns
 import missingno as mno
 import psycopg2
 import os
+import time
 from sklearn.model_selection import train_test_split
 
 
@@ -28,14 +29,31 @@ df.info()
 
 df.columns
 
-df = df[['Continent', 'WHO Region', 'Country/Region', 'Population', 'TotalCases',
-         'NewCases', 'TotalDeaths', 'NewDeaths', 'TotalRecovered', 'NewRecovered',
-         'ActiveCases', 'Serious,Critical', 'Tot Cases/1M pop', 'Deaths/1M pop', 'TotalTests', 'Tests/1M pop']]
+df = df[['Continent',
+         'WHO Region',
+         'Country/Region',
+         'Population',
+         'TotalCases',
+         'NewCases',
+         'TotalDeaths',
+         'NewDeaths',
+         'TotalRecovered',
+         'NewRecovered',
+         'ActiveCases',
+         'Serious,Critical',
+         'Tot Cases/1M pop',
+         'Deaths/1M pop',
+         'TotalTests',
+         'Tests/1M pop']]
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 plt.figure(figsize=(10, 7))
-sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="coolwarm")
+sns.heatmap(
+    df.select_dtypes('number').corr(),
+    annot=True,
+    fmt=".1f",
+    cmap="coolwarm")
 
 # plt.figure(figsize=(19, 9))
 # sns.boxplot(data=df, palette='Accent')
@@ -47,7 +65,10 @@ sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="cool
 # plt.title("Données Statistiques de la colonne Population")
 # plt.show()
 
-# valid_columns = df[['NewCases', 'NewDeaths', 'NewRecovered']].dropna(axis=1, how='all').columns
+# valid_columns = df[['NewCases',
+# 'NewDeaths',
+# 'NewRecovered']].dropna(axis=1,
+# how='all').columns
 # df.boxplot(column=valid_columns, figsize=(9, 5))
 
 # df.boxplot(column=['NewCases', 'NewDeaths', 'NewRecovered'], figsize=(9, 5))
@@ -58,7 +79,11 @@ sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="cool
 # plt.title("Données Statistiques de la colonne TotalDeaths")
 # plt.show()
 
-# df.boxplot(column=['TotalRecovered', 'ActiveCases', 'TotalCases', 'Tests/1M pop'], figsize=(9,5))
+# df.boxplot(column=['TotalRecovered',
+# 'ActiveCases',
+# 'TotalCases',
+# 'Tests/1M pop'],
+# figsize=(9,5))
 # plt.title("Données Statistiques de la colonne Population")
 # plt.show()
 
@@ -106,29 +131,46 @@ ligne_suspecte
 
 df = df[df['Country/Region'] != 'Diamond Princess']
 
-mno.matrix(df, figsize=(15,5))
+mno.matrix(df, figsize=(15, 5))
 
 df.isna().sum()
 
-df.drop_duplicates(inplace = True)
+df.drop_duplicates(inplace=True)
 
 df.duplicated()
- 
-df['NewTotalCases'] = df['TotalDeaths'] + df['TotalRecovered'] + df['ActiveCases']
+
+df['NewTotalCases'] = (
+    df['TotalDeaths'] + df['TotalRecovered'] + df['ActiveCases']
+)
 df
 
 plt.figure(figsize=(10, 7))
-sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".1f", cmap="coolwarm")
+sns.heatmap(
+    df.select_dtypes('number').corr(),
+    annot=True,
+    fmt=".1f",
+    cmap="coolwarm"
+    )
 
-df = df.drop(columns=["Tot Cases/1M pop", "Deaths/1M pop", "NewRecovered", "NewCases",
-                      "Tests/1M pop", "NewDeaths"], errors='ignore')
+df = df.drop(columns=["Tot Cases/1M pop",
+                      "Deaths/1M pop",
+                      "NewRecovered",
+                      "NewCases",
+                      "Tests/1M pop",
+                      "NewDeaths"],
+             errors='ignore')
 
 df.head()
 
 mno.matrix(df, figsize=(15, 5))
 
 plt.figure(figsize=(10, 7))
-sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".2f", cmap="coolwarm")
+sns.heatmap(
+    df.select_dtypes('number').corr(),
+    annot=True,
+    fmt=".2f",
+    cmap="coolwarm"
+    )
 
 mno.matrix(df, figsize=(15, 9))
 
@@ -150,10 +192,14 @@ nan_count_after = df['ActiveCases'].isnull().sum()
 selected_rows = df.iloc[[9, 11, 29, 40]]
 selected_rows
 
+
 def fill_missing_total_deaths(row):
     if pd.isnull(row['TotalDeaths']):
-        return int(round(row['TotalCases'] - (row['TotalRecovered'] + row['ActiveCases'] )))
+        return int(
+            round(row['TotalCases'] - (
+                row['TotalRecovered'] + row['ActiveCases'])))
     return row['TotalDeaths']
+
 
 missing_total_deaths_before = df['TotalDeaths'].isnull().sum()
 
@@ -161,13 +207,18 @@ df['TotalDeaths'] = df.apply(fill_missing_total_deaths, axis=1)
 
 missing_total_deaths_after = df['TotalDeaths'].isnull().sum()
 
-print(f"Number of missing 'TotalDeaths' values before filling: {missing_total_deaths_before}")
-print(f"Number of missing 'TotalDeaths' values after filling: {missing_total_deaths_after}")
+print(f"Number of missing 'TotalDeaths' values before filling: "
+      f"{missing_total_deaths_before}")
+print(f"Number of missing 'TotalDeaths' values after filling: "
+      f"{missing_total_deaths_after}")
+
 
 def fill_missing_total_recovered(row):
     if pd.isnull(row['TotalRecovered']):
-        return int(round(row['TotalCases'] - (row['TotalDeaths'] + row['ActiveCases'])))
+        return int(round(row['TotalCases'] - (
+            row['TotalDeaths'] + row['ActiveCases'])))
     return row['TotalRecovered']
+
 
 missing_total_deaths_before = df['TotalRecovered'].isnull().sum()
 
@@ -178,7 +229,9 @@ missing_total_deaths_after = df['TotalRecovered'].isnull().sum()
 selected_rows = df.iloc[[9, 11, 29, 40]]
 selected_rows
 
-df['NewTotalCases'] = df['TotalDeaths'] + df['TotalRecovered'] + df['ActiveCases']
+df['NewTotalCases'] = (
+    df['TotalDeaths'] + df['TotalRecovered'] + df['ActiveCases']
+)
 df
 
 mno.matrix(df, figsize=(15, 5))
@@ -187,12 +240,14 @@ if df['NewTotalCases'].equals(df['TotalCases']):
     print("Les colonnes sont identiques")
 else:
     print("Les colonnes sont différentes")
-    
+
     differences_count = (df['NewTotalCases'] != df['TotalCases']).sum()
     print(f"Nombre de différences trouvées : {differences_count}")
-    
+
     print("\nExemples de différences :")
-    diff_rows = df[df['NewTotalCases'] != df['TotalCases']][['NewTotalCases', 'TotalCases']]
+    diff_rows = df[
+        df['NewTotalCases'] != df['TotalCases']
+        ][['NewTotalCases', 'TotalCases']]
     print(diff_rows.head())
 
 df = df.drop(columns=['TotalCases'])
@@ -206,7 +261,12 @@ df['TotalTests'] = df.groupby('Continent')['TotalTests'] \
 mno.matrix(df, figsize=(15, 5))
 
 plt.figure(figsize=(8, 7))
-sns.heatmap(df.select_dtypes('number').corr(), annot=True, fmt=".2f", cmap="coolwarm")
+sns.heatmap(
+    df.select_dtypes('number').corr(),
+    annot=True,
+    fmt=".2f",
+    cmap="coolwarm"
+    )
 
 for column in df.columns:
     if df[column].dtype == 'float64':
@@ -235,9 +295,9 @@ df.head()
 
 sns.heatmap(df.select_dtypes('number').corr(), annot=True, cmap="coolwarm")
 
-X = df  
+X = df
 X_train, X_test = train_test_split(
-    X, 
+    X,
     test_size=0.2,
     random_state=42
 )
@@ -245,9 +305,10 @@ X_train, X_test = train_test_split(
 print(f"Taille de X_train: {X_train.shape}")
 print(f"Taille de X_test: {X_test.shape}")
 
+
 def checkpostgres(max_retries=5):
     print("🔍 Vérification de la connexion à PostgreSQL...", flush=True)
-    
+
     for attempt in range(max_retries):
         print(f"🟡 Tentative {attempt + 1}/{max_retries}...", flush=True)
 
@@ -268,6 +329,7 @@ def checkpostgres(max_retries=5):
 
     print("❌ PostgreSQL inaccessible après plusieurs tentatives.", flush=True)
     return False
+
 
 if __name__ == "__main__":
     checkpostgres()
@@ -298,12 +360,12 @@ CREATE TABLE IF NOT EXISTS t_users (
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    ); 
+    );
 """)
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS worldometer (
-    id SERIAL PRIMARY KEY, 
+    id SERIAL PRIMARY KEY,
     continent VARCHAR(100) NOT NULL,
     who_region VARCHAR(100) NOT NULL,
     country VARCHAR(100) NOT NULL,
@@ -348,7 +410,7 @@ cursor.execute("""
 """)
 
 
-print('mon dataframe : ', df)
+print(f"mon dataframe : {df}")
 
 for index, row in df.iterrows():
     try:
