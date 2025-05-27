@@ -24,9 +24,11 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Initialisation de FastAPI
 app = FastAPI()
+
 @app.get("/")
 def read_root():
     return {"message": "Bienvenue sur l'API COVID"}
+
 
 # Middleware CORS
 app.add_middleware(

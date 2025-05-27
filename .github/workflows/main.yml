@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build Docker image
+      - name: Build Docker image (Backend)
         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test -f Dockerfile .
       # On pousse l'image Docker sur Docker Hub pour pouvoir l'utiliser dans les autres jobs (pour le rapport de sécurité)
@@ -20,11 +20,26 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
 
+  build-frontend:
+    name: Build Docker Image (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image (Frontend)
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test -f front/Dockerfile front
+
+      - name: Log in to Docker Hub (Frontend)
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub (Frontend)
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test
+
   # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
   start-services:
     name: Run Docker Infrastructure and Tests
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [build, build-frontend]
 
     steps:
       - uses: actions/checkout@v2
@@ -42,12 +57,12 @@ jobs:
           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
         working-directory: ${{ github.workspace }}
-      # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github, 
+      # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github,
       # on lance les services Docker. On utilise docker compose pour ça.
       - name: Start Docker Compose services
-        run: docker compose up -d
+        # Ici, on précise les services qu'on veut lancer pour exclurer le service de dev frontend
+        run: docker compose up -d db backend frontend grafana
         working-directory: ${{ github.workspace }}
-
 
       - name: Wait for PostgreSQL to be ready
         run: |
@@ -57,7 +72,7 @@ jobs:
             sleep 3
           done
           echo "PostgreSQL not ready" && exit 1
-      
+
       - name: Create database if not exists
         run: |
           echo "📦 Creating database if not exists..."
@@ -132,7 +147,6 @@ jobs:
             -X POST \
             -d "{\"content\": ${content} }" \
             "$DISCORD_SECURITY_WEBHOOK"
-
 
       - name: Send Docker Scout recommendations to Discord
         run: |

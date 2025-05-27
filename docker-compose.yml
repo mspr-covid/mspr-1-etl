@@ -25,13 +25,44 @@ services:
     networks:
       - mynetwork
 
+  frontend-dev:
+    build:
+      # On part du répertoire front de l'application pour construire l'image
+      # On utilise le Dockerfile de développement pour avoir un environnement de développement
+      context: ./front
+      dockerfile: Dockerfile.dev
+    container_name: covid_front_dev
+    # Ici, on va monter le dossier front de la mahine hôte dans le conteneur
+    # pour pouvoir développer en direct sans avoir à reconstruire l'image à chaque fois
+    # On monte aussi le dossier node_modules pour éviter les conflits avec l'hôte
+    volumes:
+      - ./front:/app
+      # éviter les conflits avec node_modules de l'hôte
+      - node_modules_dev:/app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - HOST=0.0.0.0
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: covid_front
+    ports:
+      - "8080:80"
+    networks:
+      - mynetwork
+
   grafana:
     image: grafana/grafana:latest
     env_file:
       - .env
     container_name: grafana
     ports:
-      - "3000:3100"
+      - "3000:3000"
     volumes:
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./grafana/provisioning:/etc/grafana/provisioning
@@ -45,6 +76,7 @@ services:
 volumes:
   postgres_data:
   grafana_data:
+  node_modules_dev:
 
 networks:
   mynetwork:
