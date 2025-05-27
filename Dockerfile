@@ -9,7 +9,7 @@ FROM python:3.13-alpine
 
 # Installe make et les dépendances nécessaires
 # (ajout de zsh, bash et curl pour flyctl + oh-my-zsh)
-RUN apk add --no-cache make build-base git openssh curl zsh bash
+RUN apk add --no-cache make build-base git openssh curl zsh bash postgresql-client
 
 # Crée le répertoire pour l'application au sein du conteneur
 WORKDIR /app
