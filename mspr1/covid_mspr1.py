@@ -20,7 +20,7 @@ DB_CONFIG = {
     "port": os.getenv("DB_PORT"),
 }
 
-df = pd.read_csv('../data/worldometer_data_raw.csv')
+df = pd.read_csv('/data/worldometer_data_raw.csv')
 
 df.head()
 
