@@ -1,0 +1,22 @@
+# On se base sur l'image Node.js 20 alpine pour une image légère et rapide.
+# Ce Dockerfile est utilisé pour le développement de l'app front-end avec Vite.
+# Cette image est faite pour le développement, pas pour la production.
+FROM node:20-alpine
+
+# On définit le répertoire de travail dans le conteneur.
+WORKDIR /app
+
+# On copie les fichiers de configuration npm dans le conteneur.
+COPY package*.json ./
+
+# On installe les dépendances de l'app
+RUN npm install
+
+# On copie le reste des fichiers de l'app front dans le conteneur.
+COPY . .
+
+# On expose le port 5173, qui est le port par défaut de Vite pour le dév
+EXPOSE 5173
+
+# À la fin, on lance l'app avec Vite en mode développement.
+CMD ["npm", "run", "dev", "--", "--host"]
