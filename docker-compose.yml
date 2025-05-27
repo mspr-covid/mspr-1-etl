@@ -46,11 +46,11 @@ services:
     networks:
       - mynetwork
 
-  frontend-prod:
+  frontend:
     build:
       context: ./front
       dockerfile: Dockerfile
-    container_name: covid_front_prod
+    container_name: covid_front
     ports:
       - "8080:80"
     networks:
