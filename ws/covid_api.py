@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
+
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
@@ -22,6 +24,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Initialisation de FastAPI
 app = FastAPI()
+@app.get("/", include_in_schema=False)
+async def root():
+    return RedirectResponse(url="/docs")
 
 # Middleware CORS
 app.add_middleware(
