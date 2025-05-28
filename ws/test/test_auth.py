@@ -7,7 +7,7 @@ import jwt
 from fastapi.testclient import TestClient
 from datetime import timedelta
 from ws.covid_api import app, create_access_token
-from ws.covid_api import get_db
+# from ws.covid_api import get_db
 import os
 
 # Ici, on va supposer que la clé est définie dns les variables d'environnement
