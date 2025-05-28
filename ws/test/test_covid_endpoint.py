@@ -12,7 +12,7 @@ def clean_db():
     cursor = next(db_gen)
     yield
     try:
-        # On Nettoie les entrées liées à ce test
+        # On nettoie les entrées liées à ce test
         cursor.execute("DELETE FROM testing_statistics WHERE country_id IN (SELECT id FROM countries WHERE country LIKE 'Testland%')")
         cursor.execute("DELETE FROM health_statistics WHERE country_id IN (SELECT id FROM countries WHERE country LIKE 'Testland%')")
         cursor.execute("DELETE FROM countries WHERE country LIKE 'Testland%'")
@@ -31,7 +31,7 @@ class TestCovidAPI:
     @pytest.mark.covid
     def test_add_covid_entry_authenticated(self):
         
-        """On fait le parcours complet de l'inscription, connexion et ajout d'une entrée COVID."""
+        """On fait un parcours inscription, connexion et ajout d'une entrée COVID."""
         
         # Inscription
         register_response = client.post("/api/user", json={
@@ -93,7 +93,7 @@ class TestCovidAPI:
             "country": "Testland",
             "continent": "Testinent",
             "who_region": "TestRegion",
-            "population": -1,  # Valeur négative 
+            "population": -1,  
             "total_cases": 1000,
             "total_deaths": 50,
             "total_recovered": 900,
@@ -135,7 +135,7 @@ class TestCovidAPI:
         assert isinstance(json_data["data"], list)
         assert len(json_data["data"]) > 0  # On s'attend à au moins une entrée
 
-        # Vérification les clés dans la première entrée
+        # Vérification des clés dans la première entrée
         first_entry = json_data["data"][0]
         expected_keys = {
         "country", "continent", "who_region", "population",
@@ -185,7 +185,7 @@ class TestCovidAPI:
         assert post_response.status_code == 200
         assert post_response.json()["message"] == "Entry added successfully"
 
-        # On Suppression de l'entrée COVID
+        # On supprime de l'entrée COVID
         delete_response = client.delete("/covid/Testland", headers=headers)
         
         assert delete_response.status_code == 200
@@ -195,7 +195,7 @@ class TestCovidAPI:
         assert delete_response.json()["message"] == expected_message
 
 
-        # 5. Vérification que l'entrée n'est plus présente dans la liste
+        # On vérifie que l'entrée n'est plus dans la liste
         all_entries_response = client.get("/covid", headers=headers)
         
         assert all_entries_response.status_code == 200
