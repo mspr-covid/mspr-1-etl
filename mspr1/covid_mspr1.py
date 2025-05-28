@@ -293,6 +293,14 @@ conn = psycopg2.connect(
 
 cursor = conn.cursor()
 
+cursor.execute("DROP TABLE IF EXISTS testing_statistics CASCADE;")
+cursor.execute("DROP TABLE IF EXISTS health_statistics CASCADE;")
+cursor.execute("DROP TABLE IF EXISTS worldometer CASCADE;")
+cursor.execute("DROP TABLE IF EXISTS countries CASCADE;")
+cursor.execute("DROP TABLE IF EXISTS t_users CASCADE;")
+conn.commit()
+
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS t_users (
     id SERIAL PRIMARY KEY,
@@ -323,7 +331,7 @@ cursor.execute("""
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS countries (
     id SERIAL PRIMARY KEY, 
-    country VARCHAR(100) NOT NULL, 
+    country VARCHAR(100) NOT NULL UNIQUE, 
     continent VARCHAR(100) NOT NULL,
     who_region VARCHAR(100) NOT NULL,
     population INT NOT NULL
@@ -332,89 +340,85 @@ cursor.execute("""
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS health_statistics (
-    id SERIAL PRIMARY KEY, 
-    country VARCHAR(100) NOT NULL,
+    id SERIAL PRIMARY KEY,
+    country_id INT NOT NULL UNIQUE,
     total_cases INT NOT NULL,
     total_deaths INT NOT NULL,
     total_recovered INT NOT NULL,
-    serious_critical INT NOT NULL
+    serious_critical INT NOT NULL,
+    CONSTRAINT fk_health_country FOREIGN KEY (country_id) REFERENCES countries(id)
     );
 """)
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS testing_statistics (
-    id SERIAL PRIMARY KEY, 
-    country VARCHAR(100) NOT NULL,
-    total_tests INT NOT NULL
+    id SERIAL PRIMARY KEY,
+    country_id INT NOT NULL UNIQUE,
+    total_tests INT NOT NULL,
+    CONSTRAINT fk_testing_country FOREIGN KEY (country_id) REFERENCES countries(id)
     );
 """)
+
 
 print('mon dataframe : ', df)
 
 for index, row in df.iterrows():
     try:
-
         country = row['country']
         continent = row['continent']
         who_region = row['who_region']
-        population = row['population']
-        total_tests = row['total_tests']
-        total_cases = row['new_total_cases']  # Note que 'NewTotalCases' a été mappé vers 'new_total_cases'
-        total_deaths = row['total_deaths']
-        total_recovered = row['total_recovered']
-        serious_critical = row['serious_critical']
-        active_cases = row['active_cases']
-        username = 'mimi'
-        email = 'mimi'
-        password_hash = 'mimi'
-        date_created = ['date_created']
+        population = int(row['population'])
+        total_tests = int(row['total_tests'])
+        total_cases = int(row['new_total_cases'])
+        total_deaths = int(row['total_deaths'])
+        total_recovered = int(row['total_recovered'])
+        serious_critical = int(row['serious_critical'])
+        active_cases = int(row['active_cases'])  # si besoin
 
-        t_users_sql = """
-            INSERT INTO t_users (username, email, password_hash)
-            VALUES (%s, %s, %s);
-        """
+        cursor.execute("""
+            INSERT INTO countries (country, continent, who_region, population)
+            VALUES (%s, %s, %s, %s)
+            ON CONFLICT (country) DO NOTHING
+            RETURNING id;
+        """, (country, continent, who_region, population))
 
-        
-        worldometer_sql = """
+        country_id_row = cursor.fetchone()
+        if country_id_row is None:
+            cursor.execute("SELECT id FROM countries WHERE country = %s;", (country,))
+            country_id_row = cursor.fetchone()
+        country_id = country_id_row[0]
+
+        cursor.execute("""
+            INSERT INTO health_statistics (country_id, total_cases, total_deaths, total_recovered, serious_critical)
+            VALUES (%s, %s, %s, %s, %s);
+        """, (country_id, total_cases, total_deaths, total_recovered, serious_critical))
+
+        cursor.execute("""
+            INSERT INTO testing_statistics (country_id, total_tests)
+            VALUES (%s, %s);
+        """, (country_id, total_tests))
+
+        cursor.execute("""
             INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
-        """
-        
-        countries_sql = """
-            INSERT INTO countries (country, continent, who_region, population)
-            VALUES (%s, %s, %s, %s);
-        """
-        
-        health_statistics_sql = """
-            INSERT INTO health_statistics (country, total_cases, total_deaths, total_recovered, serious_critical)
-            VALUES (%s, %s, %s, %s, %s);
-        """
-        
-        testing_statistics_sql = """
-            INSERT INTO testing_statistics (country, total_tests)
-            VALUES (%s, %s);
-        """
-        
-        delete_duplicate_entry = """
-            DELETE FROM countries
-            WHERE id NOT IN (
-            SELECT MIN(id)
-            FROM countries
-            GROUP BY country
-            );
-        """
-        
-        cursor.execute(countries_sql, (country, continent, who_region, population))
-        cursor.execute(delete_duplicate_entry)
-        cursor.execute(health_statistics_sql, (country, total_cases, total_deaths, total_recovered, serious_critical))
-        cursor.execute(testing_statistics_sql, (country, total_tests))
-        cursor.execute(worldometer_sql, (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical))
+        """, (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical))
 
         conn.commit()
-        print(f"✅ sucess")
+        print(f"✅ Insertion réussie pour {country}")
 
     except psycopg2.Error as e:
         print(f"❌ Erreur lors de l'insertion des données pour {country}: {e}")
+        conn.rollback()
+
+cursor.close()
+conn.close()
+print("✅ Données chargées dans PostgreSQL")
+
+
+cursor.close()
+conn.close()
+print("✅ Données chargées dans PostgreSQL")
+
 
 cursor.close()
 conn.close()

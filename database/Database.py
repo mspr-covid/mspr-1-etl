@@ -15,8 +15,7 @@ class Database:
             port=os.getenv("DB_PORT"),
             cursor_factory=DictCursor
         )
-        self.connection.autocommit = True
-
+        
     def get_cursor(self):
         return self.connection.cursor()
 
