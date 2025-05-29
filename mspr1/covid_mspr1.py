@@ -7,7 +7,6 @@ from Database import Database
 
 
 import psycopg2
-import os
 import time
 from sklearn.model_selection import train_test_split
 from dotenv import load_dotenv
@@ -308,13 +307,13 @@ def checkpostgres(max_retries=5):
         try:
             with Database() as cursor:
                 pass
-            print("✅ Connexion PostgreSQL réussie !", flush=True)
+            print("Connexion PostgreSQL réussie !", flush=True)
             return True
         except psycopg2.OperationalError as e:
             print(f"⚠️ PostgreSQL inaccessible : {e}", flush=True)
             time.sleep(5)
 
-    print("❌ PostgreSQL inaccessible après plusieurs tentatives.", flush=True)
+    print("PostgreSQL inaccessible après plusieurs tentatives.", flush=True)
     return False
 
 
