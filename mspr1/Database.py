@@ -1,16 +1,15 @@
 import psycopg2
-import os
 from psycopg2.extras import DictCursor
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
-
 
 class Database:
     def __init__(self):
         database_url = os.getenv("DATABASE_URL")
         if database_url:
-            self.connection = psycopg2.connect(database_url, cursor_factory=DictCursor, sslmode='require')
+            self.connection = psycopg2.connect(database_url, cursor_factory=DictCursor)
         else:
             self.connection = psycopg2.connect(
             dbname=os.getenv("DB_NAME"),
@@ -20,7 +19,7 @@ class Database:
             port=os.getenv("DB_PORT"),
             cursor_factory=DictCursor
         )
-
+        
     def get_cursor(self):
         return self.connection.cursor()
 
@@ -31,4 +30,8 @@ class Database:
         return self.get_cursor()
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is None:
+            self.connection.commit()
+        else:
+            self.connection.rollback()
         self.close()

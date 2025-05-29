@@ -3,6 +3,9 @@ import jwt
 import psycopg2
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.responses import RedirectResponse
+
+
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
 from .models.model import CovidEntryPatch
 from pydantic import BaseModel
@@ -66,6 +69,7 @@ class CovidEntry(BaseModel):
     total_recovered: int
     serious_critical: int
     total_tests: int
+
 
 
 # Connexion à la BDD
