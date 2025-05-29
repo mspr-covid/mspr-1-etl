@@ -16,7 +16,7 @@ class Database:
             port=os.getenv("DB_PORT"),
             cursor_factory=DictCursor
         )
-        
+
     def get_cursor(self):
         return self.connection.cursor()
 
