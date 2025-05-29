@@ -44,6 +44,8 @@ RUN ZSH="/root/.oh-my-zsh" RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c \
 # Définit zsh comme shell par défaut pour les instructions suivantes (facultatif, utile pour debug dans le conteneur)
 SHELL ["/bin/zsh", "-c"]
 
-# Commande pour lancer l'API FastAPI avec Uvicorn
-# On garde sh ici car zsh n'est pas toujours optimal pour les CMD non interactifs
-CMD sh -c "uvicorn ws.covid_api:app --host 0.0.0.0 --port ${PORT:-8000}"
+COPY entrypoint.sh /app/entrypoint.sh
+
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]
