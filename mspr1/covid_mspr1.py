@@ -6,9 +6,6 @@ import psycopg2
 import os
 import time
 from sklearn.model_selection import train_test_split
-
-
-
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -380,8 +377,8 @@ cursor.execute("""
 
 cursor.execute("""
     CREATE TABLE IF NOT EXISTS countries (
-    id SERIAL PRIMARY KEY, 
-    country VARCHAR(100) NOT NULL UNIQUE, 
+    id SERIAL PRIMARY KEY,
+    country VARCHAR(100) NOT NULL UNIQUE,
     continent VARCHAR(100) NOT NULL,
     who_region VARCHAR(100) NOT NULL,
     population INT NOT NULL
@@ -396,7 +393,8 @@ cursor.execute("""
     total_deaths INT NOT NULL,
     total_recovered INT NOT NULL,
     serious_critical INT NOT NULL,
-    CONSTRAINT fk_health_country FOREIGN KEY (country_id) REFERENCES countries(id)
+    CONSTRAINT fk_health_country
+    FOREIGN KEY (country_id) REFERENCES countries(id)
     );
 """)
 
@@ -405,7 +403,8 @@ cursor.execute("""
     id SERIAL PRIMARY KEY,
     country_id INT NOT NULL UNIQUE,
     total_tests INT NOT NULL,
-    CONSTRAINT fk_testing_country FOREIGN KEY (country_id) REFERENCES countries(id)
+    CONSTRAINT fk_testing_country
+    FOREIGN KEY (country_id) REFERENCES countries(id)
     );
 """)
 
@@ -434,14 +433,24 @@ for index, row in df.iterrows():
 
         country_id_row = cursor.fetchone()
         if country_id_row is None:
-            cursor.execute("SELECT id FROM countries WHERE country = %s;", (country,))
+            cursor.execute("""
+                           SELECT id FROM countries
+                           WHERE country = %s;""", (country,))
             country_id_row = cursor.fetchone()
         country_id = country_id_row[0]
 
         cursor.execute("""
-            INSERT INTO health_statistics (country_id, total_cases, total_deaths, total_recovered, serious_critical)
+            INSERT INTO health_statistics (
+                country_id, total_cases,
+                total_deaths,
+                total_recovered,
+                serious_critical)
             VALUES (%s, %s, %s, %s, %s);
-        """, (country_id, total_cases, total_deaths, total_recovered, serious_critical))
+        """, (country_id,
+              total_cases,
+              total_deaths,
+              total_recovered,
+              serious_critical))
 
         cursor.execute("""
             INSERT INTO testing_statistics (country_id, total_tests)
@@ -449,9 +458,26 @@ for index, row in df.iterrows():
         """, (country_id, total_tests))
 
         cursor.execute("""
-            INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
+            INSERT INTO worldometer (
+                continent,
+                who_region,
+                country,
+                population,
+                total_tests,
+                total_cases,
+                total_deaths,
+                total_recovered,
+                serious_critical)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
-        """, (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical))
+        """, (continent,
+              who_region,
+              country,
+              population,
+              total_tests,
+              total_cases,
+              total_deaths,
+              total_recovered,
+              serious_critical))
 
         conn.commit()
         print(f"✅ Insertion réussie pour {country}")
