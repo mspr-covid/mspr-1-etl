@@ -12,7 +12,7 @@ ALGORITHM = "HS256"
 client = TestClient(app)
 
 
-#Test de la méthode qui est située dans le fichier ws/covid_api.py
+# Test de la méthode qui est située dans le fichier ws/covid_api.py
 @pytest.mark.token
 def test_create_access_token():
     # Données de test pour le token
@@ -33,9 +33,4 @@ def test_create_access_token():
     # Vérifie que le contenu du token correspond à ce qu'on a encodé
     assert decoded["sub"] == "mail_user"
     # On regarde si le champ d'expiration est bien présent dans le token
-    assert "exp" in decoded 
-    
-
-
-
-
+    assert "exp" in decoded
