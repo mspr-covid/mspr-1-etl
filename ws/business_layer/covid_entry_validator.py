@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+
 class CovidEntryValidator:
     @staticmethod
     def validate_non_negative_fields(entry):
@@ -15,6 +16,8 @@ class CovidEntryValidator:
         for field_name, value in fields.items():
             if value < 0:
                 raise HTTPException(
-                    status_code=400, 
-                    detail=f"Le champ '{field_name}' doit être un entier positif"
+                    status_code=400,
+                    detail=(
+                        f"Le champ '{field_name}' doit être un entier positif"
+                    )
                 )
