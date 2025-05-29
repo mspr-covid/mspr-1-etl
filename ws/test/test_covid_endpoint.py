@@ -4,6 +4,7 @@ from ws.covid_api import app, get_db
 
 client = TestClient(app)
 
+
 # TODO: Mettre en place une BDD de test
 @pytest.fixture(autouse=True)
 def clean_db():
@@ -13,10 +14,25 @@ def clean_db():
     yield
     try:
         # On nettoie les entrées liées à ce test
-        cursor.execute("DELETE FROM testing_statistics WHERE country_id IN (SELECT id FROM countries WHERE country LIKE 'Testland%')")
-        cursor.execute("DELETE FROM health_statistics WHERE country_id IN (SELECT id FROM countries WHERE country LIKE 'Testland%')")
-        cursor.execute("DELETE FROM countries WHERE country LIKE 'Testland%'")
-        cursor.execute("DELETE FROM t_users WHERE username LIKE 'testuser%' OR email LIKE 'testuser@%'")
+        cursor.execute("""DELETE
+                       FROM testing_statistics
+                       WHERE country_id IN (
+                           SELECT id
+                           FROM countries
+                           WHERE country LIKE 'Testland%')""")
+        cursor.execute("""DELETE
+                       FROM health_statistics
+                       WHERE country_id IN (
+                           SELECT id
+                           FROM countries
+                           WHERE country LIKE 'Testland%')""")
+        cursor.execute("""DELETE
+                       FROM countries
+                       WHERE country LIKE 'Testland%'""")
+        cursor.execute("""DELETE
+                       FROM t_users
+                       WHERE username LIKE 'testuser%'
+                       OR email LIKE 'testuser@%'""")
         cursor.connection.commit()
     except Exception as e:
         print(f"Erreur lors du nettoyage de la DB : {e}")
@@ -26,13 +42,13 @@ def clean_db():
         except Exception as e:
             print(f"Erreur lors de la fermeture de la connexion : {e}")
 
-class TestCovidAPI:
 
+class TestCovidAPI:
     @pytest.mark.covid
     def test_add_covid_entry_authenticated(self):
-        
-        """On fait un parcours inscription, connexion et ajout d'une entrée COVID."""
-        
+        """On fait un parcours inscription,
+        connexion et ajout d'une entrée COVID."""
+
         # Inscription
         register_response = client.post("/api/user", json={
             "username": "testuser",
@@ -67,25 +83,26 @@ class TestCovidAPI:
 
         assert covid_response.status_code == 200
         assert covid_response.json()["message"] == "Entry added successfully"
-    
+
     @pytest.mark.covid
     def test_add_covid_entry_with_negative_population(self):
-        """Test pour vérifier que l'ajout d'une entrée COVID avec une population négative échoue."""
+        """Test pour vérifier que l'ajout
+        d'une entrée COVID avec une population négative échoue."""
         register_response = client.post("/api/user", json={
             "username": "testuser",
             "email": "testuser@test.com",
             "password": "Test123456"
         })
-        
+
         assert register_response.status_code == 201
 
         login_response = client.post("/api/login", data={
-        "username": "testuser",
-        "password": "Test123456"
+            "username": "testuser",
+            "password": "Test123456"
         })
-        
+
         assert login_response.status_code == 200
-        
+
         token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
@@ -93,7 +110,7 @@ class TestCovidAPI:
             "country": "Testland",
             "continent": "Testinent",
             "who_region": "TestRegion",
-            "population": -1,  
+            "population": -1,
             "total_cases": 1000,
             "total_deaths": 50,
             "total_recovered": 900,
@@ -138,15 +155,17 @@ class TestCovidAPI:
         # Vérification des clés dans la première entrée
         first_entry = json_data["data"][0]
         expected_keys = {
-        "country", "continent", "who_region", "population",
-        "total_cases", "total_deaths", "total_recovered", "serious_critical",
-        "total_tests"
+            "country", "continent", "who_region", "population",
+            "total_cases", "total_deaths", "total_recovered",
+            "serious_critical", "total_tests"
         }
         assert expected_keys.issubset(first_entry.keys())
 
     @pytest.mark.covid
     def test_delete_covid_entry_authenticated(self):
-        """Test d'intégration complet : On s'enregistre, connecte, ajoute, supprime, et vérifie de la suppression d'une entrée COVID."""
+        """Test d'intégration complet :
+        On s'enregistre, connecte, ajoute, supprime,
+        et vérifie de la suppression d'une entrée COVID."""
 
         # On crée un utilisateur
         register_response = client.post("/api/user", json={
@@ -154,15 +173,15 @@ class TestCovidAPI:
             "email": "testuser@example.com",
             "password": "Test123456"
         })
-        
+
         assert register_response.status_code == 201
 
-        # Connexion pour obtenir le token 
+        # Connexion pour obtenir le token
         login_response = client.post("/api/login", data={
             "username": "testuser",
             "password": "Test123456"
         })
-        
+
         assert login_response.status_code == 200
         token = login_response.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
@@ -181,26 +200,26 @@ class TestCovidAPI:
         }
 
         post_response = client.post("/covid", json=payload, headers=headers)
-        
+
         assert post_response.status_code == 200
         assert post_response.json()["message"] == "Entry added successfully"
 
         # On supprime de l'entrée COVID
         delete_response = client.delete("/covid/Testland", headers=headers)
-        
-        assert delete_response.status_code == 200
-      
-        expected_message = f"Entry for '{payload['country']}' deleted successfully"
-        
-        assert delete_response.json()["message"] == expected_message
 
+        assert delete_response.status_code == 200
+
+        expected_message = f"Entry for '{
+            payload['country']}' deleted successfully"
+
+        assert delete_response.json()["message"] == expected_message
 
         # On vérifie que l'entrée n'est plus dans la liste
         all_entries_response = client.get("/covid", headers=headers)
-        
+
         assert all_entries_response.status_code == 200
-        
+
         entries = all_entries_response.json().get("data", [])
         countries = [entry.get("country") for entry in entries]
-        
+
         assert "Testland" not in countries

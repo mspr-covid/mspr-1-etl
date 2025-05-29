@@ -5,6 +5,7 @@ from ws.covid_api import app, get_db
 
 client = TestClient(app)
 
+
 # TODO: Mettre en place une BDD de test
 @pytest.fixture(autouse=True)
 def clean_db():
@@ -12,20 +13,25 @@ def clean_db():
     cursor = next(db_gen)
 
     # Nettoyer avant le test
-    cursor.execute("DELETE FROM t_users WHERE username LIKE 'testuser%' OR email LIKE 'testuser@%'")
+    cursor.execute("""DELETE
+                   FROM t_users
+                   WHERE username LIKE 'testuser%'
+                   OR email LIKE 'testuser@%'""")
     cursor.connection.commit()
 
     yield
 
     # Nettoyer après le test aussi
-    cursor.execute("DELETE FROM t_users WHERE username LIKE 'testuser%' OR email LIKE 'testuser@%'")
+    cursor.execute("""DELETE
+                   FROM t_users
+                   WHERE username LIKE 'testuser%'
+                   OR email LIKE 'testuser@%'""")
     cursor.connection.commit()
 
     db_gen.close()
 
 
 class TestAuthenticationAPI:
-    
     # On va tester l'inscription d'un utilisateur
     @pytest.mark.authentication
     def test_register_user(self):
@@ -36,29 +42,33 @@ class TestAuthenticationAPI:
         })
         assert response.status_code == 201
         assert response.json()["message"] == "Utilisateur créé avec succès"
-        
-    # On va tester l'inscription d'un utilisateur avec un email déjà existant
+
+# On va tester l'inscription d'un utilisateur avec un email déjà existant
     @pytest.mark.authentication
     def test_register_duplicate_user(self):
         # Création initiale
-        first_response = client.post("/api/user", json={
-        "username": "testuser_2",
-        "email": "testuser2@example.com",
-        "password": "123456"
-        })
+        first_response = client.post(
+            "/api/user",
+            json={
+                "username": "testuser_2",
+                "email": "testuser2@example.com",
+                "password": "123456"
+            })
         assert first_response.status_code == 201
 
         # Deuxième tentative avec le même email
-        response = client.post("/api/user", json={
-        "username": "testuser_3",  # username différent
-        "email": "testuser2@example.com",  # même email
-        "password": "123456"
-        })
+        response = client.post(
+            "/api/user",
+            json={
+                "username": "testuser_3",  # username différent
+                "email": "testuser2@example.com",  # même email
+                "password": "123456"
+            })
         assert response.status_code == 400
-        assert response.json()["detail"] == "Nom d'utilisateur ou email incorrect"
+        detail = response.json()["detail"]
+        assert detail == "Nom d'utilisateur ou email incorrect"
 
-
-    # On fait le parcours de la route de connexion (donc inscription + connexion)
+# On fait le parcours de la route de connexion (donc inscription + connexion)
     @pytest.mark.authentication
     def test_register_and_login_user(self):
         client.post("/api/user", json={
