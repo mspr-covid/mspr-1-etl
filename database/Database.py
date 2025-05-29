@@ -31,4 +31,8 @@ class Database:
         return self.get_cursor()
 
     def __exit__(self, exc_type, exc_value, traceback):
+        if exc_type is None:
+            self.connection.commit() 
+        else:
+            self.connection.rollback()
         self.close()
