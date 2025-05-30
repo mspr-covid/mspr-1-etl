@@ -1,9 +1,11 @@
 import os
 import jwt
 import psycopg2
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.templating import Jinja2Templates
+
 
 
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
@@ -24,11 +26,12 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Initialisation de FastAPI
 app = FastAPI()
+templates = Jinja2Templates(directory="ws/templates")
 
 
-@app.get("/")
-def read_root():
-    return {"message": "Bienvenue sur l'API COVID"}
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 
 # Middleware CORS
