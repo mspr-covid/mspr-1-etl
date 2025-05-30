@@ -3,10 +3,9 @@ import jwt
 import psycopg2
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.responses import RedirectResponse, HTMLResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
-
+from ws.config.translation import TRANSLATIONS
 
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
 from .models.model import CovidEntryPatch
@@ -30,9 +29,14 @@ templates = Jinja2Templates(directory="ws/templates")
 
 
 @app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+async def homepage(request: Request, lang: str = "en"):
+    content = TRANSLATIONS.get(lang, TRANSLATIONS["en"])
 
+    return templates.TemplateResponse("index.html", {
+            "request": request,
+            **content,
+            "current_lang": lang
+    })
 
 # Middleware CORS
 app.add_middleware(
@@ -72,7 +76,6 @@ class CovidEntry(BaseModel):
     total_recovered: int
     serious_critical: int
     total_tests: int
-
 
 
 # Connexion à la BDD
