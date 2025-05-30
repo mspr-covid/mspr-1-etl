@@ -14,7 +14,7 @@ Ici, on décrit comment fonctionne le workflow GitHub Actions mis en place pour 
 - Vérifier la qualité du code avec `flake8`
 - Scanner l'image Docker à la recherche de failles de sécurité avec Docker Scout
 - Envoyer des notifications sur Discord via des webhooks. Une notification pour le rapport de sécurité et une
-autre pour informer le statut d'une PR.
+  autre pour informer le statut d'une PR.
 
 ---
 
@@ -25,8 +25,8 @@ Ce job s'occupe de :
 - Cloner le projet
 - Construire une image Docker taguée `:test` à partir du Dockerfile
 - Se connecter à Docker Hub
-- Pousser l'image vers le Docker Hub. On se servira de cette image dans le job qui scanne le projet 
-et lancer un rapport de sécurité
+- Pousser l'image vers le Docker Hub. On se servira de cette image dans le job qui scanne le projet
+  et lancer un rapport de sécurité
 
 Ça permet de s'assurer que l'image peut être construite correctement à chaque commit.
 On évite des régressions de ce côté.
@@ -87,7 +87,7 @@ Voici la liste des secrets utilisés dans notre pipeline :
 
 ## Résumé du déroulement
 
-Pour résumer, les grandes étapes sont : 
+Pour résumer, les grandes étapes sont :
 
 1. Le projet est cloné
 2. L'image Docker est construite et poussée
@@ -102,3 +102,26 @@ Pour résumer, les grandes étapes sont :
 ## Remarque
 
 Cette pipeline est conçu pour être facilement extensible. Il est possible d'ajouter d'autres outils de qualité ou des déploiements automatiques par la suite si besoin.
+
+## 7. Déploiement continu (CD)
+
+Les jobs suivants ne s’exécutent que lors d’un **merge** sur la branche `master`. Cela garantit que seules des versions validées et stables soient déployées en production.
+
+Nous déployons notre application sur **Fly.io**, un fournisseur cloud choisi pour sa simplicité d’intégration avec GitHub Actions, son plan gratuit adapté aux petits projets, ainsi que sa gestion native des conteneurs Docker. Fly.io offre aussi une montée en charge automatique en cas d’augmentation de trafic, ce qui est un avantage pour la scalabilité.
+
+Le job de déploiement dépend de la réussite de plusieurs jobs clés :
+
+- Build des images Docker backend et frontend
+- Lancement et validation de l’infrastructure Docker
+- Tests unitaires et d’intégration
+- Notifications de succès d’intégration
+
+Pour déployer, nous utilisons l’action GitHub officielle `superfly/flyctl-actions@v1` qui installe automatiquement la CLI Fly.io dans le runner GitHub, puis exécute la commande suivante :
+
+```yaml
+- uses: superfly/flyctl-actions@v1
+  with:
+    args: "deploy --remote-only --app ${{ secrets.FLY_APP_NAME }}"
+  env:
+    FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+```
