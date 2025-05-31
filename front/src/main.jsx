@@ -2,38 +2,32 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App.jsx";
-import ConnectionPage from "./pages/ConnectionPage/ConnectionPage.jsx"
-import RegistrationPage from "./pages/RegistrationPage/RegistrationPage.jsx";
-import Data from "./pages/DataPage/DataPage.jsx";
-import HomePage from "./pages/HomePage/HomePage.jsx";
-import { handleSignUp } from './services/authService';
+import LoginPage from "./pages/LoginPage";
+import DataPage from "./pages/DataPage";
+import ManagementPage from "./pages/ManagementPage";
+import PredictionPage from "./pages/PredictionPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
- {
-element: <App />,
-children: [
- {
-path: '/',
-element: <HomePage />,
- },
- {
-path: '/connection',
-element: <ConnectionPage />,
- },
- {
-path: '/registration',
-element: <RegistrationPage handleSignUp={handleSignUp} />,
- },
- {
-path: '/data',
-element: <Data />,
- },
- ],
- },
+  {
+    element: <App />,
+    children: [
+      {
+        path: '/',
+        element: <LoginPage />,
+      },
+      {
+        path: '/data',
+        element: <ProtectedRoute><DataPage /></ProtectedRoute>,
+      },
+      {
+        path: '/manage',
+        element: <ProtectedRoute><ManagementPage /></ProtectedRoute>,
+      },
+      {
+        path: '/predict',
+        element: <ProtectedRoute><PredictionPage /></ProtectedRoute>,
+      },
+    ],
+  },
 ]);
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-<React.StrictMode>
-<RouterProvider router={router} />
-</React.StrictMode>
-);
