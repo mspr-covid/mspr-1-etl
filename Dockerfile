@@ -7,9 +7,12 @@
 
 FROM python:3.13-alpine
 
+RUN pip install --upgrade pip setuptools wheel
+
+
 # Installe make et les dépendances nécessaires
 # (ajout de zsh, bash et curl pour flyctl + oh-my-zsh)
-RUN apk add --no-cache make build-base git openssh curl zsh bash postgresql-client cmake
+RUN apk add --no-cache make build-base git openssh curl zsh bash postgresql-client cmake ca-certificates && update-ca-certificates
 
 # Crée le répertoire pour l'application au sein du conteneur
 WORKDIR /app
