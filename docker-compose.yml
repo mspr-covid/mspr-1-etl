@@ -16,8 +16,6 @@ services:
     container_name: covid_mspr
     depends_on:
       - db
-    # Parfois, il ne semble pas récupérer les variables d'environnement du .env
-    # On les redéfinit ici pour être sûr qu'elles soient bien prises en compte.
     env_file:
       - .env
     ports:

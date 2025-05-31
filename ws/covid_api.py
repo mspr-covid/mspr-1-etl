@@ -1,6 +1,7 @@
 import os
 import jwt
 import psycopg2
+import numpy as np
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse
@@ -8,13 +9,16 @@ from fastapi.templating import Jinja2Templates
 from ws.config.translation import TRANSLATIONS
 
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
-from .models.model import CovidEntryPatch
+from .models.covid_entry_patch import CovidEntryPatch
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
 from database.Database import Database
+from ws.models.covid_prediction_input import CovidPredictionInput
+from ws.services.model_service import get_model
+
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -389,3 +393,18 @@ def delete_entry(country: str,
         raise HTTPException(
             status_code=500,
             detail=f"Erreur lors de la suppression : {str(e)}")
+        
+
+@app.post("/covid/predict", tags=["prediction"])
+def predict_deaths(entry: CovidPredictionInput,
+                   current_user: str = Depends(get_current_user)):
+    try:
+        model = get_model()
+        input_data = np.array([[entry.total_recovered,
+                                entry.serious_critical,
+                                entry.total_tests]])
+        prediction = model.predict(input_data)
+        predicted_deaths = round(float(prediction[0]))
+        return {"predicted_total_deaths": predicted_deaths}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur de prédiction : {str(e)}")
