@@ -22,4 +22,4 @@ pytest-mock # for mocking HTTP requests in tests - temporaire
 pytest-cov
 jinja2
 joblib
-xgboost
+xgboost==1.7.5
