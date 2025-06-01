@@ -1,6 +1,6 @@
 {
 	"app": {
-		"title": "COVID-19 App",
+		"title": "Analyze IT app",
 		"loading": "Chargement...",
 		"error": "Une erreur est survenue"
 	},
@@ -37,14 +37,17 @@
 	},
 	"country": {
 		"name": "Pays",
-		"cases": "Cas",
-		"deaths": "Décès",
+		"cases": "Cas Totaux",
+		"deaths": "Total des Décès",
 		"recovered": "Guéris",
 		"active": "Actifs",
-		"critical": "Critiques",
+		"critical": "Cas Critiques",
 		"population": "Population",
 		"continent": "Continent",
-		"date": "Dernière mise à jour"
+		"date": "Dernière mise à jour",
+		"who_region": "Région OMS",
+		"total_tests": "Tests totaux"
+		
 	},
 	"manage": {
 		"title": "Gérer les données des pays",
@@ -59,7 +62,7 @@
 	},
 	"predict": {
 		"title": "Prédiction COVID",
-		"description": "Obtenez des prédictions basées sur les données des pays",
+		"description": "Utilisez ce formulaire pour prédire le nombre de décès COVID-19 en fonction des données fournies.",
 		"country": "Pays",
 		"date": "Date",
 		"submit": "Obtenir une prédiction",

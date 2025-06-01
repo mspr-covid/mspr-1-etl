@@ -104,7 +104,7 @@ const AddCountryForm = () => {
 
 				<Form onSubmit={handleSubmit}>
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Country")}</Form.Label>
+						<Form.Label>{t("country.name")}</Form.Label>
 						<Form.Control
 							type="text"
 							name="country"
@@ -115,7 +115,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Continent")}</Form.Label>
+						<Form.Label>{t("country.continent")}</Form.Label>
 						<Form.Control
 							type="text"
 							name="continent"
@@ -127,7 +127,7 @@ const AddCountryForm = () => {
 
 					<Form.Group className="mb-3">
 						<Form.Label>
-							{t("WHO Region (World Health Organization)")}
+							{t("country.who_region")}
 						</Form.Label>
 						<Form.Control
 							type="text"
@@ -139,7 +139,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Population")}</Form.Label>
+						<Form.Label>{t("country.population")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="population"
@@ -151,7 +151,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Total Cases")}</Form.Label>
+						<Form.Label>{t("country.cases")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="total_cases"
@@ -163,7 +163,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Total Deaths")}</Form.Label>
+						<Form.Label>{t("country.deaths")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="total_deaths"
@@ -175,7 +175,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Total Recovered")}</Form.Label>
+						<Form.Label>{t("country.recovered")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="total_recovered"
@@ -187,7 +187,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Serious Critical")}</Form.Label>
+						<Form.Label>{t("country.critical")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="serious_critical"
@@ -199,7 +199,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>{t("Total Tests")}</Form.Label>
+						<Form.Label>{t("country.total_tests")}</Form.Label>
 						<Form.Control
 							type="number"
 							name="total_tests"

@@ -1,6 +1,6 @@
 {
 	"app": {
-		"title": "COVID-19 App",
+		"title": "Analyze IT app",
 		"loading": "Caricamento...",
 		"error": "Si è verificato un errore"
 	},
@@ -37,14 +37,16 @@
 	},
 	"country": {
 		"name": "Paese",
-		"cases": "Casi",
-		"deaths": "Decessi",
+		"cases": "Casi Totali",
+		"deaths": "Decessi Totali",
 		"recovered": "Guariti",
 		"active": "Attivi",
-		"critical": "Critici",
+		"critical": "Casi critici",
 		"population": "Popolazione",
 		"continent": "Continente",
-		"date": "Ultimo aggiornamento"
+		"date": "Ultimo Aggiornamento",
+		"who_region": "Regione OMS",
+		"total_tests": "Test totali"
 	},
 	"manage": {
 		"title": "Gestisci dati dei paesi",
@@ -59,7 +61,7 @@
 	},
 	"predict": {
 		"title": "Previsione COVID",
-		"description": "Ottieni previsioni basate sui dati dei paesi",
+		"description": "Usa questo modulo per prevedere il numero di decessi per COVID-19 in base ai dati forniti.",
 		"country": "Paese",
 		"date": "Data",
 		"submit": "Ottieni previsione",

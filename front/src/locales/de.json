@@ -1,6 +1,6 @@
 {
 	"app": {
-		"title": "COVID-19 App",
+		"title": "Analyze IT app",
 		"loading": "Wird geladen...",
 		"error": "Ein Fehler ist aufgetreten"
 	},
@@ -37,14 +37,16 @@
 	},
 	"country": {
 		"name": "Land",
-		"cases": "Fälle",
-		"deaths": "Todesfälle",
+		"cases": "Gesamtfälle",
+		"deaths": "Gesamtzahl der Todesfälle",
 		"recovered": "Genesene",
 		"active": "Aktive",
-		"critical": "Kritische",
+		"critical": "Kritische Fälle",
 		"population": "Bevölkerung",
 		"continent": "Kontinent",
-		"date": "Letzte Aktualisierung"
+		"date": "Letzte Aktualisierung",
+		"who_region": "WHO-Region",
+		"toal_tests": "Gesamt-Tests"
 	},
 	"manage": {
 		"title": "Länderdaten verwalten",
@@ -59,7 +61,7 @@
 	},
 	"predict": {
 		"title": "COVID-Vorhersage",
-		"description": "Erhalten Sie Vorhersagen basierend auf Länderdaten",
+		"description": "Verwenden Sie dieses Formular, um die Anzahl der COVID-19-Todesfälle basierend auf den angegebenen Daten vorherzusagen.",
 		"country": "Land",
 		"date": "Datum",
 		"submit": "Vorhersage erhalten",

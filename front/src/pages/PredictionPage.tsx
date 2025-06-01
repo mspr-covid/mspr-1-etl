@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { Form, Button, Card, Alert, Spinner } from "react-bootstrap";
 import { getPrediction } from "../services/api";
+import { useTranslation } from "react-i18next";
+
 
 const PredictionPage = () => {
+	const { t } = useTranslation();
 	const [totalRecovered, setTotalRecovered] = useState<number | "">("");
 	const [seriousCritical, setSeriousCritical] = useState<number | "">("");
 	const [totalTests, setTotalTests] = useState<number | "">("");
@@ -42,7 +45,10 @@ const PredictionPage = () => {
 
 	return (
 		<div className="form-container">
-			<h2>Prédiction COVID</h2>
+			<h2>{t("predict.title")}</h2>
+			<p>
+				{t("predict.description")}
+			</p>
 
 			{error && (
 				<Alert variant="danger" onClose={() => setError(null)} dismissible>
@@ -54,7 +60,7 @@ const PredictionPage = () => {
 				<Card.Body>
 					<Form onSubmit={handleSubmit}>
 						<Form.Group className="mb-3">
-							<Form.Label>Total Recovered</Form.Label>
+							<Form.Label>{t("country.recovered")}</Form.Label>
 							<Form.Control
 								type="number"
 								value={totalRecovered}
@@ -68,7 +74,7 @@ const PredictionPage = () => {
 						</Form.Group>
 
 						<Form.Group className="mb-3">
-							<Form.Label>Serious Critical</Form.Label>
+							<Form.Label>{t("country.critical")}</Form.Label>
 							<Form.Control
 								type="number"
 								value={seriousCritical}
@@ -82,7 +88,7 @@ const PredictionPage = () => {
 						</Form.Group>
 
 						<Form.Group className="mb-3">
-							<Form.Label>Total Tests</Form.Label>
+							<Form.Label>{t("country.total_tests")}</Form.Label>
 							<Form.Control
 								type="number"
 								value={totalTests}
