@@ -115,13 +115,13 @@ const CountriesPage = () => {
 							<tr>
 								<th>{t("country.name")}</th>
 								<th>{t("country.continent")}</th>
-								<th>{t("WHO Region")}</th>
+								<th>{t("country.who_region")}</th>
 								<th>{t("country.population")}</th>
 								<th>{t("country.cases")}</th>
 								<th>{t("country.deaths")}</th>
 								<th>{t("country.recovered")}</th>
 								<th>{t("country.critical")}</th>
-								<th>{t("Total Tests")}</th>
+								<th>{t("country.total_tests")}</th>
 							</tr>
 						</thead>
 						<tbody>

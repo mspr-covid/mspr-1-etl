@@ -1,6 +1,6 @@
 {
 	"app": {
-		"title": "COVID-19 App",
+		"title": "Analyze IT app",
 		"loading": "Loading...",
 		"error": "An error occurred"
 	},
@@ -37,14 +37,14 @@
 	},
 	"country": {
 		"name": "Country",
-		"cases": "Cases",
-		"deaths": "Deaths",
+		"cases": "Total Cases",
+		"deaths": "Total Deaths",
 		"recovered": "Recovered",
-		"active": "Active",
-		"critical": "Critical",
+		"critical": "Serious Critical",
 		"population": "Population",
 		"continent": "Continent",
-		"date": "Last Updated"
+		"who_region": "WHO Region",
+		"total_tests": "Total Tests"
 	},
 	"manage": {
 		"title": "Manage Country Data",
@@ -59,7 +59,7 @@
 	},
 	"predict": {
 		"title": "COVID Prediction",
-		"description": "Get predictions based on country data",
+		"description": "Use this form to predict the number of COVID-19 deaths based on the provided data.",
 		"country": "Country",
 		"date": "Date",
 		"submit": "Get Prediction",
