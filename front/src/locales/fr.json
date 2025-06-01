@@ -1,0 +1,80 @@
+{
+  "app": {
+    "title": "Tableau de Bord COVID-19",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue"
+  },
+  "nav": {
+    "home": "Accueil",
+    "countries": "Pays",
+    "manage": "Gérer les données",
+    "predict": "Prédiction",
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français",
+    "it": "Italien",
+    "de": "Allemand",
+    "select": "Langue"
+  },
+  "auth": {
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "required": "Ce champ est requis",
+    "loginError": "Nom d'utilisateur ou mot de passe invalide",
+    "loginSuccess": "Connexion réussie"
+  },
+  "countries": {
+    "title": "Données COVID des Pays",
+    "search": "Rechercher des pays",
+    "noResults": "Aucun pays trouvé",
+    "loading": "Chargement des pays...",
+    "error": "Erreur lors du chargement des pays"
+  },
+  "country": {
+    "name": "Pays",
+    "cases": "Cas",
+    "deaths": "Décès",
+    "recovered": "Guéris",
+    "active": "Actifs",
+    "critical": "Critiques",
+    "population": "Population",
+    "continent": "Continent",
+    "date": "Dernière mise à jour"
+  },
+  "manage": {
+    "title": "Gérer les données des pays",
+    "add": "Ajouter un pays",
+    "edit": "Modifier un pays",
+    "delete": "Supprimer un pays",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer ce pays?",
+    "success": "Opération réussie",
+    "error": "Échec de l'opération"
+  },
+  "predict": {
+    "title": "Prédiction COVID",
+    "description": "Obtenez des prédictions basées sur les données des pays",
+    "country": "Pays",
+    "date": "Date",
+    "submit": "Obtenir une prédiction",
+    "result": "Résultat de la prédiction",
+    "noResult": "Aucune prédiction disponible",
+    "loading": "Calcul de la prédiction..."
+  },
+  "buttons": {
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "back": "Retour"
+  },
+  "covid": {
+    "dashboard": "Tableau de Bord COVID"
+  }
+}

@@ -3,6 +3,9 @@
 # Cette image est faite pour le développement, pas pour la production.
 FROM node:20-alpine
 
+RUN apk add --no-cache git
+
+
 # On définit le répertoire de travail dans le conteneur.
 WORKDIR /app
 
