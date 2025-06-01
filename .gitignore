@@ -38,3 +38,6 @@ lerna-debug.log*
 
 # spécifique 
 grafana/provisioning/datasources/datasources.yaml
+
+# notebook
+*.ipynb
