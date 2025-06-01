@@ -39,19 +39,14 @@ const CountriesPage = () => {
 
 				console.log("Réponse brute API getCountries:", data);
 
-				// IMPORTANT : data est un objet avec la clé "data" contenant le tableau
 				if (data && Array.isArray(data.data)) {
 					setCountries(data.data);
 					setFilteredCountries(data.data);
 					setError(null);
-					console.log("Données pays chargées:", data.data.length, "pays");
 				} else {
 					setError(t("countries.error") + " (La réponse ne contient pas data)");
 					setCountries([]);
 					setFilteredCountries([]);
-					console.warn(
-						"La réponse API ne contient pas 'data' ou n'est pas un tableau."
-					);
 				}
 			} catch (err) {
 				setError(t("countries.error"));
@@ -120,13 +115,13 @@ const CountriesPage = () => {
 							<tr>
 								<th>{t("country.name")}</th>
 								<th>{t("country.continent")}</th>
-								<th>{t("country.region")}</th>
+								<th>{t("WHO Region")}</th>
 								<th>{t("country.population")}</th>
 								<th>{t("country.cases")}</th>
 								<th>{t("country.deaths")}</th>
 								<th>{t("country.recovered")}</th>
 								<th>{t("country.critical")}</th>
-								<th>{t("country.tests")}</th>
+								<th>{t("Total Tests")}</th>
 							</tr>
 						</thead>
 						<tbody>

@@ -61,9 +61,12 @@ export const deleteCountry = async (country: string) => {
 	return response.data;
 };
 
-// Prediction API
-export const getPrediction = async (data: string) => {
-	const response = await api.post("/predict", data);
+export const getPrediction = async (data: {
+	total_recovered: number;
+	serious_critical: number;
+	total_tests: number;
+}) => {
+	const response = await api.post("/covid/predict", data);
 	return response.data;
 };
 
