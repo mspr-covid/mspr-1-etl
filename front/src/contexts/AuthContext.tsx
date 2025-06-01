@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		try {
 			setError(null);
 			const data = await loginUser(username, password);
-			setToken(data.access_token); // ✅ ici le bon champ
+			setToken(data.access_token);
 			return true;
 		} catch (err) {
 			setError("Login failed. Please check your credentials.");

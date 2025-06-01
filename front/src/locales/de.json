@@ -1,80 +1,80 @@
 {
-  "app": {
-    "title": "COVID-19 Dashboard",
-    "loading": "Wird geladen...",
-    "error": "Ein Fehler ist aufgetreten"
-  },
-  "nav": {
-    "home": "Startseite",
-    "countries": "Länder",
-    "manage": "Daten verwalten",
-    "predict": "Vorhersage",
-    "login": "Anmelden",
-    "logout": "Abmelden"
-  },
-  "languages": {
-    "en": "Englisch",
-    "fr": "Französisch",
-    "it": "Italienisch",
-    "de": "Deutsch",
-    "select": "Sprache"
-  },
-  "auth": {
-    "username": "Benutzername",
-    "password": "Passwort",
-    "login": "Anmelden",
-    "logout": "Abmelden",
-    "required": "Dieses Feld ist erforderlich",
-    "loginError": "Ungültiger Benutzername oder Passwort",
-    "loginSuccess": "Anmeldung erfolgreich"
-  },
-  "countries": {
-    "title": "COVID-Daten der Länder",
-    "search": "Länder suchen",
-    "noResults": "Keine Länder gefunden",
-    "loading": "Länder werden geladen...",
-    "error": "Fehler beim Laden der Länder"
-  },
-  "country": {
-    "name": "Land",
-    "cases": "Fälle",
-    "deaths": "Todesfälle",
-    "recovered": "Genesene",
-    "active": "Aktive",
-    "critical": "Kritische",
-    "population": "Bevölkerung",
-    "continent": "Kontinent",
-    "date": "Letzte Aktualisierung"
-  },
-  "manage": {
-    "title": "Länderdaten verwalten",
-    "add": "Land hinzufügen",
-    "edit": "Land bearbeiten",
-    "delete": "Land löschen",
-    "save": "Speichern",
-    "cancel": "Abbrechen",
-    "confirmDelete": "Sind Sie sicher, dass Sie dieses Land löschen möchten?",
-    "success": "Operation erfolgreich",
-    "error": "Operation fehlgeschlagen"
-  },
-  "predict": {
-    "title": "COVID-Vorhersage",
-    "description": "Erhalten Sie Vorhersagen basierend auf Länderdaten",
-    "country": "Land",
-    "date": "Datum",
-    "submit": "Vorhersage erhalten",
-    "result": "Vorhersageergebnis",
-    "noResult": "Keine Vorhersage verfügbar",
-    "loading": "Vorhersage wird berechnet..."
-  },
-  "buttons": {
-    "submit": "Absenden",
-    "cancel": "Abbrechen",
-    "edit": "Bearbeiten",
-    "delete": "Löschen",
-    "back": "Zurück"
-  },
-  "covid": {
-    "dashboard": "COVID-Dashboard"
-  }
+	"app": {
+		"title": "COVID-19 App",
+		"loading": "Wird geladen...",
+		"error": "Ein Fehler ist aufgetreten"
+	},
+	"nav": {
+		"home": "Startseite",
+		"countries": "Länder",
+		"manage": "Daten verwalten",
+		"predict": "Vorhersage",
+		"login": "Anmelden",
+		"logout": "Abmelden"
+	},
+	"languages": {
+		"en": "Englisch",
+		"fr": "Französisch",
+		"it": "Italienisch",
+		"de": "Deutsch",
+		"select": "Sprache"
+	},
+	"auth": {
+		"username": "Benutzername",
+		"password": "Passwort",
+		"login": "Anmelden",
+		"logout": "Abmelden",
+		"required": "Dieses Feld ist erforderlich",
+		"loginError": "Ungültiger Benutzername oder Passwort",
+		"loginSuccess": "Anmeldung erfolgreich"
+	},
+	"countries": {
+		"title": "COVID-Daten der Länder",
+		"search": "Länder suchen",
+		"noResults": "Keine Länder gefunden",
+		"loading": "Länder werden geladen...",
+		"error": "Fehler beim Laden der Länder"
+	},
+	"country": {
+		"name": "Land",
+		"cases": "Fälle",
+		"deaths": "Todesfälle",
+		"recovered": "Genesene",
+		"active": "Aktive",
+		"critical": "Kritische",
+		"population": "Bevölkerung",
+		"continent": "Kontinent",
+		"date": "Letzte Aktualisierung"
+	},
+	"manage": {
+		"title": "Länderdaten verwalten",
+		"add": "Land hinzufügen",
+		"edit": "Land bearbeiten",
+		"delete": "Land löschen",
+		"save": "Speichern",
+		"cancel": "Abbrechen",
+		"confirmDelete": "Sind Sie sicher, dass Sie dieses Land löschen möchten?",
+		"success": "Operation erfolgreich",
+		"error": "Operation fehlgeschlagen"
+	},
+	"predict": {
+		"title": "COVID-Vorhersage",
+		"description": "Erhalten Sie Vorhersagen basierend auf Länderdaten",
+		"country": "Land",
+		"date": "Datum",
+		"submit": "Vorhersage erhalten",
+		"result": "Vorhersageergebnis",
+		"noResult": "Keine Vorhersage verfügbar",
+		"loading": "Vorhersage wird berechnet..."
+	},
+	"buttons": {
+		"submit": "Absenden",
+		"cancel": "Abbrechen",
+		"edit": "Bearbeiten",
+		"delete": "Löschen",
+		"back": "Zurück"
+	},
+	"covid": {
+		"dashboard": "COVID-Dashboard"
+	}
 }

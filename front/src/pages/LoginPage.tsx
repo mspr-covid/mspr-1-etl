@@ -25,8 +25,8 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      await login(username, password); // appel au contexte d'auth
-      navigate('/'); // ✅ MODIF: redirection après login
+      await login(username, password);
+      navigate('/');
     } finally {
       setIsLoading(false);
     }
