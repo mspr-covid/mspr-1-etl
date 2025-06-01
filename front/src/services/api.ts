@@ -1,0 +1,70 @@
+import axios from "axios";
+
+const API_URL = "https://covid-app.fly.dev";
+
+// Create axios instance
+const api = axios.create({
+	baseURL: API_URL,
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
+
+// Add token to requests if available
+api.interceptors.request.use((config) => {
+	const token = localStorage.getItem("token");
+	if (token) {
+		config.headers.Authorization = `Bearer ${token}`;
+	}
+	return config;
+});
+
+// ✅ Auth API - Corrigé pour FastAPI (qui attend des données de formulaire)
+export const loginUser = async (username: string, password: string) => {
+	const params = new URLSearchParams();
+	params.append("username", username);
+	params.append("password", password);
+
+	const response = await api.post("/api/login", params, {
+		headers: {
+			"Content-Type": "application/x-www-form-urlencoded",
+		},
+	});
+
+	console.log("loginUser response:", response.data);
+	return response.data; // <-- ici on récupère bien le token
+};
+
+// Countries API
+export const getCountries = async () => {
+	const response = await api.get("/covid");
+	return response.data;
+};
+
+// export const getCountry = async (id: string) => {
+// 	const response = await api.get(`/countries/${id}`);
+// 	return response.data;
+// };
+
+export const createCountry = async (countryData: string) => {
+	const response = await api.post("/covid", countryData);
+	return response.data;
+};
+
+export const updateCountry = async (id: string, countryData: string) => {
+	const response = await api.put(`/countries/${id}`, countryData);
+	return response.data;
+};
+
+export const deleteCountry = async (country: string) => {
+	const response = await api.delete(`/covid/${country}`);
+	return response.data;
+};
+
+// Prediction API
+export const getPrediction = async (data: string) => {
+	const response = await api.post("/predict", data);
+	return response.data;
+};
+
+export default api;

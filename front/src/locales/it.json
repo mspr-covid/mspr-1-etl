@@ -1,0 +1,80 @@
+{
+  "app": {
+    "title": "Dashboard COVID-19",
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore"
+  },
+  "nav": {
+    "home": "Home",
+    "countries": "Paesi",
+    "manage": "Gestisci Dati",
+    "predict": "Previsione",
+    "login": "Accesso",
+    "logout": "Uscita"
+  },
+  "languages": {
+    "en": "Inglese",
+    "fr": "Francese",
+    "it": "Italiano",
+    "de": "Tedesco",
+    "select": "Lingua"
+  },
+  "auth": {
+    "username": "Nome utente",
+    "password": "Password",
+    "login": "Accedi",
+    "logout": "Esci",
+    "required": "Questo campo è obbligatorio",
+    "loginError": "Nome utente o password non validi",
+    "loginSuccess": "Accesso riuscito"
+  },
+  "countries": {
+    "title": "Dati COVID dei Paesi",
+    "search": "Cerca paesi",
+    "noResults": "Nessun paese trovato",
+    "loading": "Caricamento paesi...",
+    "error": "Errore durante il caricamento dei paesi"
+  },
+  "country": {
+    "name": "Paese",
+    "cases": "Casi",
+    "deaths": "Decessi",
+    "recovered": "Guariti",
+    "active": "Attivi",
+    "critical": "Critici",
+    "population": "Popolazione",
+    "continent": "Continente",
+    "date": "Ultimo aggiornamento"
+  },
+  "manage": {
+    "title": "Gestisci dati dei paesi",
+    "add": "Aggiungi paese",
+    "edit": "Modifica paese",
+    "delete": "Elimina paese",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "confirmDelete": "Sei sicuro di voler eliminare questo paese?",
+    "success": "Operazione riuscita",
+    "error": "Operazione fallita"
+  },
+  "predict": {
+    "title": "Previsione COVID",
+    "description": "Ottieni previsioni basate sui dati dei paesi",
+    "country": "Paese",
+    "date": "Data",
+    "submit": "Ottieni previsione",
+    "result": "Risultato della previsione",
+    "noResult": "Nessuna previsione disponibile",
+    "loading": "Calcolo della previsione..."
+  },
+  "buttons": {
+    "submit": "Invia",
+    "cancel": "Annulla",
+    "edit": "Modifica",
+    "delete": "Elimina",
+    "back": "Indietro"
+  },
+  "covid": {
+    "dashboard": "Dashboard COVID"
+  }
+}
