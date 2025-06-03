@@ -3,14 +3,15 @@ import jwt
 import psycopg2
 import numpy as np
 from fastapi import FastAPI, HTTPException, Depends, Request
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from ws.config.translation import TRANSLATIONS
 
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
+from .models.user import UserCreate, UserLogin
+from .models.covid_entry import CovidEntry
 from .models.covid_entry_patch import CovidEntryPatch
-from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
@@ -56,30 +57,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Gestion des tokens
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
-
-
-# Modèles Pydantic
-class UserCreate(BaseModel):
-    username: str
-    email: str
-    password: str
-
-
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-
-class CovidEntry(BaseModel):
-    country: str
-    continent: str
-    who_region: str
-    population: int
-    total_cases: int
-    total_deaths: int
-    total_recovered: int
-    serious_critical: int
-    total_tests: int
 
 
 # Connexion à la BDD
@@ -150,7 +127,7 @@ def register_user(user: UserCreate, cursor=Depends(get_db)):
 # Route pour se connecter et récupérer un token
 @app.post("/api/login", status_code=200)
 def login_user(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+        user: UserLogin,
         cursor=Depends(get_db)):
     try:
         cursor.execute("""
@@ -158,18 +135,19 @@ def login_user(
                        password_hash
                        FROM t_users
                        WHERE username = %s""",
-                       (form_data.username,))
-        user = cursor.fetchone()
-        if not user or not pwd_context.verify(
-            form_data.password,
-                user["password_hash"]):
+                       (user.username,))
+        user_db = cursor.fetchone()
+        if not user_db or not pwd_context.verify(
+            user.password,
+                user_db["password_hash"]):
             raise HTTPException(
                 status_code=400,
                 detail="Identifiants invalides")
 
-        access_token = create_access_token(data={"sub": form_data.username})
+        access_token = create_access_token(data={"sub": user.username})
         return {"access_token": access_token, "token_type": "bearer"}
     except Exception as e:
+        print("🔥 ERREUR /api/login :", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -393,7 +371,7 @@ def delete_entry(country: str,
         raise HTTPException(
             status_code=500,
             detail=f"Erreur lors de la suppression : {str(e)}")
-        
+
 
 @app.post("/covid/predict", tags=["prediction"])
 def predict_deaths(entry: CovidPredictionInput,
@@ -407,4 +385,6 @@ def predict_deaths(entry: CovidPredictionInput,
         predicted_deaths = round(float(prediction[0]))
         return {"predicted_total_deaths": predicted_deaths}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur de prédiction : {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur de prédiction : {str(e)}")

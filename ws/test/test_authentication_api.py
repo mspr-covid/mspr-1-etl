@@ -77,7 +77,7 @@ class TestAuthenticationAPI:
             "password": "123456"
         })
 
-        response = client.post("/api/login", data={
+        response = client.post("/api/login", json={
             "username": "testuser_3",
             "password": "123456"
         })

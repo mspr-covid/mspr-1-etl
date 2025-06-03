@@ -58,7 +58,7 @@ class TestCovidAPI:
         assert register_response.status_code == 201
 
         # Connexion
-        login_response = client.post("/api/login", data={
+        login_response = client.post("/api/login", json={
             "username": "testuser",
             "password": "Test123456"
         })
@@ -96,7 +96,7 @@ class TestCovidAPI:
 
         assert register_response.status_code == 201
 
-        login_response = client.post("/api/login", data={
+        login_response = client.post("/api/login", json={
             "username": "testuser",
             "password": "Test123456"
         })
@@ -134,7 +134,7 @@ class TestCovidAPI:
         assert register_response.status_code == 201
 
         # Connexion
-        login_response = client.post("/api/login", data={
+        login_response = client.post("/api/login", json={
             "username": "testuser_getall",
             "password": "123456"
         })
@@ -177,7 +177,7 @@ class TestCovidAPI:
         assert register_response.status_code == 201
 
         # Connexion pour obtenir le token
-        login_response = client.post("/api/login", data={
+        login_response = client.post("/api/login", json={
             "username": "testuser",
             "password": "Test123456"
         })

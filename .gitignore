@@ -35,6 +35,7 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+.devcontainer/
 
 # spécifique 
 grafana/provisioning/datasources/datasources.yaml
