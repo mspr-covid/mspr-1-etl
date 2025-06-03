@@ -1,7 +1,7 @@
 # Dans cette première étape, on va construire l'application front avec Node 
 # On utlise une image alpine car plus légère et plus rapide.
 # Ici, dans cette première étape on va compiler l'application front.
-FROM node:18-alpine AS builder
+FROM node:18 AS builder
 
 # On définit le répertoire de travail dans le conteneur
 WORKDIR /app
@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Avec notre gestionnaire de package, on installe les dépendances nécessaires pour l'application.
-RUN npm install
+RUN npm ci
 
 # On copie le reste des fichiers de l'application dans le conteneur.
 # De la machine hôte vers le conteneur.
