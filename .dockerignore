@@ -36,9 +36,3 @@ logs/
 Thumbs.db
 .vscode/
 .idea/
-
-# notebook
-*.ipynb
-
-# fly
-*.toml
