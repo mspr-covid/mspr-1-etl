@@ -39,3 +39,6 @@ Thumbs.db
 
 # notebook
 *.ipynb
+
+# fly
+*.toml

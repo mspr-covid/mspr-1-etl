@@ -41,3 +41,6 @@ grafana/provisioning/datasources/datasources.yaml
 
 # notebook
 *.ipynb
+
+# fly
+*.toml
