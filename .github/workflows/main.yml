@@ -67,12 +67,14 @@ jobs:
       - name: Installer PA11y
         run: npm install -g pa11y
 
-      - name: Run Pa11y with --no-sandbox
+      - name: Run Pa11y with Puppeteer
         run: |
-          pa11y http://localhost:5173/login \
-            --chrome-launch-options="--no-sandbox" \
-            > pa11y-report.txt || true
+          npm install pa11y puppeteer
+          node .github/scripts/pa11y-run.js > pa11y-report.txt || true
 
+      - name: Print Pa11y report to logs
+        run: cat pa11y-report.txt
+        
       - name: Wait for PostgreSQL to be ready
         run: |
           echo "⏳ Waiting for PostgreSQL..."
