@@ -247,14 +247,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Debug app name
-        run: "echo App name: ${{ secrets.FLY_FRONT }}"
 
-      - name: Deploy Frontend to Fly.io
-        uses: superfly/flyctl-actions@v1
-        with:
-          args: "deploy --remote-only --app analyze-it-app --config front/fly.toml"
+      - name: Deploy Frontend (manual run)
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_APP: ${{ secrets.FLY_FRONT }}
+        run: flyctl deploy --remote-only --app $FLY_APP --config front/fly.toml     
+
 
