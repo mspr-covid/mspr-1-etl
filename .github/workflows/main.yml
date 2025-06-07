@@ -1,6 +1,11 @@
 name: Mspr Integration Workflow
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
 
 jobs:
   # le premier job est un build. On construit notre image Docker pour tester que le Dockerfile fonctionne
@@ -188,16 +193,16 @@ jobs:
       - name: Discord Notification
         uses: emvakar/discord-notification-action@v2
         with:
-          title: "✅ Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}"
+          title: "✅ Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}. Succés du workflow !"
           status: "success"
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
   deploy-api:
-    name: Deploy to Fly.io
+    name: Deploy to Fly
     runs-on: ubuntu-latest
     needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
@@ -210,9 +215,10 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
   
   deploy-frontend:
-    name: Deploy Frontend to Fly.io
+    name: Deploy Frontend to Fly
     runs-on: ubuntu-latest
-    needs: [build-frontend]
+    needs: [build-frontend, start-services, notification-security, notification-integration]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
@@ -224,15 +230,15 @@ jobs:
         with:
           args: "deploy --remote-only --app ${{ secrets.FLY_FRONT }}"
 
-  notify-deployment:
-    name: Déploiement effectué
+  notify-deployment-api-success:
+    name: Successful Deployment for API
     runs-on: ubuntu-latest
     needs: [deploy-api]
 
     # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
     # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
     steps:
-      - name: Discord Notification
+      - name: Discord Notification For API
         run: |
           content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/" '{"content": $txt}')
           curl -H "Content-Type: application/json" \
@@ -240,17 +246,51 @@ jobs:
                -d "$content" \
                "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
 
-  notify-deployment-failure:
-    name: Échec du déploiement
+  notify-deployment-api-failure:
+    name: Failed Deployment for API
     runs-on: ubuntu-latest
     if: failure() && github.ref == 'refs/heads/master'
     needs: [deploy-api]
 
     steps:
-      - name: Discord Notification
+      - name: Discord Notification For API
         run: |
-          content=$(jq -Rn --arg txt "❌ Échec du déploiement." '{"content": $txt}')
+          content=$(jq -Rn --arg txt "❌ Échec du déploiement de l'API." '{"content": $txt}')
           curl -H "Content-Type: application/json" \
                -X POST \
                -d "$content" \
                "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
+  
+
+  notify-deployment-front-success:
+    name: Successful Deployment for Frontend
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend]
+
+    # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
+    # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
+    steps:
+      - name: Discord Notification For Frontend
+        run: |
+          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_FRONT }}.fly.dev/" '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
+
+  notify-deployment-front-failure:
+    name: Failed Deployment for Frontend
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/master'
+    needs: [deploy-frontend]
+
+    steps:
+      - name: Discord Notification For Frontend
+        run: |
+          content=$(jq -Rn --arg txt "❌ Échec du déploiement du client." '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
+
+
