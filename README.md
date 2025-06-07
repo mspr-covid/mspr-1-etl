@@ -1,5 +1,7 @@
 # 📊 MSPR 1 – Projet ETL, API FastAPI, PostgreSQL & Grafana
 
+![CI](https://github.com/Nouster/mspr-1-etl/actions/workflows/main.yml/badge.svg)
+
 Ce projet est une solution d'extraction, transformation et chargement (ETL) des données du COVID-19, accompagnée d'une API REST développée avec FastAPI, d'un tableau de bord Grafana pour la visualisation des données, d'une base de données PostgreSQL pour le stockage et d'un modèle de machine learning. Le tout est orchestré dans un environnement Dockerisé prêt pour le développement via Dev Containers.
 
 ---

@@ -247,6 +247,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Debug app name
+        run: "echo App name: ${{ secrets.FLY_FRONT }}"
 
       - name: Deploy Frontend to Fly.io
         uses: superfly/flyctl-actions@v1
