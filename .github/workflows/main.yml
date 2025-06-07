@@ -248,6 +248,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # Check if FLY_FRONT secret is set
+      - name: Check FLY_FRONT value
+        run: echo "FLY_FRONT=${{ secrets.FLY_FRONT }}"
+
       - name: Deploy Frontend
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}     
