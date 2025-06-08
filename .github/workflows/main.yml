@@ -9,7 +9,7 @@ on:
 
 jobs:
   # le premier job est un build. On construit notre image Docker pour tester que le Dockerfile fonctionne
-  build:
+  build-backend:
     name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +44,7 @@ jobs:
   start-services:
     name: Run Docker Infrastructure and Tests
     runs-on: ubuntu-latest
-    needs: [build, build-frontend]
+    needs: [build-backend, build-frontend]
 
     steps:
       - uses: actions/checkout@v2
@@ -198,7 +198,7 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
 
   deploy-api:
-    name: Deploy to Fly
+    name: Deploy API to Fly
     runs-on: ubuntu-latest
     needs: [start-services, notification-security, notification-integration]
     # La ligne du dessous sert à ne déployer que sur la branche master
@@ -210,7 +210,8 @@ jobs:
       - name: Deploy to Fly.io
         uses: superfly/flyctl-actions@v1
         with:
-          args: "deploy --remote-only --app ${{ secrets.FLY_APP_NAME }}"
+          # Ici, on déploie l'image Docker qu'on a construite dans le job build et qu'on a stocké dans le registry
+          args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --app ${{ secrets.FLY_APP_NAME }}"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
   
@@ -228,7 +229,9 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}     
         uses: superfly/flyctl-actions@v1
         with:
-          args: "deploy --remote-only --app ${{ secrets.FLY_FRONT }}"
+          # Ici, on déploie l'image Docker qu'on a construite dans le job build-frontend et qu'on a stocké dans le registry
+          args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test --app ${{ secrets.FLY_FRONT }}"
+
 
   notify-deployment-api-success:
     name: Successful Deployment for API
