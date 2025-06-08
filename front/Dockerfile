@@ -9,9 +9,7 @@ WORKDIR /app
 # On copie les fichiers de configuration npm dans le conteneur (package.json et package-lock.json). 
 # Ils listent les dépendances de l'application.
 COPY package*.json ./
-
-# Avec notre gestionnaire de package, on installe les dépendances nécessaires pour l'application.
-RUN npm install
+RUN rm -rf node_modules package-lock.json && npm install
 
 # On copie le reste des fichiers de l'application dans le conteneur.
 # De la machine hôte vers le conteneur.
