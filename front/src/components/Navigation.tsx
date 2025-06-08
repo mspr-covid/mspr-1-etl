@@ -1,4 +1,3 @@
-import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -13,16 +12,16 @@ const Navigation = () => {
 	return (
 		<Navbar bg="light" expand="lg" className="mb-3">
 			<Container>
-			<Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
- 			 	<img
-   					src="/favicon.svg"       
-    				alt="Logo"
-    				width="32"
-    				height="32"
-    				className="me-2"      
-  				/>
-  				{t("app.title")}
-			</Navbar.Brand>
+				<Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
+					<img
+						src="/favicon.svg"
+						alt="Logo"
+						width="32"
+						height="32"
+						className="me-2"
+					/>
+					{t("app.title")}
+				</Navbar.Brand>
 
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">

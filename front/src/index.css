@@ -100,4 +100,65 @@ body {
 
 }
 
+@media (max-width: 768px) {
+  .responsive-table {
+    border: none;
+  }
 
+  .responsive-table thead {
+    display: none;
+  }
+
+  .responsive-table,
+  .responsive-table tbody,
+  .responsive-table tr,
+  .responsive-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .responsive-table tr {
+    background: linear-gradient(145deg, #ffffff, #f1f1f1);
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e3e3e3;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .responsive-table tr:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .responsive-table td {
+    position: relative;
+    padding: 0.75rem 1rem 0.75rem 50%;
+    border: none;
+    min-height: 45px;
+    font-size: 0.95rem;
+    color: #333;
+  }
+
+  .responsive-table td::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    font-weight: 600;
+    color: #666;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+
+  .responsive-table td:last-child {
+    margin-top: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

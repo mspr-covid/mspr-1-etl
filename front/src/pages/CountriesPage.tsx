@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	Table,
 	Form,
@@ -10,12 +10,13 @@ import {
 	Container,
 	Row,
 	Col,
-	Badge
+	Badge,
 } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { getCountries, deleteCountry } from "../services/api";
 import ConfirmModal from "../components/ConfirmModal";
 import { continentClassMap } from "./styles/continentTag";
+import CountryCard from "../components/CountryCard";
 
 interface Country {
 	country: string;
@@ -27,6 +28,9 @@ interface Country {
 	total_recovered: number;
 	serious_critical: number;
 	total_tests: number;
+	// Ajout des champs calculés (non fournis par l'API)
+	death_rate?: number;
+	recovery_rate?: number;
 }
 
 const CountriesPage = () => {
@@ -39,7 +43,34 @@ const CountriesPage = () => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
 	const [countryToDelete, setCountryToDelete] = useState<string>("");
+	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth < 768);
+		};
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	const calculateRates = (data: Country[]): Country[] => {
+		return data.map((country) => {
+			const deathRate =
+				country.total_cases > 0
+					? (country.total_deaths / country.total_cases) * 100
+					: 0;
+			const recoveryRate =
+				country.total_cases > 0
+					? (country.total_recovered / country.total_cases) * 100
+					: 0;
+			return {
+				...country,
+				death_rate: deathRate,
+				recovery_rate: recoveryRate,
+			};
+		});
+	};
 
 	const fetchCountries = async () => {
 		try {
@@ -47,10 +78,10 @@ const CountriesPage = () => {
 			setError(null);
 			const data = await getCountries();
 
-
 			if (data && Array.isArray(data.data)) {
-				setCountries(data.data);
-				setFilteredCountries(data.data);
+				const countriesWithRates = calculateRates(data.data);
+				setCountries(countriesWithRates);
+				setFilteredCountries(countriesWithRates);
 			} else {
 				setError(t("countries.error") + " (La réponse ne contient pas data)");
 				setCountries([]);
@@ -96,19 +127,21 @@ const CountriesPage = () => {
 
 			await deleteCountry(countryToDelete);
 
-			// Remove from local state
-			const updatedCountries = countries.filter(c => c.country !== countryToDelete);
+			const updatedCountries = countries.filter(
+				(c) => c.country !== countryToDelete
+			);
 			setCountries(updatedCountries);
-			setFilteredCountries(updatedCountries.filter(
-				(country) =>
-					country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
-			));
+			setFilteredCountries(
+				updatedCountries.filter(
+					(country) =>
+						country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
+				)
+			);
 
 			setSuccessMessage(t("countries.deleteSuccess"));
-			
-			// Clear success message after 3 seconds
+
 			setTimeout(() => setSuccessMessage(null), 3000);
 		} catch (err) {
 			setError(t("countries.deleteError"));
@@ -124,18 +157,6 @@ const CountriesPage = () => {
 		setCountryToDelete("");
 	};
 
-	const formatNumber = (num: number) => {
-		return num.toLocaleString();
-	};
-
-	const getDeathRate = (deaths: number, cases: number) => {
-		return cases > 0 ? ((deaths / cases) * 100).toFixed(2) + '%' : '0%';
-	};
-
-	const getRecoveryRate = (recovered: number, cases: number) => {
-		return cases > 0 ? ((recovered / cases) * 100).toFixed(2) + '%' : '0%';
-	};
-
 	return (
 		<Container fluid className="py-4">
 			<Row>
@@ -147,11 +168,14 @@ const CountriesPage = () => {
 								? `${t("countries.total_countries")} : ${filteredCountries.length}`
 								: `${t("countries.total_countries_plural")} : ${filteredCountries.length}`}
 						</Badge>
-
 					</div>
 
 					{successMessage && (
-						<Alert variant="success" dismissible onClose={() => setSuccessMessage(null)}>
+						<Alert
+							variant="success"
+							dismissible
+							onClose={() => setSuccessMessage(null)}
+						>
 							{successMessage}
 						</Alert>
 					)}
@@ -166,9 +190,7 @@ const CountriesPage = () => {
 						<Card.Body>
 							<Form>
 								<InputGroup>
-									<InputGroup.Text>
-										🔍
-									</InputGroup.Text>
+									<InputGroup.Text>🔍</InputGroup.Text>
 									<Form.Control
 										placeholder={t("countries.search")}
 										value={searchTerm}
@@ -179,7 +201,7 @@ const CountriesPage = () => {
 											variant="outline-secondary"
 											onClick={() => setSearchTerm("")}
 										>
-											✕
+											X
 										</Button>
 									)}
 								</InputGroup>
@@ -194,9 +216,21 @@ const CountriesPage = () => {
 						</div>
 					) : filteredCountries.length === 0 ? (
 						<Alert variant="info">{t("countries.noResults")}</Alert>
+					) : isMobile ? (
+						<div>
+							{filteredCountries.map((country) => (
+								<CountryCard
+									key={country.country}
+									country={country}
+									handleDeleteClick={handleDeleteClick}
+									deleting={deleting === country.country}
+								/>
+							))}
+						</div>
 					) : (
-						<div className="table-responsive">
-							<Table striped hover className="table-hover">
+						// Desktop
+						<div className="table-responsive rounded-3">
+							<Table striped hover className="table-hover responsive-table">
 								<thead className="table-dark">
 									<tr>
 										<th>{t("country.name")}</th>
@@ -218,44 +252,46 @@ const CountriesPage = () => {
 												<strong>{country.country}</strong>
 											</td>
 											<td>
-											<Badge bg="secondary" className={`text-white ${continentClassMap[country.continent] || ""}`}>
-  												{country.continent}
-											</Badge>
-
+												<Badge
+													bg="secondary"
+													className={`text-white ${
+														continentClassMap[country.continent] || ""
+													}`}
+												>
+													{country.continent}
+												</Badge>
 											</td>
 											<td>
-												<small className="text-muted">{country.who_region}</small>
-											</td>
-											<td className="text-end">{formatNumber(country.population)}</td>
-											<td className="text-end">
-												<span className="fw-bold text-primary">
-													{formatNumber(country.total_cases)}
-												</span>
-											</td>
-											<td className="text-end">
-												<span className="fw-bold text-danger">
-													{formatNumber(country.total_deaths)}
-												</span>
-												<br />
 												<small className="text-muted">
-													{getDeathRate(country.total_deaths, country.total_cases)}
+													{country.who_region}
 												</small>
 											</td>
 											<td className="text-end">
-												<span className="fw-bold text-success">
-													{formatNumber(country.total_recovered)}
-												</span>
+												{country.population.toLocaleString()}
+											</td>
+											<td className="text-end text-primary fw-bold">
+												{country.total_cases.toLocaleString()}
+											</td>
+											<td className="text-end text-danger fw-bold">
+												{country.total_deaths.toLocaleString()}
 												<br />
 												<small className="text-muted">
-													{getRecoveryRate(country.total_recovered, country.total_cases)}
+													({country.death_rate?.toFixed(2)}%)
 												</small>
 											</td>
-											<td className="text-end">
-												<span className="fw-bold text-warning">
-													{formatNumber(country.serious_critical)}
-												</span>
+											<td className="text-end text-success fw-bold">
+												{country.total_recovered.toLocaleString()}
+												<br />
+												<small className="text-muted">
+													({country.recovery_rate?.toFixed(2)}%)
+												</small>
 											</td>
-											<td className="text-end">{formatNumber(country.total_tests)}</td>
+											<td className="text-end text-warning fw-bold">
+												{country.serious_critical.toLocaleString()}
+											</td>
+											<td className="text-end">
+												{country.total_tests.toLocaleString()}
+											</td>
 											<td className="text-center">
 												<Button
 													variant="outline-danger"
@@ -265,9 +301,9 @@ const CountriesPage = () => {
 													className="d-flex align-items-center justify-content-center"
 												>
 													{deleting === country.country ? (
-														<Spinner animation="border\" size="sm" />
+														<Spinner animation="border" size="sm" />
 													) : (
-														'🗑️'
+														"🗑️"
 													)}
 												</Button>
 											</td>
@@ -283,7 +319,9 @@ const CountriesPage = () => {
 			<ConfirmModal
 				show={showConfirmModal}
 				title={t("countries.confirmDelete")}
-				message={t("countries.confirmDeleteMessage", { country: countryToDelete })}
+				message={t("countries.confirmDeleteMessage", {
+					country: countryToDelete,
+				})}
 				confirmText={t("countries.delete")}
 				cancelText={t("countries.cancel")}
 				onConfirm={handleDeleteConfirm}
