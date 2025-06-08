@@ -1,10 +1,9 @@
 # On se base sur l'image Node.js 20 alpine pour une image légère et rapide.
 # Ce Dockerfile est utilisé pour le développement de l'app front-end avec Vite.
 # Cette image est faite pour le développement, pas pour la production.
-FROM node:20-alpine
+FROM node:20
 
-RUN apk add --no-cache git
-
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # On définit le répertoire de travail dans le conteneur.
 WORKDIR /app
