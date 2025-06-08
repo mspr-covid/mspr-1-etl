@@ -11,6 +11,9 @@ WORKDIR /app
 # On copie les fichiers de configuration npm dans le conteneur.
 COPY package*.json ./
 
+RUN rm -rf node_modules package-lock.json && npm install
+
+
 # On installe les dépendances de l'app
 RUN npm install
 
