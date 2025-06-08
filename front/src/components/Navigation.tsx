@@ -13,9 +13,17 @@ const Navigation = () => {
 	return (
 		<Navbar bg="light" expand="lg" className="mb-3">
 			<Container>
-				<Navbar.Brand as={Link} to="/">
-					{t("app.title")}
-				</Navbar.Brand>
+			<Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
+ 			 	<img
+   					src="/favicon.svg"       
+    				alt="Logo"
+    				width="32"
+    				height="32"
+    				className="me-2"      
+  				/>
+  				{t("app.title")}
+			</Navbar.Brand>
+
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
