@@ -33,7 +33,14 @@
 		"search": "Länder suchen",
 		"noResults": "Keine Länder gefunden",
 		"loading": "Länder werden geladen...",
-		"error": "Fehler beim Laden der Länder"
+		"error": "Fehler beim Laden der Länder",
+		"total_countries": "Gesamtzahl der Länder",
+		"total_countries_plural": "Gesamtzahl der Länder",
+		"delete": "Land löschen",
+		"cancel": "Löschen abbrechen",
+		"confirmDeleteMessage": "Sind Sie sicher, dass Sie \"{{country}}\" löschen möchten ?",
+		"confirmDelete": "Sind Sie sicher, dass Sie dieses Land löschen möchten ?"
+
 	},
 	"country": {
 		"name": "Land",
@@ -46,7 +53,8 @@
 		"continent": "Kontinent",
 		"date": "Letzte Aktualisierung",
 		"who_region": "WHO-Region",
-		"toal_tests": "Gesamt-Tests"
+		"toal_tests": "Gesamt-Tests",
+		"actions": "Aktionen"
 	},
 	"manage": {
 		"title": "Länderdaten verwalten",

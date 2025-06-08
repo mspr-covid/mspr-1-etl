@@ -62,3 +62,42 @@ body {
 .navbar {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* tags continent */
+
+.continent-africa {
+  background-color: #fff4e6 !important;
+  color: black !important;
+}
+
+.continent-europe {
+  background-color: #e6f0ff !important; 
+  color: black !important;
+
+}
+
+.continent-asia {
+  background-color: #f0ffe6 !important; 
+  color: black !important;
+
+}
+
+.continent-north-america {
+  background-color: #fffbe6 !important;
+  color: black !important;
+ 
+}
+
+.continent-south-america {
+  background-color: #ffe6f084 !important;
+  color: black !important;
+ 
+}
+
+.continent-oceania {
+  background-color: #e6fff7 !important; 
+  color: black !important;
+
+}
+
+
