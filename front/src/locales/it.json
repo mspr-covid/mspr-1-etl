@@ -33,7 +33,13 @@
 		"search": "Cerca paesi",
 		"noResults": "Nessun paese trovato",
 		"loading": "Caricamento paesi...",
-		"error": "Errore durante il caricamento dei paesi"
+		"error": "Errore durante il caricamento dei paesi",
+		"total_countries": "Totale Paese",
+		"total_countries_plural": "Totale Paesi",
+		"delete": "Elimina Paese",
+		"cancel": "Annulla eliminazione",
+		"confirmDeleteMessage": "Sei sicuro di voler eliminare \"{{country}}\" ?",
+		"confirmDelete": "Sei sicuro di voler eliminare questo paese ?"
 	},
 	"country": {
 		"name": "Paese",
@@ -46,7 +52,8 @@
 		"continent": "Continente",
 		"date": "Ultimo Aggiornamento",
 		"who_region": "Regione OMS",
-		"total_tests": "Test totali"
+		"total_tests": "Test totali",
+		"actions": "Azioni"
 	},
 	"manage": {
 		"title": "Gestisci dati dei paesi",
