@@ -40,6 +40,13 @@ const Navigation = () => {
 								</Nav.Link>
 								<Nav.Link
 									as={Link}
+									to="/datavisualization"
+									active={location.pathname === "/datavisualization"}
+								>
+									{t("nav.data_visualization")}
+								</Nav.Link>
+								<Nav.Link
+									as={Link}
 									to="/predict"
 									active={location.pathname === "/predict"}
 								>
