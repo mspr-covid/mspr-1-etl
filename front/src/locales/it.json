@@ -10,7 +10,8 @@
 		"manage": "Gestisci Dati",
 		"predict": "Previsione",
 		"login": "Accesso",
-		"logout": "Uscita"
+		"logout": "Uscita",
+		"data_visualization": "Visualizzazione Dati"
 	},
 	"languages": {
 		"en": "Inglese",
@@ -76,12 +77,20 @@
 		"noResult": "Nessuna previsione disponibile",
 		"loading": "Calcolo della previsione..."
 	},
+	"data_visualization": {
+		"card_total_countries": "Totale Paesi",
+		"card_global_cases": "Casi Globali Totali",
+		"card_global_recovered": "Guarigioni Globali Totali",
+		"top_total_cases": "Top 15 Paesi con più casi",
+		"select_countries": "Seleziona Paesi"
+	},
 	"buttons": {
 		"submit": "Invia",
 		"cancel": "Annulla",
 		"edit": "Modifica",
 		"delete": "Elimina",
-		"back": "Indietro"
+		"back": "Indietro",
+		"select_countries": "Seleziona Paesi"
 	},
 	"covid": {
 		"dashboard": "Dashboard COVID"

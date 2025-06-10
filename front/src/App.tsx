@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import CountriesPage from "./pages/CountriesPage";
 import CountryFormPage from "./pages/CountryFormPage";
 import PredictionPage from "./pages/PredictionPage";
+import DataVisualization from "./pages/DataVisualization";
 import LanguageSelector from "./components/LanguageSelector";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
@@ -50,6 +51,15 @@ function AppContent() {
 							</ProtectedRoute>
 						}
 					/>
+					<Route
+  						path="/datavisualization"
+  						element={
+    						<ProtectedRoute>
+      						<DataVisualization />
+   						 </ProtectedRoute>
+  						}
+					/>
+
 					<Route
 						path="/predict"
 						element={

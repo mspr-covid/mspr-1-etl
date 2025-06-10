@@ -10,7 +10,8 @@
 		"manage": "Gérer les données",
 		"predict": "Prédiction",
 		"login": "Connexion",
-		"logout": "Déconnexion"
+		"logout": "Déconnexion",
+		"data_visualization": "Visualisation des données"
 	},
 	"languages": {
 		"en": "Anglais",
@@ -76,12 +77,20 @@
 		"noResult": "Aucune prédiction disponible",
 		"loading": "Calcul de la prédiction..."
 	},
+	"data_visualization": {
+		"card_total_countries": "Total des pays",
+		"card_global_cases": "Total des cas",
+		"card_global_recovered": "Total des guéris",
+		"top_total_cases": "Top 15 des pays comptant le plus de cas",
+		"select_countries_hint": "Sélectionnez des pays pour visualiser les données"
+	},
 	"buttons": {
 		"submit": "Soumettre",
 		"cancel": "Annuler",
 		"edit": "Modifier",
 		"delete": "Supprimer",
-		"back": "Retour"
+		"back": "Retour",
+		"select_countries": "Sélectionner des pays"
 	},
 	"covid": {
 		"dashboard": "Tableau de Bord COVID"

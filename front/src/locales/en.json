@@ -10,7 +10,8 @@
 		"manage": "Manage Data",
 		"predict": "Prediction",
 		"login": "Login",
-		"logout": "Logout"
+		"logout": "Logout",
+		"data_visualization": "Data Visualization"
 	},
 	"languages": {
 		"en": "English",
@@ -74,12 +75,20 @@
 		"noResult": "No prediction available",
 		"loading": "Calculating prediction..."
 	},
+	"data_visualization": {
+		"card_total_countries": "Total Countries",
+		"card_global_cases": "Global Cases",
+		"card_global_recovered": "Global Recovered",
+		"top_total_cases": "Top 15 countries with the highest number of cases",
+		"select_countries_hint": "Select countries to visualize data"
+	},
 	"buttons": {
 		"submit": "Submit",
 		"cancel": "Cancel",
 		"edit": "Edit",
 		"delete": "Delete",
-		"back": "Back"
+		"back": "Back",
+		"select_countries": "Select Countries"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"

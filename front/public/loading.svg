@@ -1,0 +1,9 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#2d89ef" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+  <polyline points="0,30 30,30 40,10 50,50 60,30 80,30 90,20 100,40 110,30 140,30 160,10 170,50 180,30 200,30">
+    <animate attributeName="points" dur="2s" repeatCount="indefinite" values="
+      0,30 30,30 40,10 50,50 60,30 80,30 90,20 100,40 110,30 140,30 160,10 170,50 180,30 200,30;
+      0,30 30,30 40,15 50,45 60,30 80,30 90,25 100,35 110,30 140,30 160,15 170,45 180,30 200,30;
+      0,30 30,30 40,10 50,50 60,30 80,30 90,20 100,40 110,30 140,30 160,10 170,50 180,30 200,30
+    "/>
+  </polyline>
+</svg>
