@@ -104,11 +104,13 @@ const CountriesPage = () => {
 	}, [t]);
 
 	useEffect(() => {
-		let filtered = searchTerm.trim()
+		const filtered = searchTerm.trim()
 			? countries.filter(
 					(country) =>
 						country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-						country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						country.continent
+							.toLowerCase()
+							.includes(searchTerm.toLowerCase()) ||
 						country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
 			  )
 			: [...countries];
@@ -190,8 +192,12 @@ const CountriesPage = () => {
 						<h2 className="mb-0">{t("countries.title")}</h2>
 						<Badge bg="primary" className="fs-6">
 							{filteredCountries.length === 1
-								? `${t("countries.total_countries")} : ${filteredCountries.length}`
-								: `${t("countries.total_countries_plural")} : ${filteredCountries.length}`}
+								? `${t("countries.total_countries")} : ${
+										filteredCountries.length
+								  }`
+								: `${t("countries.total_countries_plural")} : ${
+										filteredCountries.length
+								  }`}
 						</Badge>
 					</div>
 
@@ -256,84 +262,133 @@ const CountriesPage = () => {
 						<div className="table-responsive rounded-3">
 							<Table striped hover className="table-hover responsive-table">
 								<thead className="table-dark">
-								<tr>
-									<th onClick={() => toggleSort("country")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.name")} {sortIcon("country")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("continent")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.continent")} {sortIcon("continent")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("who_region")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.who_region")} {sortIcon("who_region")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("population")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.population")} {sortIcon("population")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("total_cases")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.cases")} {sortIcon("total_cases")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("total_deaths")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.deaths")} {sortIcon("total_deaths")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("total_recovered")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.recovered")} {sortIcon("total_recovered")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("serious_critical")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.critical")} {sortIcon("serious_critical")}
-										</div>
-									</th>
-									<th onClick={() => toggleSort("total_tests")}>
-										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
-											{t("country.total_tests")} {sortIcon("total_tests")}
-										</div>
-									</th>
-									<th className="text-center">
-										<div className="d-flex flex-column justify-content-center align-items-center">
-											{t("country.actions")}
-										</div>
-									</th>
-								</tr>
+									<tr>
+										<th onClick={() => toggleSort("country")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.name")} {sortIcon("country")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("continent")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.continent")} {sortIcon("continent")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("who_region")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.who_region")} {sortIcon("who_region")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("population")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.population")} {sortIcon("population")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("total_cases")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.cases")} {sortIcon("total_cases")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("total_deaths")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.deaths")} {sortIcon("total_deaths")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("total_recovered")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.recovered")} {sortIcon("total_recovered")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("serious_critical")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.critical")} {sortIcon("serious_critical")}
+											</div>
+										</th>
+										<th onClick={() => toggleSort("total_tests")}>
+											<div
+												className="d-flex flex-column justify-content-center align-items-center"
+												style={{ cursor: "pointer" }}
+											>
+												{t("country.total_tests")} {sortIcon("total_tests")}
+											</div>
+										</th>
+										<th className="text-center">
+											<div className="d-flex flex-column justify-content-center align-items-center">
+												{t("country.actions")}
+											</div>
+										</th>
+									</tr>
 								</thead>
 								<tbody>
 									{filteredCountries.map((country) => (
 										<tr key={country.country}>
-											<td><strong>{country.country}</strong></td>
+											<td>
+												<strong>{country.country}</strong>
+											</td>
 											<td>
 												<Badge
 													bg="secondary"
-													className={`text-white ${continentClassMap[country.continent] || ""}`}
+													className={`text-white ${
+														continentClassMap[country.continent] || ""
+													}`}
 												>
 													{country.continent}
 												</Badge>
 											</td>
-											<td><small className="text-muted">{country.who_region}</small></td>
-											<td className="text-end">{country.population.toLocaleString()}</td>
-											<td className="text-end text-primary fw-bold">{country.total_cases.toLocaleString()}</td>
+											<td>
+												<small className="text-muted">
+													{country.who_region}
+												</small>
+											</td>
+											<td className="text-end">
+												{country.population.toLocaleString()}
+											</td>
+											<td className="text-end text-primary fw-bold">
+												{country.total_cases.toLocaleString()}
+											</td>
 											<td className="text-end text-danger fw-bold">
-												{country.total_deaths.toLocaleString()}<br />
-												<small className="text-muted">({country.death_rate?.toFixed(2)}%)</small>
+												{country.total_deaths.toLocaleString()}
+												<br />
+												<small className="text-muted">
+													({country.death_rate?.toFixed(2)}%)
+												</small>
 											</td>
 											<td className="text-end text-success fw-bold">
-												{country.total_recovered.toLocaleString()}<br />
-												<small className="text-muted">({country.recovery_rate?.toFixed(2)}%)</small>
+												{country.total_recovered.toLocaleString()}
+												<br />
+												<small className="text-muted">
+													({country.recovery_rate?.toFixed(2)}%)
+												</small>
 											</td>
-											<td className="text-end text-warning fw-bold">{country.serious_critical.toLocaleString()}</td>
-											<td className="text-end">{country.total_tests.toLocaleString()}</td>
+											<td className="text-end text-warning fw-bold">
+												{country.serious_critical.toLocaleString()}
+											</td>
+											<td className="text-end">
+												{country.total_tests.toLocaleString()}
+											</td>
 											<td className="text-center">
 												<Button
 													variant="outline-danger"
