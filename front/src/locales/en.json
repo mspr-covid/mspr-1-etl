@@ -40,7 +40,8 @@
 		"delete": "Delete Country",
 		"cancel": "Cancel Delete",
 		"confirmDeleteMessage": "Are you sure you want to delete \"{{country}}\" ?",
-		"confirmDelete": "Are you sure you want to delete this country ?"
+		"confirmDelete": "Are you sure you want to delete this country ?",
+		"deleteSuccess": "\"{{country}}\" deleted successfully"
 	},
 	"country": {
 		"name": "Country",
@@ -80,11 +81,20 @@
 		"card_global_cases": "Global Cases",
 		"card_global_recovered": "Global Recovered",
 		"top_total_cases": "Top 15 countries with the highest number of cases",
+		"lowest_total_cases": "Top 15 countries with the lowest number of cases",
 		"select_countries_hint": "Select countries to visualize data",
 		"label_scatter_test": "Number of tests",
 		"label_scatter_cases": "Total cases",
 		"title_scatter": "Scatter Plot of Cases vs Tests",
-		"description_scatter": "Correlation: Number of tests vs detected cases"
+		"description_scatter": "Correlation: Number of tests vs detected cases",
+		"title_pie": "Pie Chart of Cases by Continent",
+		"pie_no_data": "No data available for this chart"
+	},
+	"country_form": {
+		"informations": "General Informations about the Country",
+		"demography": "Demography",
+		"health_statistics": "Health Statistics",
+		"tests": "Tests Conducted"
 	},
 	"buttons": {
 		"submit": "Submit",
@@ -92,7 +102,11 @@
 		"edit": "Edit",
 		"delete": "Delete",
 		"back": "Back",
-		"select_countries": "Select Countries"
+		"add_country": "Add Country",
+		"select_countries": "Select Countries",
+		"clear_selection": "Clear Selection",
+		"show_lowest_cases": "Show Countries with Lowest Cases",
+		"show_highest_cases": "Show Countries with Highest Cases"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"

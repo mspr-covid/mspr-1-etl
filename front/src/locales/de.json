@@ -40,7 +40,8 @@
 		"delete": "Land löschen",
 		"cancel": "Löschen abbrechen",
 		"confirmDeleteMessage": "Sind Sie sicher, dass Sie \"{{country}}\" löschen möchten ?",
-		"confirmDelete": "Sind Sie sicher, dass Sie dieses Land löschen möchten ?"
+		"confirmDelete": "Sind Sie sicher, dass Sie dieses Land löschen möchten ?",
+		"deleteSuccess": " \"{{country}}\" wurde erfolgreich gelöscht"
 	},
 	"country": {
 		"name": "Land",
@@ -82,11 +83,20 @@
 		"card_global_cases": "Globale Fälle",
 		"card_global_recovered": "Global Genesene",
 		"top_total_cases": "Top 15 Länder mit den meisten Fällen",
+		"lowest_total_cases": "Top 15 Länder mit den wenigsten Fällen",
 		"select_countries_hint": "Wählen Sie Länder aus, um die Daten anzuzeigen",
 		"label_scatter_test": "Anzahl der Tests",
 		"label_scatter_cases": "Anzahl der Fälle",
 		"title_scatter": "Streudiagramm: Fälle vs. Tests",
-		"description_scatter": "Korrelation: Anzahl der Tests vs. erkannte Fälle"
+		"description_scatter": "Korrelation: Anzahl der Tests vs. erkannte Fälle",
+		"title_pie": "Kreisdiagramm der Fälle nach Kontinent",
+		"pie_no_data": "Keine Daten für dieses Diagramm verfügbar"
+	},
+	"country_form": {
+		"informations": "Allgemeine Informationen über das Land",
+		"demography": "Demografie",
+		"health_statistics": "Gesundheitsstatistiken",
+		"tests": "Tests durchgeführt"
 	},
 	"buttons": {
 		"submit": "Absenden",
@@ -94,7 +104,11 @@
 		"edit": "Bearbeiten",
 		"delete": "Löschen",
 		"back": "Zurück",
-		"select_countries": "Länder auswählen"
+		"add_country": "Land hinzufügen",
+		"select_countries": "Länder auswählen",
+		"clear_selection": "Auswahl löschen",
+		"show_lowest_cases": "Länder mit den wenigsten Fällen anzeigen",
+		"show_highest_cases": "Länder mit den meisten Fällen anzeigen"
 	},
 	"covid": {
 		"dashboard": "COVID-Dashboard"

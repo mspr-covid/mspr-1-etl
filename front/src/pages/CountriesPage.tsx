@@ -17,6 +17,7 @@ import { getCountries, deleteCountry } from "../services/api";
 import ConfirmModal from "../components/ConfirmModal";
 import { continentClassMap } from "./styles/continentTag";
 import CountryCard from "../components/CountryCard";
+import AddCountryModal from "../components/AddCountryModal";
 
 interface Country {
 	country: string;
@@ -48,6 +49,7 @@ const CountriesPage = () => {
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
 	const [sortKey, setSortKey] = useState<SortKey>("country");
 	const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+	const [showAddModal, setShowAddModal] = useState(false);
 	const { t } = useTranslation();
 
 	useEffect(() => {
@@ -159,7 +161,9 @@ const CountriesPage = () => {
 			);
 			setCountries(updatedCountries);
 
-			setSuccessMessage(t("countries.deleteSuccess"));
+			setSuccessMessage(
+				t("countries.deleteSuccess", { country: countryToDelete })
+			);
 			setTimeout(() => setSuccessMessage(null), 3000);
 		} catch (err) {
 			setError(t("countries.deleteError"));
@@ -235,6 +239,12 @@ const CountriesPage = () => {
 											X
 										</Button>
 									)}
+									<Button
+										variant="success"
+										onClick={() => setShowAddModal(true)}
+									>
+										{t("buttons.add_country")}
+									</Button>
 								</InputGroup>
 							</Form>
 						</Card.Body>
@@ -254,7 +264,7 @@ const CountriesPage = () => {
 									key={country.country}
 									country={country}
 									handleDeleteClick={handleDeleteClick}
-									deleting={deleting === country.country}
+									deleting={deleting}
 								/>
 							))}
 						</div>
@@ -424,6 +434,10 @@ const CountriesPage = () => {
 				onConfirm={handleDeleteConfirm}
 				onCancel={handleDeleteCancel}
 				variant="danger"
+			/>
+			<AddCountryModal
+				show={showAddModal}
+				onHide={() => setShowAddModal(false)}
 			/>
 		</Container>
 	);

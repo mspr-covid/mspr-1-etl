@@ -10,7 +10,11 @@ const Navigation = () => {
 	const location = useLocation();
 
 	return (
-		<Navbar bg="light" expand="lg" className="mb-3 sticky-top">
+		<Navbar
+			bg="light"
+			expand="lg"
+			className="mb-3 sticky-top border rounded-bottom-3 border-black"
+		>
 			<Container>
 				<Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
 					<img

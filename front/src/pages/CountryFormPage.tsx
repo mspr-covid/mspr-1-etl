@@ -2,18 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Card, Alert, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { createCountry } from "../services/api";
-
-interface CountryInput {
-	country: string;
-	continent: string;
-	who_region: string;
-	population: number;
-	total_cases: number;
-	total_deaths: number;
-	total_recovered: number;
-	serious_critical: number;
-	total_tests: number;
-}
+import CountryInput from "../types/CountryInput";
 
 const AddCountryForm = () => {
 	const { t } = useTranslation();
@@ -126,9 +115,7 @@ const AddCountryForm = () => {
 					</Form.Group>
 
 					<Form.Group className="mb-3">
-						<Form.Label>
-							{t("country.who_region")}
-						</Form.Label>
+						<Form.Label>{t("country.who_region")}</Form.Label>
 						<Form.Control
 							type="text"
 							name="who_region"

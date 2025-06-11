@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-
 import Navigation from "./components/Navigation";
 import LoginPage from "./pages/LoginPage";
 import CountriesPage from "./pages/CountriesPage";
 import CountryFormPage from "./pages/CountryFormPage";
 import PredictionPage from "./pages/PredictionPage";
 import DataVisualization from "./pages/DataVisualization";
-import LanguageSelector from "./components/LanguageSelector";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -52,12 +49,12 @@ function AppContent() {
 						}
 					/>
 					<Route
-  						path="/datavisualization"
-  						element={
-    						<ProtectedRoute>
-      						<DataVisualization />
-   						 </ProtectedRoute>
-  						}
+						path="/datavisualization"
+						element={
+							<ProtectedRoute>
+								<DataVisualization />
+							</ProtectedRoute>
+						}
 					/>
 
 					<Route
