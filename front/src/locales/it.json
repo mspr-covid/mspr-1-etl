@@ -82,7 +82,11 @@
 		"card_global_cases": "Casi Globali Totali",
 		"card_global_recovered": "Guarigioni Globali Totali",
 		"top_total_cases": "Top 15 Paesi con più casi",
-		"select_countries": "Seleziona Paesi"
+		"select_countries": "Seleziona Paesi",
+		"label_scatter_test": "Numero di test",
+		"label_scatter_cases": "Numero di casi",
+		"title_scatter": "Grafico a dispersione: test vs casi",
+		"description_scatter": "Correlazione: Numero di test vs casi rilevati"
 	},
 	"buttons": {
 		"submit": "Invia",

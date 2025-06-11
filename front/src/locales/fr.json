@@ -82,7 +82,11 @@
 		"card_global_cases": "Total des cas",
 		"card_global_recovered": "Total des guéris",
 		"top_total_cases": "Top 15 des pays comptant le plus de cas",
-		"select_countries_hint": "Sélectionnez des pays pour visualiser les données"
+		"select_countries_hint": "Sélectionnez des pays pour visualiser les données",
+		"label_scatter_test": "Nombre de tests",
+		"label_scatter_cases": "Nombre de cas",
+		"title_scatter": "Graphique de dispersion : tests vs cas",
+		"description_scatter":"Corrélation: Nombre de tests vs cas détectés"
 	},
 	"buttons": {
 		"submit": "Soumettre",

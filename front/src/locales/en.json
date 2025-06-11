@@ -80,7 +80,11 @@
 		"card_global_cases": "Global Cases",
 		"card_global_recovered": "Global Recovered",
 		"top_total_cases": "Top 15 countries with the highest number of cases",
-		"select_countries_hint": "Select countries to visualize data"
+		"select_countries_hint": "Select countries to visualize data",
+		"label_scatter_test": "Number of tests",
+		"label_scatter_cases": "Total cases",
+		"title_scatter": "Scatter Plot of Cases vs Tests",
+		"description_scatter": "Correlation: Number of tests vs detected cases"
 	},
 	"buttons": {
 		"submit": "Submit",

@@ -28,10 +28,12 @@ interface Country {
 	total_recovered: number;
 	serious_critical: number;
 	total_tests: number;
-	// On ajoute des champs calculés (attention c'est non fournis par l'API)
 	death_rate?: number;
 	recovery_rate?: number;
 }
+
+type SortKey = keyof Country | "death_rate" | "recovery_rate";
+type SortOrder = "asc" | "desc";
 
 const CountriesPage = () => {
 	const [countries, setCountries] = useState<Country[]>([]);
@@ -44,6 +46,8 @@ const CountriesPage = () => {
 	const [showConfirmModal, setShowConfirmModal] = useState(false);
 	const [countryToDelete, setCountryToDelete] = useState<string>("");
 	const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 768);
+	const [sortKey, setSortKey] = useState<SortKey>("country");
+	const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
 	const { t } = useTranslation();
 
 	useEffect(() => {
@@ -100,18 +104,39 @@ const CountriesPage = () => {
 	}, [t]);
 
 	useEffect(() => {
-		if (searchTerm.trim() === "") {
-			setFilteredCountries(countries);
+		let filtered = searchTerm.trim()
+			? countries.filter(
+					(country) =>
+						country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
+						country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
+			  )
+			: [...countries];
+
+		filtered.sort((a, b) => {
+			const aValue = a[sortKey] ?? 0;
+			const bValue = b[sortKey] ?? 0;
+			if (typeof aValue === "string" && typeof bValue === "string") {
+				return sortOrder === "asc"
+					? aValue.localeCompare(bValue)
+					: bValue.localeCompare(aValue);
+			}
+			return sortOrder === "asc"
+				? Number(aValue) - Number(bValue)
+				: Number(bValue) - Number(aValue);
+		});
+
+		setFilteredCountries(filtered);
+	}, [searchTerm, countries, sortKey, sortOrder]);
+
+	const toggleSort = (key: SortKey) => {
+		if (sortKey === key) {
+			setSortOrder(sortOrder === "asc" ? "desc" : "asc");
 		} else {
-			const filtered = countries.filter(
-				(country) =>
-					country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
-					country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
-			);
-			setFilteredCountries(filtered);
+			setSortKey(key);
+			setSortOrder("asc");
 		}
-	}, [searchTerm, countries]);
+	};
 
 	const handleDeleteClick = (countryName: string) => {
 		setCountryToDelete(countryName);
@@ -131,17 +156,8 @@ const CountriesPage = () => {
 				(c) => c.country !== countryToDelete
 			);
 			setCountries(updatedCountries);
-			setFilteredCountries(
-				updatedCountries.filter(
-					(country) =>
-						country.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-						country.continent.toLowerCase().includes(searchTerm.toLowerCase()) ||
-						country.who_region.toLowerCase().includes(searchTerm.toLowerCase())
-				)
-			);
 
 			setSuccessMessage(t("countries.deleteSuccess"));
-
 			setTimeout(() => setSuccessMessage(null), 3000);
 		} catch (err) {
 			setError(t("countries.deleteError"));
@@ -155,6 +171,15 @@ const CountriesPage = () => {
 	const handleDeleteCancel = () => {
 		setShowConfirmModal(false);
 		setCountryToDelete("");
+	};
+
+	const sortIcon = (key: SortKey) => {
+		if (sortKey !== key) return <i className="bi bi-arrow-down-up ms-1" />;
+		return sortOrder === "asc" ? (
+			<i className="bi bi-arrow-up" />
+		) : (
+			<i className="bi bi-arrow-down" />
+		);
 	};
 
 	return (
@@ -228,70 +253,87 @@ const CountriesPage = () => {
 							))}
 						</div>
 					) : (
-						// Desktop
 						<div className="table-responsive rounded-3">
 							<Table striped hover className="table-hover responsive-table">
 								<thead className="table-dark">
-									<tr>
-										<th>{t("country.name")}</th>
-										<th>{t("country.continent")}</th>
-										<th>{t("country.who_region")}</th>
-										<th className="text-end">{t("country.population")}</th>
-										<th className="text-end">{t("country.cases")}</th>
-										<th className="text-end">{t("country.deaths")}</th>
-										<th className="text-end">{t("country.recovered")}</th>
-										<th className="text-end">{t("country.critical")}</th>
-										<th className="text-end">{t("country.total_tests")}</th>
-										<th className="text-center">{t("country.actions")}</th>
-									</tr>
+								<tr>
+									<th onClick={() => toggleSort("country")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.name")} {sortIcon("country")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("continent")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.continent")} {sortIcon("continent")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("who_region")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.who_region")} {sortIcon("who_region")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("population")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.population")} {sortIcon("population")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("total_cases")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.cases")} {sortIcon("total_cases")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("total_deaths")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.deaths")} {sortIcon("total_deaths")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("total_recovered")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.recovered")} {sortIcon("total_recovered")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("serious_critical")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.critical")} {sortIcon("serious_critical")}
+										</div>
+									</th>
+									<th onClick={() => toggleSort("total_tests")}>
+										<div className="d-flex flex-column justify-content-center align-items-center" style={{ cursor: "pointer" }}>
+											{t("country.total_tests")} {sortIcon("total_tests")}
+										</div>
+									</th>
+									<th className="text-center">
+										<div className="d-flex flex-column justify-content-center align-items-center">
+											{t("country.actions")}
+										</div>
+									</th>
+								</tr>
 								</thead>
 								<tbody>
 									{filteredCountries.map((country) => (
 										<tr key={country.country}>
-											<td>
-												<strong>{country.country}</strong>
-											</td>
+											<td><strong>{country.country}</strong></td>
 											<td>
 												<Badge
 													bg="secondary"
-													className={`text-white ${
-														continentClassMap[country.continent] || ""
-													}`}
+													className={`text-white ${continentClassMap[country.continent] || ""}`}
 												>
 													{country.continent}
 												</Badge>
 											</td>
-											<td>
-												<small className="text-muted">
-													{country.who_region}
-												</small>
-											</td>
-											<td className="text-end">
-												{country.population.toLocaleString()}
-											</td>
-											<td className="text-end text-primary fw-bold">
-												{country.total_cases.toLocaleString()}
-											</td>
+											<td><small className="text-muted">{country.who_region}</small></td>
+											<td className="text-end">{country.population.toLocaleString()}</td>
+											<td className="text-end text-primary fw-bold">{country.total_cases.toLocaleString()}</td>
 											<td className="text-end text-danger fw-bold">
-												{country.total_deaths.toLocaleString()}
-												<br />
-												<small className="text-muted">
-													({country.death_rate?.toFixed(2)}%)
-												</small>
+												{country.total_deaths.toLocaleString()}<br />
+												<small className="text-muted">({country.death_rate?.toFixed(2)}%)</small>
 											</td>
 											<td className="text-end text-success fw-bold">
-												{country.total_recovered.toLocaleString()}
-												<br />
-												<small className="text-muted">
-													({country.recovery_rate?.toFixed(2)}%)
-												</small>
+												{country.total_recovered.toLocaleString()}<br />
+												<small className="text-muted">({country.recovery_rate?.toFixed(2)}%)</small>
 											</td>
-											<td className="text-end text-warning fw-bold">
-												{country.serious_critical.toLocaleString()}
-											</td>
-											<td className="text-end">
-												{country.total_tests.toLocaleString()}
-											</td>
+											<td className="text-end text-warning fw-bold">{country.serious_critical.toLocaleString()}</td>
+											<td className="text-end">{country.total_tests.toLocaleString()}</td>
 											<td className="text-center">
 												<Button
 													variant="outline-danger"
