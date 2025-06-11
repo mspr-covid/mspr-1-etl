@@ -149,7 +149,7 @@ const DataVisualization: React.FC = () => {
 		plugins: {
 			title: {
 				display: true,
-				text: "Corrélation: Nombre de tests vs cas détectés",
+				text: t("data_visualization.description_scatter"),
 			},
 			tooltip: {
 				callbacks: {
@@ -162,11 +162,11 @@ const DataVisualization: React.FC = () => {
 		},
 		scales: {
 			x: {
-				title: { display: true, text: "Nombre de tests" },
+				title: { display: true, text: t("data_visualization.label_scatter_test") },
 				ticks: { callback: (v: any) => v.toLocaleString() },
 			},
 			y: {
-				title: { display: true, text: "Cas détectés" },
+				title: { display: true, text: t("data_visualization.label_scatter_cases") },
 				ticks: { callback: (v: any) => v.toLocaleString() },
 			},
 		},
@@ -297,7 +297,7 @@ const DataVisualization: React.FC = () => {
 			{/* → Scatter Plot */}
 			<div className="card shadow-sm">
 				<div className="card-body">
-					<h5>Tests vs Cases Scatter Plot</h5>
+					<h5>{t("data_visualization.title_scatter")}</h5>
 					{selectedCountries.length > 0 ? (
 						<div style={{ height: 300 }}>
 							<Scatter data={prepareScatterData()} options={scatterOptions} />

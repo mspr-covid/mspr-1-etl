@@ -82,7 +82,11 @@
 		"card_global_cases": "Globale Fälle",
 		"card_global_recovered": "Global Genesene",
 		"top_total_cases": "Top 15 Länder mit den meisten Fällen",
-		"select_countries_hint": "Wählen Sie Länder aus, um die Daten anzuzeigen"
+		"select_countries_hint": "Wählen Sie Länder aus, um die Daten anzuzeigen",
+		"label_scatter_test": "Anzahl der Tests",
+		"label_scatter_cases": "Anzahl der Fälle",
+		"title_scatter": "Streudiagramm: Fälle vs. Tests",
+		"description_scatter": "Korrelation: Anzahl der Tests vs. erkannte Fälle"
 	},
 	"buttons": {
 		"submit": "Absenden",
