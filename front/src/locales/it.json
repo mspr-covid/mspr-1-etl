@@ -40,7 +40,8 @@
 		"delete": "Elimina Paese",
 		"cancel": "Annulla eliminazione",
 		"confirmDeleteMessage": "Sei sicuro di voler eliminare \"{{country}}\" ?",
-		"confirmDelete": "Sei sicuro di voler eliminare questo paese ?"
+		"confirmDelete": "Sei sicuro di voler eliminare questo paese ?",
+		"deleteSuccess": "\"{{country}}\" eliminato con successo"
 	},
 	"country": {
 		"name": "Paese",
@@ -82,11 +83,20 @@
 		"card_global_cases": "Casi Globali Totali",
 		"card_global_recovered": "Guarigioni Globali Totali",
 		"top_total_cases": "Top 15 Paesi con più casi",
+		"lowest_total_cases": "Top 15 Paesi con meno casi",
 		"select_countries": "Seleziona Paesi",
 		"label_scatter_test": "Numero di test",
 		"label_scatter_cases": "Numero di casi",
 		"title_scatter": "Grafico a dispersione: test vs casi",
-		"description_scatter": "Correlazione: Numero di test vs casi rilevati"
+		"description_scatter": "Correlazione: Numero di test vs casi rilevati",
+		"title_pie": "Tasso di casi di COVID-19 per continente",
+		"pie_no_data": "Nessun dato disponibile per il grafico a torta"
+	},
+	"country_form": {
+		"informations": "Informazioni generali sul paese",
+		"demography": "Demografia",
+		"health_statistics": "Statistiche sanitarie",
+		"tests": "Test condotti"
 	},
 	"buttons": {
 		"submit": "Invia",
@@ -94,7 +104,11 @@
 		"edit": "Modifica",
 		"delete": "Elimina",
 		"back": "Indietro",
-		"select_countries": "Seleziona Paesi"
+		"add_country": "Aggiungi Paese",
+		"select_countries": "Seleziona Paesi",
+		"clear_selection": "Pulisci selezione",
+		"show_lowest_cases": "Mostra Paesi con meno casi",
+		"show_highest_cases": "Mostra Paesi con più casi"
 	},
 	"covid": {
 		"dashboard": "Dashboard COVID"

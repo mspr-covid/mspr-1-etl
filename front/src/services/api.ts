@@ -1,4 +1,5 @@
 import axios from "axios";
+import CountryInput from "../types/CountryInput";
 
 const API_URL = "https://covid-app.fly.dev";
 
@@ -46,7 +47,7 @@ export const getCountries = async () => {
 // 	return response.data;
 // };
 
-export const createCountry = async (countryData: string) => {
+export const createCountry = async (countryData: CountryInput) => {
 	const response = await api.post("/covid", countryData);
 	return response.data;
 };
