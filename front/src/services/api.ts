@@ -1,5 +1,6 @@
 import axios from "axios";
 import CountryInput from "../types/CountryInput";
+import CountryInputPredict from "../types/CountryInputPredict";
 
 const API_URL = "https://covid-app.fly.dev";
 
@@ -68,6 +69,11 @@ export const getPrediction = async (data: {
 	total_tests: number;
 }) => {
 	const response = await api.post("/covid/predict", data);
+	return response.data;
+};
+
+export const getPredictionV2 = async (data: CountryInputPredict) => {
+	const response = await api.post("/covid/predictV2", data);
 	return response.data;
 };
 
