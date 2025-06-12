@@ -17,7 +17,8 @@ from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
 from database.Database import Database
 from ws.models.covid_prediction_input import CovidPredictionInput
-from ws.services.model_service import get_model
+from ws.models.covid_prediction_input_v2 import CovidPredictionInputV2
+from ws.services.model_service import get_model, get_model_v2
 
 
 # Charger les variables d'environnement
@@ -408,3 +409,29 @@ def predict_deaths(entry: CovidPredictionInput,
         return {"predicted_total_deaths": predicted_deaths}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erreur de prédiction : {str(e)}")
+
+
+@app.post("/covid/predictV2", tags=["prediction"])
+def predict_deaths_v2(entry: CovidPredictionInputV2,
+                      current_user: str = Depends(get_current_user)):
+    try:
+        model = get_model_v2()
+        input_data = np.array([[entry.continent,
+                                entry.who_region,
+                                entry.country,
+                                entry.population,
+                                entry.total_recovered,
+                                entry.active_cases,
+                                entry.serious_critical,
+                                entry.total_tests,
+                                entry.new_total_cases]])
+        prediction = model.predict(input_data)
+        predicted_deaths = round(float(prediction[0]))
+        return {"predicted total deaths": predicted_deaths}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+
+        
+        
+      
+  
