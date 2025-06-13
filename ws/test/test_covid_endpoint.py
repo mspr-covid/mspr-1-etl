@@ -223,3 +223,37 @@ class TestCovidAPI:
         countries = [entry.get("country") for entry in entries]
 
         assert "Testland" not in countries
+        
+    @pytest.mark.covid
+    def test_predict_v2_invalid_data_causes_value_error(self):
+        """Test avec données invalides pour provoquer une ValueError"""
+
+        client.post("/api/user", json={
+            "username": "testuser_invalidinput",
+            "email": "invalidinput@test.com",
+            "password": "Test123456"
+        })
+        token = client.post("/api/login", data={
+            "username": "testuser_invalidinput",
+            "password": "Test123456"
+        }).json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # Envoi d'une string là où un number est attendu
+        response = client.post("/covid/predictV2", json={
+            "country": "Testland",
+            "continent": "Testinent",
+            "who_region": "TestRegion",
+            "population": "devrait provoquer value error",  
+            "total_recovered": 80000,
+            "active_cases": 15000,
+            "serious_critical": 500,
+            "total_tests": 150000,
+            "new_total_cases": 2000
+        }, headers=headers)
+
+        assert response.status_code == 422
+        assert response.json()["detail"][0]["msg"] == "Input should be a valid integer, unable to parse string as an integer"
+
+
+
