@@ -65,7 +65,7 @@ Ils sont lancés via le framework pytest et sont intégrés à une pipeline CI. 
 Le projet utilise **GitHub Actions** pour exécuter automatiquement les tests unitaires à chaque `push` ou `pull request`.
 Un webhook vers un salon Discord permet de notifier l’équipe en temps réel des résultats du workflow.
 
-Le fichier de configuration se trouve dans `.github/workflows/ci.yml`.
+Le fichier de configuration se trouve dans `.github/workflows/main.yml`.
 
 ### ✅ Étapes automatisées
 
