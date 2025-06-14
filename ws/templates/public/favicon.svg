@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
+  <!-- Cercle principal, symbole d’unité et de cycle ETL -->
+  <circle cx="32" cy="32" r="30" stroke="#ffffff" stroke-width="4" fill="url(#grad1)"/>
+  
+  <!-- Hexagone central stylisé pour pipeline et structure -->
+  <polygon points="32,14 47,24 47,40 32,50 17,40 17,24" fill="#2F80ED" />
+  
+  <!-- Trois cercles symbolisant data points ou nœuds -->
+  <circle cx="32" cy="22" r="4" fill="#ffffff"/>
+  <circle cx="42" cy="38" r="4" fill="#ffffff"/>
+  <circle cx="22" cy="38" r="4" fill="#ffffff"/>
+  
+  <!-- Lignes connectant les points (data flow) -->
+  <line x1="32" y1="22" x2="42" y2="38" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="22" x2="22" y2="38" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="22" y1="38" x2="42" y2="38" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  
+  <defs>
+    <linearGradient id="grad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2F80ED" />
+      <stop offset="100%" stop-color="#56CCF2" />
+    </linearGradient>
+  </defs>
+</svg>
