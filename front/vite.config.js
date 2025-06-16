@@ -24,8 +24,5 @@ export default defineConfig({
 				// Pas de réécriture, on garde le préfixe /covid côté backend
 			},
 		},
-		watch: {
-			usePolling: true
-		}
 	},
 });
