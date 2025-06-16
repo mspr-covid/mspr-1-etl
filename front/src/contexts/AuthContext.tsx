@@ -17,21 +17,6 @@ const AuthContext = createContext<AuthContextType>({
 	error: null,
 });
 
-function isTokenValid(token: string | null): boolean {
-	if (!token) return false;
-
-	try {
-		const [, payload] = token.split(".");
-		const decoded = JSON.parse(atob(payload));
-		if (!decoded.exp) return false;
-
-		const now = Math.floor(Date.now() / 1000); // secondes
-		return decoded.exp > now;
-	} catch (e) {
-		return false;
-	}
-}
-
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -44,14 +29,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-	if (token && isTokenValid(token)) {
-		localStorage.setItem("token", token);
-		setIsAuthenticated(true);
-	} else {
-		localStorage.removeItem("token");
-		setToken(null);
-		setIsAuthenticated(false);
-	}
+		if (token) {
+			localStorage.setItem("token", token);
+			setIsAuthenticated(true);
+		} else {
+			localStorage.removeItem("token");
+			setIsAuthenticated(false);
+		}
 	}, [token]);
 
 	const login = async (
