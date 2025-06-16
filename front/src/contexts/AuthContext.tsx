@@ -25,13 +25,9 @@ function isTokenValid(token: string | null): boolean {
 		const decoded = JSON.parse(atob(payload));
 		if (!decoded.exp) return false;
 
-		const now = Math.floor(Date.now() / 1000); 
+		const now = Math.floor(Date.now() / 1000); // secondes
 		return decoded.exp > now;
 	} catch (e) {
-		if (import.meta.env?.MODE === "development") {
-			console.error("Token validation error:", e);
-			
-		}
 		return false;
 	}
 }
