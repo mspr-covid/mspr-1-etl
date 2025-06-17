@@ -432,7 +432,8 @@ def predict_deaths_v2(entry: CovidPredictionInputV2,
         prediction = model.predict(input_df)
         predicted_deaths = round(float(prediction[0]))
         
-        return {"predicted total deaths": predicted_deaths}
+        return {"predicted_total_deaths": predicted_deaths}
+
     except FileNotFoundError:
         raise HTTPException(status_code=500, detail="Model file not found.")
     except ValueError as ve:

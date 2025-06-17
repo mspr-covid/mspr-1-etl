@@ -69,14 +69,29 @@
 		"error": "Operation fehlgeschlagen"
 	},
 	"predict": {
-		"title": "COVID-Vorhersage",
-		"description": "Verwenden Sie dieses Formular, um die Anzahl der COVID-19-Todesfälle basierend auf den angegebenen Daten vorherzusagen.",
-		"country": "Land",
-		"date": "Datum",
-		"submit": "Vorhersage erhalten",
+		"global_title": "Fortschrittliche COVID-19-Vorhersage",
+		"general_description": "Verwenden Sie unser fortschrittliches KI-Modell, um die Anzahl der Todesfälle basierend auf umfassenden epidemiologischen Daten vorherzusagen.",
+		"title_form": "Umfassende epidemiologische Daten",
+		"description": "Verwenden Sie dieses Formular, um die Anzahl der COVID-19-Todesfälle basierend auf den bereitgestellten Daten vorherzusagen.",
+		"title_section_1": "Geografische Informationen",
+		"placeholder_country": "Z. B.: Frankreich",
+		"select_option_1": "Kontinent auswählen",
+		"select_option_2": "Region auswählen",
+		"title_section_2": "Demografische Daten",
+		"placeholder_population": "Bevölkerung des Landes",
+		"title_section_3": "COVID-19-Daten",
+		"placeholder_total_recovered": "Anzahl der Genesenen",
+		"placeholder_serious_critical": "Kritische Fälle",
+		"placeholder_total_tests": "Durchgeführte Tests",
+		"submit": "Analyse ...",
 		"result": "Vorhersageergebnis",
 		"noResult": "Keine Vorhersage verfügbar",
-		"loading": "Vorhersage wird berechnet..."
+		"loading": "Vorhersage wird berechnet...",
+		"about_title": "Über das fortschrittliche Modell",
+		"about": "Dieses Modell nutzt umfassende geografische, demografische und epidemiologische Daten, um genauere Vorhersagen zu liefern. Es berücksichtigt die Bevölkerungszahl, die geografische Region und alle COVID-19-Indikatoren für eine detaillierte Analyse.",
+		"title_prediction_result": "Vorhersageergebnis",
+		"description_prediction_result": "prognostizierte Todesfälle",
+		"info_prediction_result": "Vorhersage basierend auf einem fortschrittlichen KI-Modell"
 	},
 	"data_visualization": {
 		"card_total_countries": "Gesamtzahl der Länder",
@@ -108,7 +123,8 @@
 		"select_countries": "Länder auswählen",
 		"clear_selection": "Auswahl löschen",
 		"show_lowest_cases": "Länder mit den wenigsten Fällen anzeigen",
-		"show_highest_cases": "Länder mit den meisten Fällen anzeigen"
+		"show_highest_cases": "Länder mit den meisten Fällen anzeigen",
+		"analyze": "Analysiere"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"

@@ -32,7 +32,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ data }) => {
 			</div>
 			<div className="col-md-4 mb-3">
 				<div className="card shadow-sm">
-					<div className="card-body d-flex justify-content-between">
+					<div className="card-body d-flex justify-content-between p-2">
 						<div>
 							<small className="text-muted">
 								{t("data_visualization.card_global_cases")}
@@ -41,12 +41,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ data }) => {
 								{data.reduce((s, c) => s + c.total_cases, 0).toLocaleString()}
 							</h4>
 						</div>
-						<span style={{ fontSize: "2rem" }}>
-							<img
-								src="./icons/total_cases.svg"
-								alt="icon virus for total cases"
-							/>
-						</span>
+						<span className="fs-1">🦠</span>
 					</div>
 				</div>
 			</div>
