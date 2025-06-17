@@ -74,16 +74,24 @@
 		"title_form": "Données épidémiologiques complètes",
 		"description": "Utilisez ce formulaire pour prédire le nombre de décès COVID-19 en fonction des données fournies.",
 		"title_section_1": "Informations géographiques",
+		"placeholder_country": "Ex : France",
 		"select_option_1": "Sélectionner un continent",
 		"select_option_2": "Sélectionner une région",
 		"title_section_2": "Données démographiques",
+		"placeholder_population": "Population du pays",
 		"title_section_3": "Données COVID-19",
+		"placeholder_total_recovered": "Nombre de guéris",
+		"placeholder_serious_critical": "Cas critique",
+		"placeholder_total_tests": "Total des tests réalisés",
 		"submit": "Analyse ...",
 		"result": "Résultat de la prédiction",
 		"noResult": "Aucune prédiction disponible",
 		"loading": "Calcul de la prédiction...",
 		"about_title": "À propos du modèle avancé",
-		"about": "Ce modèle utilise des données géographiques, démographiques et épidémiologiques complètes pour fournir des prédictions plus précises. Il prend en compte la population, la région géographique, et l'ensemble des indicateurs COVID-19 pour une analyse approfondie."
+		"about": "Ce modèle utilise des données géographiques, démographiques et épidémiologiques complètes pour fournir des prédictions plus précises. Il prend en compte la population, la région géographique, et l'ensemble des indicateurs COVID-19 pour une analyse approfondie.",
+		"title_prediction_result": "Résultat de la prédiction",
+		"description_prediction_result": "décès prédits",
+		"info_prediction_result": "Prédiction basée sur un modèle d'intelligence artificielle avancé"
 	},
 	"data_visualization": {
 		"card_total_countries": "Total des pays",
@@ -115,7 +123,8 @@
 		"select_countries": "Sélectionner des pays",
 		"clear_selection": "Effacer la sélection",
 		"show_lowest_cases": "Afficher les pays avec le moins de cas",
-		"show_highest_cases": "Afficher les pays avec le plus de cas"
+		"show_highest_cases": "Afficher les pays avec le plus de cas",
+		"analyze": "Analyser"
 	},
 	"covid": {
 		"dashboard": "Tableau de Bord COVID"

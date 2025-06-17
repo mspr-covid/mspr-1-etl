@@ -47,7 +47,7 @@ function PredictionPage() {
 
 		try {
 			const result = await getPredictionV2(formData);
-			setPredictedDeaths(result.predicted_total_deaths);
+			setPredictedDeaths(result["predicted total deaths"]);
 		} catch (err) {
 			setError("Erreur lors de la prédiction. Veuillez réessayer.");
 			console.error(err);
@@ -90,7 +90,6 @@ function PredictionPage() {
 			<div className="container">
 				<div className="row justify-content-center">
 					<div className="col-lg-10 col-xl-8">
-						{/* Header */}
 						<div className="text-center mb-5">
 							<div className="hero-icon"></div>
 							<h1 className="display-5 fw-bold text-dark mb-3">
@@ -101,7 +100,6 @@ function PredictionPage() {
 							</p>
 						</div>
 
-						{/* Error Alert */}
 						{error && (
 							<div
 								className="alert alert-danger alert-dismissible fade show mb-4"
@@ -122,7 +120,7 @@ function PredictionPage() {
 							</div>
 						)}
 
-						{/* Main Form Card */}
+						{/* Cards */}
 						<div className="card form-card mb-4">
 							<div className="card-header">
 								<h4 className="mb-0 text-center fw-bold">
@@ -132,7 +130,7 @@ function PredictionPage() {
 							</div>
 							<div className="card-body p-4">
 								<form onSubmit={handleSubmit}>
-									{/* Section 1: Informations géographiques */}
+									{/* Section 1  Geographics Informations  */}
 									<div className="section-header mb-3">
 										<h5 className="text-primary mb-3">
 											<span className="me-2">📍</span>
@@ -154,7 +152,7 @@ function PredictionPage() {
 												onChange={(e) =>
 													handleInputChange("country", e.target.value)
 												}
-												placeholder="Ex: France"
+												placeholder={t("predict.placeholder_country")}
 												required
 											/>
 										</div>
@@ -206,7 +204,7 @@ function PredictionPage() {
 										</div>
 									</div>
 
-									{/* Section 2: Données démographiques */}
+									{/* Section 2  Démographics data */}
 									<div className="section-header mb-3">
 										<h5 className="text-primary mb-3">
 											<span className="me-2">👥</span>
@@ -233,7 +231,7 @@ function PredictionPage() {
 															parseInt(e.target.value) || 0
 														)
 													}
-													placeholder="Population du pays"
+													placeholder={t("predict.placeholder_population")}
 													required
 													min="1"
 												/>
@@ -241,7 +239,7 @@ function PredictionPage() {
 										</div>
 									</div>
 
-									{/* Section 3: Données COVID-19 */}
+									{/* Section 3 Data COVID-19 */}
 									<div className="section-header mb-3">
 										<h5 className="text-primary mb-3">
 											<span className="me-2 fs-1">🦠</span>
@@ -253,7 +251,7 @@ function PredictionPage() {
 										<div className="col-md-6 mb-3">
 											<label htmlFor="total_cases" className="form-label">
 												<span className="me-2">📊</span>
-												{t("country.cases")}
+												{t("country.cases")} *
 											</label>
 											<div className="input-group">
 												<span className="input-group-text">📈</span>
@@ -273,37 +271,13 @@ function PredictionPage() {
 												/>
 											</div>
 										</div>
-										{/* 
-										<div className="col-md-6 mb-3">
-											<label htmlFor="total_deaths" className="form-label">
-												<span className="me-2">💀</span>
-												{t("country.deaths")}
-											</label>
-											<div className="input-group">
-												<span className="input-group-text">⚰️</span>
-												<input
-													type="number"
-													className="form-control"
-													id="total_deaths"
-													value={formData.total_deaths || ""}
-													onChange={(e) =>
-														handleInputChange(
-															"total_deaths",
-															parseInt(e.target.value) || 0
-														)
-													}
-													placeholder="Nombre total de décès"
-													min="0"
-												/>
-											</div>
-										</div> */}
 									</div>
 
 									<div className="row mb-4">
 										<div className="col-md-4 mb-3">
 											<label htmlFor="total_recovered" className="form-label">
 												<span className="me-2">✅</span>
-												{t("country.recovered")}
+												{t("country.recovered")} *
 											</label>
 											<div className="input-group">
 												<span className="input-group-text">💚</span>
@@ -318,7 +292,7 @@ function PredictionPage() {
 															parseInt(e.target.value) || 0
 														)
 													}
-													placeholder="Nombre de guéris"
+													placeholder={t("predict.placeholder_total_recovered")}
 													min="0"
 												/>
 											</div>
@@ -342,7 +316,9 @@ function PredictionPage() {
 															parseInt(e.target.value) || 0
 														)
 													}
-													placeholder="Cas critiques"
+													placeholder={t(
+														"predict.placeholder_serious_critical"
+													)}
 													min="0"
 												/>
 											</div>
@@ -366,7 +342,7 @@ function PredictionPage() {
 															parseInt(e.target.value) || 0
 														)
 													}
-													placeholder="Nombre total de tests"
+													placeholder={t("predict.placeholder_total_tests")}
 													required
 													min="1"
 												/>
@@ -392,7 +368,7 @@ function PredictionPage() {
 											) : (
 												<>
 													<span className="me-2">🎯</span>
-													{t("predict.submit")}
+													{t("buttons.analyze")}
 												</>
 											)}
 										</button>
@@ -402,20 +378,21 @@ function PredictionPage() {
 						</div>
 
 						{/* Results Card */}
-						{predictedDeaths !== null && (
+						{typeof predictedDeaths === "number" && (
 							<div className="card result-card">
 								<div className="card-body text-center p-4">
 									<h5 className="card-title mb-3">
 										<span className="me-2">📊</span>
-										Résultat de la prédiction
+										{t("predict.title_prediction_result")}
 									</h5>
 									<div className="prediction-number mb-2">
 										{predictedDeaths.toLocaleString("fr-FR")}
 									</div>
-									<p className="text-muted mb-0">décès prédits</p>
+									<p className="text-muted mb-0">
+										{t("predict.description_prediction_result")}
+									</p>
 									<small className="text-muted d-block mt-2">
-										* Prédiction basée sur un modèle d'intelligence artificielle
-										avancé
+										* {t("predict.info_prediction_result")}
 									</small>
 								</div>
 							</div>
