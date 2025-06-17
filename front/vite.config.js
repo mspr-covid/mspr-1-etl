@@ -5,6 +5,8 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+// Lire la variable d'environnement USE_POLLING, défaut: false
+const usePolling = process.env.USE_POLLING === "true";
 
 export default defineConfig({
 	plugins: [react()],
@@ -25,7 +27,7 @@ export default defineConfig({
 			},
 		},
 		watch: {
-			usePolling: true
+			usePolling,
 		}
 	},
 });
