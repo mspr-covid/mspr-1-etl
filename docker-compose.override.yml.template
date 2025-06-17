@@ -1,0 +1,6 @@
+services:
+  frontend-dev:
+    environment:
+      # Active le "polling" pour que Vite détecte les changements de fichiers dans Docker (utile sous WSL, Linux ou Windows)
+      # Sur macOS, ce n'est normalement pas nécessaire.
+      - USE_POLLING=true
