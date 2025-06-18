@@ -41,7 +41,7 @@ const SummaryCards: React.FC<SummaryCardsProps> = ({ data }) => {
 								{data.reduce((s, c) => s + c.total_cases, 0).toLocaleString()}
 							</h4>
 						</div>
-						<span className="fs-1">🦠</span>
+						<span className="display-5">🦠</span>
 					</div>
 				</div>
 			</div>
