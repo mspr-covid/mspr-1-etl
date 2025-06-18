@@ -80,6 +80,7 @@ const ScatterPlotTestsCases: React.FC<ScatterPlotTestsCasesProps> = ({
 
 	const scatterOptions: ChartOptions<"scatter"> = {
 		responsive: true,
+		aspectRatio: 4 / 3,
 		plugins: {
 			title: {
 				display: true,
@@ -179,7 +180,7 @@ const ScatterPlotTestsCases: React.FC<ScatterPlotTestsCasesProps> = ({
 				<div className="card-body">
 					<h5>{t("data_visualization.title_scatter")}</h5>
 					{selectedCountries.length > 0 ? (
-						<div style={{ height: 300 }}>
+						<div className="scatter-container">
 							<Scatter data={prepareScatterData()} options={scatterOptions} />
 						</div>
 					) : (
