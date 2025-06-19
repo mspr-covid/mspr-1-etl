@@ -387,55 +387,7 @@ if __name__ == "__main__":
     print("✅ Tables créées avec succès.")
 
 
-    # with Database() as cursor:
-    #     for index, row in df.iterrows():
-    #         try:
-    #             country = row['country']
-    #             continent = row['continent']
-    #             who_region = row['who_region']
-    #             population = int(row['population'])
-    #             total_tests = int(row['total_tests'])
-    #             total_cases = int(row['new_total_cases'])
-    #             total_deaths = int(row['total_deaths'])
-    #             total_recovered = int(row['total_recovered'])
-    #             serious_critical = int(row['serious_critical'])
-    #             active_cases = int(row['active_cases'])  # optionnel
-
-    #             cursor.execute("""
-    #                 INSERT INTO countries (country, continent, who_region, population)
-    #                 VALUES (%s, %s, %s, %s)
-    #                 ON CONFLICT (country) DO NOTHING
-    #                 RETURNING id;
-    #             """, (country, continent, who_region, population))
-
-    #             country_id_row = cursor.fetchone()
-    #             if country_id_row is None:
-    #                 cursor.execute("SELECT id FROM countries WHERE country = %s;", (country,))
-    #                 country_id_row = cursor.fetchone()
-    #             country_id = country_id_row[0]
-
-    #             cursor.execute("""
-    #                 INSERT INTO health_statistics (country_id, total_cases, total_deaths, total_recovered, serious_critical)
-    #                 VALUES (%s, %s, %s, %s, %s);
-    #             """, (country_id, total_cases, total_deaths, total_recovered, serious_critical))
-
-    #             cursor.execute("""
-    #                 INSERT INTO testing_statistics (country_id, total_tests)
-    #                 VALUES (%s, %s);
-    #             """, (country_id, total_tests))
-
-    #             cursor.execute("""
-    #                 INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
-    #                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
-    #             """, (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical))
-
-    #             print(f"Insertion réussie pour {country}")
-
-    #         except psycopg2.Error as e:
-    #             print(f"Erreur lors de l'insertion pour {country}: {e}")
     with Database() as cursor:
-        conn = cursor.connection  # Récupérer la connexion pour faire rollback si besoin
-
         for index, row in df.iterrows():
             try:
                 country = row['country']
@@ -460,24 +412,18 @@ if __name__ == "__main__":
                 if country_id_row is None:
                     cursor.execute("SELECT id FROM countries WHERE country = %s;", (country,))
                     country_id_row = cursor.fetchone()
-
                 country_id = country_id_row[0]
 
-                # Insertion dans health_statistics
                 cursor.execute("""
                     INSERT INTO health_statistics (country_id, total_cases, total_deaths, total_recovered, serious_critical)
-                    VALUES (%s, %s, %s, %s, %s)
-                    ON CONFLICT (country_id) DO NOTHING;
+                    VALUES (%s, %s, %s, %s, %s);
                 """, (country_id, total_cases, total_deaths, total_recovered, serious_critical))
 
-                # Insertion dans testing_statistics
                 cursor.execute("""
                     INSERT INTO testing_statistics (country_id, total_tests)
-                    VALUES (%s, %s)
-                    ON CONFLICT (country_id) DO NOTHING;
+                    VALUES (%s, %s);
                 """, (country_id, total_tests))
 
-                # Insertion dans worldometer
                 cursor.execute("""
                     INSERT INTO worldometer (continent, who_region, country, population, total_tests, total_cases, total_deaths, total_recovered, serious_critical)
                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
@@ -486,6 +432,5 @@ if __name__ == "__main__":
                 print(f"Insertion réussie pour {country}")
 
             except psycopg2.Error as e:
-                conn.rollback()  # Très important pour débloquer la transaction
-                print(f"❌ Erreur lors de l'insertion pour {country}: {e}")
-
+                print(f"Erreur lors de l'insertion pour {country}: {e}")
+    
