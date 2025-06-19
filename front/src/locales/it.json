@@ -10,7 +10,8 @@
 		"manage": "Gestisci Dati",
 		"predict": "Previsione",
 		"login": "Accesso",
-		"logout": "Uscita"
+		"logout": "Uscita",
+		"data_visualization": "Visualizzazione Dati"
 	},
 	"languages": {
 		"en": "Inglese",
@@ -33,7 +34,14 @@
 		"search": "Cerca paesi",
 		"noResults": "Nessun paese trovato",
 		"loading": "Caricamento paesi...",
-		"error": "Errore durante il caricamento dei paesi"
+		"error": "Errore durante il caricamento dei paesi",
+		"total_countries": "Totale Paese",
+		"total_countries_plural": "Totale Paesi",
+		"delete": "Elimina Paese",
+		"cancel": "Annulla eliminazione",
+		"confirmDeleteMessage": "Sei sicuro di voler eliminare \"{{country}}\" ?",
+		"confirmDelete": "Sei sicuro di voler eliminare questo paese ?",
+		"deleteSuccess": "\"{{country}}\" eliminato con successo"
 	},
 	"country": {
 		"name": "Paese",
@@ -46,7 +54,8 @@
 		"continent": "Continente",
 		"date": "Ultimo Aggiornamento",
 		"who_region": "Regione OMS",
-		"total_tests": "Test totali"
+		"total_tests": "Test totali",
+		"actions": "Azioni"
 	},
 	"manage": {
 		"title": "Gestisci dati dei paesi",
@@ -60,21 +69,62 @@
 		"error": "Operazione fallita"
 	},
 	"predict": {
-		"title": "Previsione COVID",
-		"description": "Usa questo modulo per prevedere il numero di decessi per COVID-19 in base ai dati forniti.",
-		"country": "Paese",
-		"date": "Data",
-		"submit": "Ottieni previsione",
+		"global_title": "Previsione Avanzata COVID-19",
+		"general_description": "Utilizza il nostro modello avanzato di intelligenza artificiale per prevedere il numero di decessi basandoti su dati epidemiologici completi.",
+		"title_form": "Dati epidemiologici completi",
+		"description": "Utilizza questo modulo per prevedere il numero di decessi COVID-19 in base ai dati forniti.",
+		"title_section_1": "Informazioni geografiche",
+		"placeholder_country": "Es: Francia",
+		"select_option_1": "Seleziona un continente",
+		"select_option_2": "Seleziona una regione",
+		"title_section_2": "Dati demografici",
+		"placeholder_population": "Popolazione del paese",
+		"title_section_3": "Dati COVID-19",
+		"placeholder_total_recovered": "Numero di guariti",
+		"placeholder_serious_critical": "Casi critici",
+		"placeholder_total_tests": "Totale test effettuati",
+		"submit": "Analisi ...",
 		"result": "Risultato della previsione",
 		"noResult": "Nessuna previsione disponibile",
-		"loading": "Calcolo della previsione..."
+		"loading": "Calcolo della previsione...",
+		"about_title": "Informazioni sul modello avanzato",
+		"about": "Questo modello utilizza dati geografici, demografici ed epidemiologici completi per fornire previsioni più accurate. Tiene conto della popolazione, della regione geografica e di tutti gli indicatori COVID-19 per un'analisi approfondita.",
+		"title_prediction_result": "Risultato della previsione",
+		"description_prediction_result": "decessi previsti",
+		"info_prediction_result": "Previsione basata su un modello avanzato di intelligenza artificiale"
+	},
+	"data_visualization": {
+		"card_total_countries": "Totale Paesi",
+		"card_global_cases": "Casi Globali Totali",
+		"card_global_recovered": "Guarigioni Globali Totali",
+		"top_total_cases": "Top 15 Paesi con più casi",
+		"lowest_total_cases": "Top 15 Paesi con meno casi",
+		"select_countries": "Seleziona Paesi",
+		"label_scatter_test": "Numero di test",
+		"label_scatter_cases": "Numero di casi",
+		"title_scatter": "Grafico a dispersione: test vs casi",
+		"description_scatter": "Correlazione: Numero di test vs casi rilevati",
+		"title_pie": "Tasso di casi di COVID-19 per continente",
+		"pie_no_data": "Nessun dato disponibile per il grafico a torta"
+	},
+	"country_form": {
+		"informations": "Informazioni generali sul paese",
+		"demography": "Demografia",
+		"health_statistics": "Statistiche sanitarie",
+		"tests": "Test condotti"
 	},
 	"buttons": {
 		"submit": "Invia",
 		"cancel": "Annulla",
 		"edit": "Modifica",
 		"delete": "Elimina",
-		"back": "Indietro"
+		"back": "Indietro",
+		"add_country": "Aggiungi Paese",
+		"select_countries": "Seleziona Paesi",
+		"clear_selection": "Pulisci selezione",
+		"show_lowest_cases": "Mostra Paesi con meno casi",
+		"show_highest_cases": "Mostra Paesi con più casi",
+		"analyze": "Analizzare"
 	},
 	"covid": {
 		"dashboard": "Dashboard COVID"

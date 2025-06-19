@@ -1,4 +1,3 @@
-import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -11,11 +10,23 @@ const Navigation = () => {
 	const location = useLocation();
 
 	return (
-		<Navbar bg="light" expand="lg" className="mb-3">
+		<Navbar
+			bg="light"
+			expand="lg"
+			className="mb-3 sticky-top border rounded-bottom-3 border-black"
+		>
 			<Container>
-				<Navbar.Brand as={Link} to="/">
+				<Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
+					<img
+						src="/favicon.svg"
+						alt="Logo"
+						width="32"
+						height="32"
+						className="me-2"
+					/>
 					{t("app.title")}
 				</Navbar.Brand>
+
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
@@ -30,6 +41,13 @@ const Navigation = () => {
 									active={location.pathname === "/countries/manage"}
 								>
 									{t("nav.manage")}
+								</Nav.Link>
+								<Nav.Link
+									as={Link}
+									to="/datavisualization"
+									active={location.pathname === "/datavisualization"}
+								>
+									{t("nav.data_visualization")}
 								</Nav.Link>
 								<Nav.Link
 									as={Link}

@@ -1,4 +1,6 @@
 import axios from "axios";
+import CountryInput from "../types/CountryInput";
+import CountryInputPredict from "../types/CountryInputPredict";
 
 const API_URL = "https://covid-app.fly.dev";
 
@@ -9,6 +11,18 @@ const api = axios.create({
 		"Content-Type": "application/json",
 	},
 });
+
+api.interceptors.response.use(
+	(response) => response,
+	(error) => {
+		if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+			localStorage.removeItem("token");
+			window.location.href = "/login";
+		}
+		return Promise.reject(error);
+	}
+);
+
 
 // Add token to requests if available
 api.interceptors.request.use((config) => {
@@ -46,7 +60,7 @@ export const getCountries = async () => {
 // 	return response.data;
 // };
 
-export const createCountry = async (countryData: string) => {
+export const createCountry = async (countryData: CountryInput) => {
 	const response = await api.post("/covid", countryData);
 	return response.data;
 };
@@ -67,6 +81,11 @@ export const getPrediction = async (data: {
 	total_tests: number;
 }) => {
 	const response = await api.post("/covid/predict", data);
+	return response.data;
+};
+
+export const getPredictionV2 = async (data: CountryInputPredict) => {
+	const response = await api.post("/covid/predictV2", data);
 	return response.data;
 };
 

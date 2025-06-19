@@ -10,7 +10,8 @@
 		"manage": "Gérer les données",
 		"predict": "Prédiction",
 		"login": "Connexion",
-		"logout": "Déconnexion"
+		"logout": "Déconnexion",
+		"data_visualization": "Visualisation des données"
 	},
 	"languages": {
 		"en": "Anglais",
@@ -33,21 +34,28 @@
 		"search": "Rechercher des pays",
 		"noResults": "Aucun pays trouvé",
 		"loading": "Chargement des pays...",
-		"error": "Erreur lors du chargement des pays"
+		"error": "Erreur lors du chargement des pays",
+		"total_countries": "Total des pays",
+		"total_countries_plural": "Total des pays",
+		"delete": "Supprimer le pays",
+		"cancel": "Annuler la suppression",
+		"confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer \"{{country}}\" ?",
+		"confirmDelete": "Êtes-vous sûr de vouloir supprimer ce pays ?",
+		"deleteSuccess": "\"{{country}}\" supprimé avec succès"
 	},
 	"country": {
 		"name": "Pays",
-		"cases": "Cas Totaux",
-		"deaths": "Total des Décès",
-		"recovered": "Guéris",
+		"cases": "Total des cas",
+		"deaths": "Total des décès",
+		"recovered": "Total des guéris",
 		"active": "Actifs",
-		"critical": "Cas Critiques",
+		"critical": "Cas critiques",
 		"population": "Population",
 		"continent": "Continent",
 		"date": "Dernière mise à jour",
 		"who_region": "Région OMS",
-		"total_tests": "Tests totaux"
-		
+		"total_tests": "Tests totaux",
+		"actions": "Actions"
 	},
 	"manage": {
 		"title": "Gérer les données des pays",
@@ -61,21 +69,62 @@
 		"error": "Échec de l'opération"
 	},
 	"predict": {
-		"title": "Prédiction COVID",
+		"global_title": "Prédiction COVID-19 Avancée",
+		"general_description": "Utilisez notre modèle d'intelligence artificielle avancé pour prédire le nombre de décès basé sur des données épidémiologiques complètes.",
+		"title_form": "Données épidémiologiques complètes",
 		"description": "Utilisez ce formulaire pour prédire le nombre de décès COVID-19 en fonction des données fournies.",
-		"country": "Pays",
-		"date": "Date",
-		"submit": "Obtenir une prédiction",
+		"title_section_1": "Informations géographiques",
+		"placeholder_country": "Ex : France",
+		"select_option_1": "Sélectionner un continent",
+		"select_option_2": "Sélectionner une région",
+		"title_section_2": "Données démographiques",
+		"placeholder_population": "Population du pays",
+		"title_section_3": "Données COVID-19",
+		"placeholder_total_recovered": "Nombre de guéris",
+		"placeholder_serious_critical": "Cas critique",
+		"placeholder_total_tests": "Total des tests réalisés",
+		"submit": "Analyse ...",
 		"result": "Résultat de la prédiction",
 		"noResult": "Aucune prédiction disponible",
-		"loading": "Calcul de la prédiction..."
+		"loading": "Calcul de la prédiction...",
+		"about_title": "À propos du modèle avancé",
+		"about": "Ce modèle utilise des données géographiques, démographiques et épidémiologiques complètes pour fournir des prédictions plus précises. Il prend en compte la population, la région géographique, et l'ensemble des indicateurs COVID-19 pour une analyse approfondie.",
+		"title_prediction_result": "Résultat de la prédiction",
+		"description_prediction_result": "décès prédits",
+		"info_prediction_result": "Prédiction basée sur un modèle d'intelligence artificielle avancé"
+	},
+	"data_visualization": {
+		"card_total_countries": "Total des pays",
+		"card_global_cases": "Total des cas",
+		"card_global_recovered": "Total des guéris",
+		"top_total_cases": "Top 15 des pays comptant le plus de cas",
+		"lowest_total_cases": "Top 15 des says comptant le moins de cas",
+		"select_countries_hint": "Sélectionnez des pays pour visualiser les données",
+		"label_scatter_test": "Nombre de tests",
+		"label_scatter_cases": "Nombre de cas",
+		"title_scatter": "Graphique de dispersion : tests vs cas",
+		"description_scatter": "Corrélation: Nombre de tests vs cas détectés",
+		"title_pie": "Taux de cas de COVID-19 par continent",
+		"pie_no_data": "Aucune donnée disponible pour le graphique circulaire"
+	},
+	"country_form": {
+		"informations": "Informations générales sur le pays",
+		"demography": "Démographie",
+		"health_statistics": "Statistiques de santé",
+		"tests": "Tests réalisés"
 	},
 	"buttons": {
 		"submit": "Soumettre",
 		"cancel": "Annuler",
 		"edit": "Modifier",
 		"delete": "Supprimer",
-		"back": "Retour"
+		"back": "Retour",
+		"add_country": "Ajouter un pays",
+		"select_countries": "Sélectionner des pays",
+		"clear_selection": "Effacer la sélection",
+		"show_lowest_cases": "Afficher les pays avec le moins de cas",
+		"show_highest_cases": "Afficher les pays avec le plus de cas",
+		"analyze": "Analyser"
 	},
 	"covid": {
 		"dashboard": "Tableau de Bord COVID"

@@ -10,7 +10,8 @@
 		"manage": "Manage Data",
 		"predict": "Prediction",
 		"login": "Login",
-		"logout": "Logout"
+		"logout": "Logout",
+		"data_visualization": "Data Visualization"
 	},
 	"languages": {
 		"en": "English",
@@ -33,18 +34,26 @@
 		"search": "Search countries",
 		"noResults": "No countries found",
 		"loading": "Loading countries...",
-		"error": "Error loading countries"
+		"error": "Error loading countries",
+		"total_countries": "Total Countries",
+		"total_countries_plural": "Total Countries",
+		"delete": "Delete Country",
+		"cancel": "Cancel Delete",
+		"confirmDeleteMessage": "Are you sure you want to delete \"{{country}}\" ?",
+		"confirmDelete": "Are you sure you want to delete this country ?",
+		"deleteSuccess": "\"{{country}}\" deleted successfully"
 	},
 	"country": {
 		"name": "Country",
 		"cases": "Total Cases",
 		"deaths": "Total Deaths",
-		"recovered": "Recovered",
+		"recovered": "Total Recovered",
 		"critical": "Serious Critical",
 		"population": "Population",
 		"continent": "Continent",
 		"who_region": "WHO Region",
-		"total_tests": "Total Tests"
+		"total_tests": "Total Tests",
+		"actions": "Actions"
 	},
 	"manage": {
 		"title": "Manage Country Data",
@@ -58,21 +67,62 @@
 		"error": "Operation failed"
 	},
 	"predict": {
-		"title": "COVID Prediction",
+		"global_title": "Advanced COVID-19 Prediction",
+		"general_description": "Use our advanced artificial intelligence model to predict the number of deaths based on comprehensive epidemiological data.",
+		"title_form": "Comprehensive Epidemiological Data",
 		"description": "Use this form to predict the number of COVID-19 deaths based on the provided data.",
-		"country": "Country",
-		"date": "Date",
-		"submit": "Get Prediction",
+		"title_section_1": "Geographic Information",
+		"placeholder_country": "e.g. France",
+		"select_option_1": "Select a continent",
+		"select_option_2": "Select a region",
+		"title_section_2": "Demographic Data",
+		"placeholder_population": "Country population",
+		"title_section_3": "COVID-19 Data",
+		"placeholder_total_recovered": "Number of recovered",
+		"placeholder_serious_critical": "Critical cases",
+		"placeholder_total_tests": "Total tests performed",
+		"submit": "Analyzing...",
 		"result": "Prediction Result",
 		"noResult": "No prediction available",
-		"loading": "Calculating prediction..."
+		"loading": "Calculating prediction...",
+		"about_title": "About the Advanced Model",
+		"about": "This model uses comprehensive geographic, demographic, and epidemiological data to provide more accurate predictions. It takes into account the population, geographic region, and all COVID-19 indicators for a detailed analysis.",
+		"title_prediction_result": "Prediction Result",
+		"description_prediction_result": "predicted deaths",
+		"info_prediction_result": "Prediction based on an advanced artificial intelligence model"
+	},
+	"data_visualization": {
+		"card_total_countries": "Total Countries",
+		"card_global_cases": "Global Cases",
+		"card_global_recovered": "Global Recovered",
+		"top_total_cases": "Top 15 countries with the highest number of cases",
+		"lowest_total_cases": "Top 15 countries with the lowest number of cases",
+		"select_countries_hint": "Select countries to visualize data",
+		"label_scatter_test": "Number of tests",
+		"label_scatter_cases": "Total cases",
+		"title_scatter": "Scatter Plot of Cases vs Tests",
+		"description_scatter": "Correlation: Number of tests vs detected cases",
+		"title_pie": "Pie Chart of Cases by Continent",
+		"pie_no_data": "No data available for this chart"
+	},
+	"country_form": {
+		"informations": "General Informations about the Country",
+		"demography": "Demography",
+		"health_statistics": "Health Statistics",
+		"tests": "Tests Conducted"
 	},
 	"buttons": {
 		"submit": "Submit",
 		"cancel": "Cancel",
 		"edit": "Edit",
 		"delete": "Delete",
-		"back": "Back"
+		"back": "Back",
+		"add_country": "Add Country",
+		"select_countries": "Select Countries",
+		"clear_selection": "Clear Selection",
+		"show_lowest_cases": "Show Countries with Lowest Cases",
+		"show_highest_cases": "Show Countries with Highest Cases",
+		"analyze": "Analyze"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"
