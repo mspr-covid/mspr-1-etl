@@ -47,7 +47,7 @@ function PredictionPage() {
 
 		try {
 			const result = await getPredictionV2(formData);
-			setPredictedDeaths(result["predicted total deaths"]);
+			setPredictedDeaths(result["predicted_total_deaths"]);
 		} catch (err) {
 			setError("Erreur lors de la prédiction. Veuillez réessayer.");
 			console.error(err);
