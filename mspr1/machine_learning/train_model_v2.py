@@ -81,7 +81,7 @@ cv_learning = ShuffleSplit(n_splits=5, test_size=0.2, random_state=42)
 best_models = {}
 
 # === Fonction learning curve ===
-def plot_learning_curve(estimator, title, X, y, cv=5, scoring='r2'):
+def plot_learning_curve(estimator, title, X, y, cv=5, scoring='r2', filename=None):
     train_sizes, train_scores, val_scores = learning_curve(
         estimator=clone(estimator),
         X=X,
@@ -103,7 +103,13 @@ def plot_learning_curve(estimator, title, X, y, cv=5, scoring='r2'):
     plt.legend(loc="best")
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
+
+    if filename:
+        os.makedirs("mspr1/machine_learning/static/plots", exist_ok=True)
+        plt.savefig(f"mspr1/machine_learning/static/plots/{filename}.png")
+        plt.close()
+    else:
+        plt.show()
 
 # === Entraînement des modèles ===
 for name, config in models.items():
@@ -142,7 +148,14 @@ for name, config in models.items():
     print(f"📊 RMSE sur test : {rmse_test:.4f}")
 
     print(f"📈 Learning Curve pour : {name}")
-    plot_learning_curve(best_model, f"Learning Curve - {name}", X_train, y_train, cv=cv_learning)
+    plot_learning_curve(
+        best_model,
+        f"Learning Curve - {name}",
+        X_train,
+        y_train,
+        cv=cv_learning,
+        filename=f"learning_curve_{name}"
+    )
 
     best_models[name] = {
         'best_estimator': best_model,
