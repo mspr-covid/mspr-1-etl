@@ -134,6 +134,11 @@ jobs:
             --chrome-launch-options="--no-sandbox" \
             > pa11y-report.txt || true
 
+      - name: Upload Pa11y report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa11y-accessibility-report
+          path: pa11y-report.txt
 
   notification-security:
     name: Security Report
