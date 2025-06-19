@@ -2,16 +2,20 @@ import os
 import jwt
 import psycopg2
 import numpy as np
+import pandas as pd
+import pathlib
+
 from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ws.config.translation import TRANSLATIONS
+from fastapi.staticfiles import StaticFiles
 
+from ws.config.translation import TRANSLATIONS
 from ws.business_layer.covid_entry_validator import CovidEntryValidator
 from .models.covid_entry_patch import CovidEntryPatch
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, UTC
 from dotenv import load_dotenv
@@ -19,7 +23,6 @@ from database.Database import Database
 from ws.models.covid_prediction_input import CovidPredictionInput
 from ws.models.covid_prediction_input_v2 import CovidPredictionInputV2
 from ws.services.model_service import get_model, get_model_v2
-import pandas as pd
 
 
 # Charger les variables d'environnement
@@ -31,8 +34,13 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Initialisation de FastAPI
 app = FastAPI()
-templates = Jinja2Templates(directory="ws/templates")
 
+BASE_DIR = pathlib.Path(__file__).resolve().parent
+static_dir = BASE_DIR / "../mspr1/machine_learning/static"
+
+app.mount("/static", StaticFiles(directory=static_dir.resolve()), name="static")
+
+templates = Jinja2Templates(directory="ws/templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def homepage(request: Request, lang: str = "en"):
@@ -440,6 +448,16 @@ def predict_deaths_v2(entry: CovidPredictionInputV2,
         raise HTTPException(status_code=400, detail=f"Invalid input data: {str(ve)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+    
+@app.get("/plots", tags=["visualisation"])
+def list_plots():
+    plots_path = os.path.join(os.path.dirname(__file__), "../mspr1/machine_learning/static/plots")
+    try:
+        files = [f for f in os.listdir(plots_path) if f.endswith(".png")]
+        urls = [f"/static/plots/{f}" for f in files]
+        return {"plots": urls}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Access error to graphics : {str(e)}")
 
 
         
