@@ -129,7 +129,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 
 
 # Route pour inscrire un utilisateur
-@app.post("/api/user", status_code=201)
+@app.post("/api/user", tags=["authentication"], status_code=201)
 def register_user(user: UserCreate, cursor=Depends(get_db)):
     try:
         cursor.execute("""
@@ -158,7 +158,7 @@ def register_user(user: UserCreate, cursor=Depends(get_db)):
 
 
 # Route pour se connecter et récupérer un token
-@app.post("/api/login", status_code=200)
+@app.post("/api/login", tags=["authentication"], status_code=200)
 def login_user(
     form_data: OAuth2PasswordRequestForm = Depends(),
         cursor=Depends(get_db)):
@@ -184,7 +184,7 @@ def login_user(
 
 
 # Route GET pour récupérer toutes les entrées (nécessite authentification)
-@app.get("/covid")
+@app.get("/covid", tags=["data"])
 def get_all_entries(
     cursor=Depends(get_db),
         current_user: str = Depends(get_current_user)):
@@ -206,7 +206,7 @@ def get_all_entries(
 
 
 # Route GET pour récupérer une entrée par pays
-@app.get("/covid/{country}")
+@app.get("/covid/{country}", tags=["data"])
 def get_entry_by_country(
     country: str,
     cursor=Depends(get_db),
@@ -234,7 +234,7 @@ def get_entry_by_country(
 
 
 # Route POST pour ajouter une entrée (nécessite authentification)
-@app.post("/covid")
+@app.post("/covid", tags=["data"])
 def add_entry(
     entry: CovidEntry,
     cursor=Depends(get_db),
@@ -314,7 +314,7 @@ def add_entry(
 
 
 # Route PATCH pour modifier une entrée
-@app.patch("/covid/{country}")
+@app.patch("/covid/{country}", tags=["data"])
 def partial_update_entry(
     country: str,
     entry: CovidEntryPatch,
@@ -369,7 +369,7 @@ def partial_update_entry(
 
 
 # La route pour supprimer une entrée
-@app.delete("/covid/{country}")
+@app.delete("/covid/{country}", tags=["data"])
 def delete_entry(country: str,
                  cursor=Depends(get_db),
                  current_user: str = Depends(get_current_user)):
@@ -449,15 +449,32 @@ def predict_deaths_v2(entry: CovidPredictionInputV2,
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
     
-@app.get("/plots", tags=["visualisation"])
-def list_plots():
+@app.get("/learning_curve", tags=["visualization"])
+def list_plots(current_user: str = Depends(get_current_user)):
     plots_path = os.path.join(os.path.dirname(__file__), "../mspr1/machine_learning/static/plots")
     try:
-        files = [f for f in os.listdir(plots_path) if f.endswith(".png")]
+        files = [
+            f for f in os.listdir(plots_path)
+            if f.endswith(".png") and f.startswith("learning_curve")
+        ]
         urls = [f"/static/plots/{f}" for f in files]
         return {"plots": urls}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Access error to graphics : {str(e)}")
+    
+@app.get("/residual_plot", tags=["visualization"])
+def list_residual(current_user: str = Depends(get_current_user)):
+    plots_path = os.path.join(os.path.dirname(__file__), "../mspr1/machine_learning/static/plots")
+    try:
+        files = [
+            f for f in os.listdir(plots_path)
+            if f.endswith(".png") and f.startswith("residuals")
+        ]
+        urls = [f"/static/plots/{f}" for f in files]
+        return {"plots": urls}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Access error to graphics : {str(e)}")
+
 
 
         

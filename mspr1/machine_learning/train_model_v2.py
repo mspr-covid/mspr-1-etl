@@ -111,6 +111,26 @@ def plot_learning_curve(estimator, title, X, y, cv=5, scoring='r2', filename=Non
     else:
         plt.show()
 
+def plot_residuals(y_true, y_pred, model_name):
+    """
+    Trace et sauvegarde la courbe des résidus dans le dossier static/.
+    - Ça montre les erreurs (pour rappel le résidus = y_true - y_pred) en fonction des prédictions.
+    """
+    residuals = y_true - y_pred
+
+    plt.figure(figsize=(8, 5))
+    plt.scatter(y_pred, residuals, alpha=0.5)
+    plt.axhline(0, color='red', linestyle='--', linewidth=1)
+    plt.title(f"Residual plot - {model_name}")
+    plt.xlabel("Predicted values")
+    plt.ylabel("Residual (errors)")
+    plt.grid(True)
+    plt.tight_layout()
+
+    os.makedirs("mspr1/machine_learning/static/plots", exist_ok=True)
+    plt.savefig(f"mspr1/machine_learning/static/plots/residuals_{model_name}.png")
+    plt.close()
+
 # === Entraînement des modèles ===
 for name, config in models.items():
     print(f"\n🔍 RandomizedSearchCV pour : {name}")
@@ -146,6 +166,9 @@ for name, config in models.items():
 
     print(f"📊 R² sur test : {r2_test:.4f}")
     print(f"📊 RMSE sur test : {rmse_test:.4f}")
+
+    print(f"📉 Courbe des résidus pour : {name}")
+    plot_residuals(y_test, y_pred_test, name)
 
     print(f"📈 Learning Curve pour : {name}")
     plot_learning_curve(

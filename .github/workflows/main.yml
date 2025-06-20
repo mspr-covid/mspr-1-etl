@@ -241,7 +241,7 @@ jobs:
       - name: Fly logs for frontend 
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}
-        run: flyctl logs -a ${{ secrets.FLY_FRONT }} --num-lines 50
+        run: flyctl logs -a ${{ secrets.FLY_FRONT }}
 
 
 
