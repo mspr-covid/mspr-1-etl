@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - 80-cicd-generate-pa11y-report
 
 
 jobs:
