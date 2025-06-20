@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - master
-      - 80-cicd-generate-pa11y-report
 
 
 jobs:
@@ -134,7 +133,7 @@ jobs:
         run: npm install
 
       - name: Run pa11y script
-        run: node pa11y-script.js
+        run: node .github\scripts\pa11y-script.js
 
       - name: Upload Pa11y report
         uses: actions/upload-artifact@v4
