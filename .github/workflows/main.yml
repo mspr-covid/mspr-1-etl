@@ -341,9 +341,10 @@ jobs:
       - name: Run Pa11y and write report
         run: |
           echo "📤 Audit Pa11y en cours..."
-          npx pa11y --runner puppeteer https://analyze-it-app.fly.dev/login \
-            --chrome-launch-options="--no-sandbox" \
-            > pa11y-report.txt
+          npx pa11y https://analyze-it-app.fly.dev/login \
+          --chrome-launch-flags="--no-sandbox" \
+          > pa11y-report.txt
+
 
           echo "✅ Rapport Pa11y généré :"
           cat pa11y-report.txt
