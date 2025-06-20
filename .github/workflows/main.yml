@@ -112,9 +112,9 @@ jobs:
         # important : on lance les tests dans le conteneur backend où l'app est configurée
         run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
 
-  Ce job est lié à des notifcation de sécurité via des webhook Discord.
-  Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
-  et envoie le rapport sur un salon Discord.
+  # Ce job est lié à des notifcation de sécurité via des webhook Discord.
+  # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
+  # et envoie le rapport sur un salon Discord.
 
   pa11y-report:
     name: Rapport Accessibilité (PA11y)
