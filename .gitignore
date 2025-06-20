@@ -39,3 +39,7 @@ lerna-debug.log*
 # spécifique 
 grafana/provisioning/datasources/datasources.yaml
 docker-compose.override.yml
+
+Dockerfile.pa11y
+pa11y-script.js
+pa11y-output/
