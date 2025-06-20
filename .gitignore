@@ -43,5 +43,4 @@ docker-compose.override.yml
 # Pa11y test artifacts
 pa11y-output/
 pa11y-report.txt
-Dockerfile.pa11y
 # pa11y-script.js

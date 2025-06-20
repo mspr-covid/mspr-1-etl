@@ -1,333 +1,124 @@
-# name: Mspr Integration Workflow
-
-# on:
-#   pull_request:
-#   push:
-#     branches:
-#       - master
-
-
-# jobs:
-#   # le premier job est un build. On construit notre image Docker pour tester que le Dockerfile fonctionne
-#   build-backend:
-#     name: Build Docker Image
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - name: Build Docker image (Backend)
-#         # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
-#         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test -f Dockerfile .
-#       # On pousse l'image Docker sur Docker Hub pour pouvoir l'utiliser dans les autres jobs (pour le rapport de sécurité)
-#       - name: Log in to Docker Hub
-#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-#       - name: Push Docker image to Docker Hub
-#         run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
-
-#   build-frontend:
-#     name: Build Docker Image (Frontend)
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - name: Build Docker image (Frontend)
-#         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test -f front/Dockerfile front
-
-#       - name: Log in to Docker Hub (Frontend)
-#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-#       - name: Push Docker image to Docker Hub (Frontend)
-#         run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test
-
-#   # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
-#   start-services:
-#     name: Run Docker Infrastructure and Tests
-#     runs-on: ubuntu-latest
-#     needs: [build-backend, build-frontend]
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       # On ne pousse pas nos variables d'environnement dans le repo. On les stocke donc dans les secrets de GitHub.
-#       - name: Create .env file from secrets
-#         run: |
-#           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-#           echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-#           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-#           echo "DB_HOST=db" >> .env
-#           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-#           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-#           echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
-#           echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
-#           echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
-#         working-directory: ${{ github.workspace }}
-#       # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github,
-#       # on lance les services Docker. On utilise docker compose pour ça.
-#       - name: Start Docker Compose services
-#         # Ici, on précise les services qu'on veut lancer pour exclurer le service de dev frontend
-#         run: docker compose up -d db backend frontend grafana
-#         working-directory: ${{ github.workspace }}
-
-#       - name: Wait for PostgreSQL to be ready
-#         run: |
-#           echo "⏳ Waiting for PostgreSQL..."
-#           for i in {1..10}; do
-#             docker exec postgres_db pg_isready -U postgres && exit 0
-#             sleep 3
-#           done
-#           echo "PostgreSQL not ready" && exit 1
-
-#       - name: Create database if not exists
-#         run: |
-#           echo "📦 Creating database if not exists..."
-#           docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -d postgres -c \
-#           "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE \"${{ secrets.DB_NAME }}\"; END IF; END \$\$;"
-
-#       - name: Initialize database tables
-#         run: docker exec covid_mspr python /app/mspr1/covid_mspr1.py
-
-#       - name: Wait for FastAPI to be ready
-#         run: |
-#           echo "⏳ Waiting for FastAPI (localhost:8000)..."
-#           for i in {1..10}; do
-#             curl -s http://localhost:8000/docs > /dev/null && exit 0
-#             sleep 3
-#           done
-#           echo "FastAPI not ready" && exit 1
-
-#       - name: Show FastAPI logs if tests fail
-#         if: failure()
-#         run: docker logs covid_mspr
-
-#       # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
-#       # si on a des erreurs. On améliorera ça tout petit à petit.
-#       - name: Run flake8 linter (non bloquant)
-#         run: |
-#           docker exec covid_mspr pip install flake8
-#           docker exec covid_mspr flake8 . || true
-
-#       - name: Run tests with coverage
-#         # important : on lance les tests dans le conteneur backend où l'app est configurée
-#         run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
-
-#   # Ce job est lié à des notifcation de sécurité via des webhook Discord.
-#   # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
-#   # et envoie le rapport sur un salon Discord.
-
-#   pa11y-report:
-#     name: Rapport Accessibilité (PA11y)
-#     runs-on: ubuntu-latest
-#     needs: [start-services]
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-
-#       - name: Installer PA11y
-#         run: npm install -g pa11y
-
-#       # 
-#       - name: Run Pa11y with Puppeteer and debug
-#         run: |
-#           npx pa11y --runner puppeteer https://analyze-it-app.fly.dev/login \
-#             --chrome-launch-options="--no-sandbox" \
-#             > pa11y-report.txt
-#           echo "✅ Rapport Pa11y généré :"
-#           cat pa11y-report.txt
-
-
-#       - name: Upload Pa11y report
-#         uses: actions/upload-artifact@v4
-#         with:
-#           name: pa11y-accessibility-report
-#           path: pa11y-report.txt
-
-#   notification-security:
-#     name: Security Report
-#     runs-on: ubuntu-latest
-#     needs: [start-services]
-
-#     env:
-#       DISCORD_SECURITY_WEBHOOK: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - name: Log in to Docker Hub
-#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-#       - name: Pull Docker Image To Scan
-#         run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
-
-#       - name: Installer Docker Scout CLI
-#         run: |
-#           curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
-
-#       - name: Run Docker Scout quickview
-#         run: |
-#           docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > quickview.txt
-#           cat quickview.txt
-
-#       - name: Run Docker Scout recommendations
-#         run: |
-#           docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > recommendations.txt
-#           cat recommendations.txt
-
-#       - name: Send Docker Scout quickview to Discord
-#         run: |
-#           content=$(printf '```\n%s\n```' "$(cat quickview.txt)" | jq -Rs .)
-#           curl -H "Content-Type: application/json" \
-#             -X POST \
-#             -d "{\"content\": ${content} }" \
-#             "$DISCORD_SECURITY_WEBHOOK"
-
-#       - name: Send Docker Scout recommendations to Discord
-#         run: |
-#           content=$(printf '```\n%s\n```' "$(cat recommendations.txt)" | jq -Rs .)
-#           curl -H "Content-Type: application/json" \
-#             -X POST \
-#             -d "{\"content\": ${content} }" \
-#             "$DISCORD_SECURITY_WEBHOOK"
-
-#   # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
-#   # On s'appuie sur un workflow externe pour envoyer la notification.
-#   # Le dépot est ici : https://github.com/emvakar/discord-notification-action
-#   notification-integration:
-#     name: Integration Notification
-#     runs-on: ubuntu-latest
-#     needs: [start-services]
-#     steps:
-#       - name: Discord Notification
-#         uses: emvakar/discord-notification-action@v2
-#         with:
-#           title: "✅ Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}. Succés du workflow !"
-#           status: "success"
-#           webhook: ${{ secrets.DISCORD_WEBHOOK }}
-
-#   deploy-api:
-#     name: Deploy API to Fly
-#     runs-on: ubuntu-latest
-#     needs: [start-services, notification-security, notification-integration]
-#     # La ligne du dessous sert à ne déployer que sur la branche master
-#     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - name: Deploy to Fly.io
-#         uses: superfly/flyctl-actions@v1
-#         with:
-#           # Ici, on déploie l'image Docker qu'on a construite dans le job build et qu'on a stocké dans le registry
-#           args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --app ${{ secrets.FLY_APP_NAME }}"
-#         env:
-#           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-  
-#   deploy-frontend:
-#     name: Deploy Frontend to Fly
-#     runs-on: ubuntu-latest
-#     needs: [build-frontend, start-services, notification-security, notification-integration]
-#     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-
-#     steps:
-#       - uses: actions/checkout@v2
-
-#       - name: Deploy Frontend
-#         env:
-#           FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}     
-#         uses: superfly/flyctl-actions@v1
-#         with:
-#           # Ici, on déploie l'image Docker qu'on a construite dans le job build-frontend et qu'on a stocké dans le registry
-#           args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test --app ${{ secrets.FLY_FRONT }}"
-      
-#       - name: Install Flyctl (pour logs)
-#         run: |
-#           curl -L https://fly.io/install.sh | sh
-#           export FLYCTL_INSTALL="$HOME/.fly"
-#           echo "$FLYCTL_INSTALL/bin" >> $GITHUB_PATH
-          
-#       - name: Fly logs for frontend 
-#         env:
-#           FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}
-#         run: flyctl logs -a ${{ secrets.FLY_FRONT }} --num-lines 50
-
-
-
-#   notify-deployment-api-success:
-#     name: Successful Deployment for API
-#     runs-on: ubuntu-latest
-#     needs: [deploy-api]
-
-#     # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
-#     # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
-#     steps:
-#       - name: Discord Notification For API
-#         run: |
-#           content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/" '{"content": $txt}')
-#           curl -H "Content-Type: application/json" \
-#                -X POST \
-#                -d "$content" \
-#                "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
-
-#   notify-deployment-api-failure:
-#     name: Failed Deployment for API
-#     runs-on: ubuntu-latest
-#     if: failure() && github.ref == 'refs/heads/master'
-#     needs: [deploy-api]
-
-#     steps:
-#       - name: Discord Notification For API
-#         run: |
-#           content=$(jq -Rn --arg txt "❌ Échec du déploiement de l'API." '{"content": $txt}')
-#           curl -H "Content-Type: application/json" \
-#                -X POST \
-#                -d "$content" \
-#                "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
-  
-
-#   notify-deployment-front-success:
-#     name: Successful Deployment for Frontend
-#     runs-on: ubuntu-latest
-#     needs: [deploy-frontend]
-
-#     # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
-#     # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
-#     steps:
-#       - name: Discord Notification For Frontend
-#         run: |
-#           content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_FRONT }}.fly.dev/" '{"content": $txt}')
-#           curl -H "Content-Type: application/json" \
-#                -X POST \
-#                -d "$content" \
-#                "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
-
-#   notify-deployment-front-failure:
-#     name: Failed Deployment for Frontend
-#     runs-on: ubuntu-latest
-#     if: failure() && github.ref == 'refs/heads/master'
-#     needs: [deploy-frontend]
-
-#     steps:
-#       - name: Discord Notification For Frontend
-#         run: |
-#           content=$(jq -Rn --arg txt "❌ Échec du déploiement du client." '{"content": $txt}')
-#           curl -H "Content-Type: application/json" \
-#                -X POST \
-#                -d "$content" \
-#                "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
-
-
-name: Pa11y Test Workflow
+name: Mspr Integration Workflow
 
 on:
+  pull_request:
   push:
     branches:
-      - test/pa11y
+      - master
+
 
 jobs:
-  pa11y-accessibility-check:
+  # le premier job est un build. On construit notre image Docker pour tester que le Dockerfile fonctionne
+  build-backend:
+    name: Build Docker Image
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image (Backend)
+        # On construit l’image Docker en taguant :test, pour indiquer que c’est une image pour les tests CI
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test -f Dockerfile .
+      # On pousse l'image Docker sur Docker Hub pour pouvoir l'utiliser dans les autres jobs (pour le rapport de sécurité)
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+
+  build-frontend:
+    name: Build Docker Image (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image (Frontend)
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test -f front/Dockerfile front
+
+      - name: Log in to Docker Hub (Frontend)
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker image to Docker Hub (Frontend)
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test
+
+  # Ici, après avoir construit notre image, on lance toute l'infra Docker et les tests dans ce second job.
+  start-services:
+    name: Run Docker Infrastructure and Tests
+    runs-on: ubuntu-latest
+    needs: [build-backend, build-frontend]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # On ne pousse pas nos variables d'environnement dans le repo. On les stocke donc dans les secrets de GitHub.
+      - name: Create .env file from secrets
+        run: |
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_HOST=db" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> .env
+          echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> .env
+          echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> .env
+        working-directory: ${{ github.workspace }}
+      # Une fois le fichier .env créé avec les variables qui sont stockées dans les secrets de Github,
+      # on lance les services Docker. On utilise docker compose pour ça.
+      - name: Start Docker Compose services
+        # Ici, on précise les services qu'on veut lancer pour exclurer le service de dev frontend
+        run: docker compose up -d db backend frontend grafana
+        working-directory: ${{ github.workspace }}
+
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          echo "⏳ Waiting for PostgreSQL..."
+          for i in {1..10}; do
+            docker exec postgres_db pg_isready -U postgres && exit 0
+            sleep 3
+          done
+          echo "PostgreSQL not ready" && exit 1
+
+      - name: Create database if not exists
+        run: |
+          echo "📦 Creating database if not exists..."
+          docker exec postgres_db psql -U "${{ secrets.POSTGRES_USER }}" -d postgres -c \
+          "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.DB_NAME }}') THEN CREATE DATABASE \"${{ secrets.DB_NAME }}\"; END IF; END \$\$;"
+
+      - name: Initialize database tables
+        run: docker exec covid_mspr python /app/mspr1/covid_mspr1.py
+
+      - name: Wait for FastAPI to be ready
+        run: |
+          echo "⏳ Waiting for FastAPI (localhost:8000)..."
+          for i in {1..10}; do
+            curl -s http://localhost:8000/docs > /dev/null && exit 0
+            sleep 3
+          done
+          echo "FastAPI not ready" && exit 1
+
+      - name: Show FastAPI logs if tests fail
+        if: failure()
+        run: docker logs covid_mspr
+
+      # Un linter qui va nous aider à respecter les conventions de codage mais qui ne va pas bloquer le workflow
+      # si on a des erreurs. On améliorera ça tout petit à petit.
+      - name: Run flake8 linter (non bloquant)
+        run: |
+          docker exec covid_mspr pip install flake8
+          docker exec covid_mspr flake8 . || true
+
+      - name: Run tests with coverage
+        # important : on lance les tests dans le conteneur backend où l'app est configurée
+        run: docker exec covid_mspr pytest --cov=ws --cov-report=term-missing
+
+  # Ce job est lié à des notifcation de sécurité via des webhook Discord.
+  # Il génére un rapport de sécurité avec la docker scout, un scanner de vulnérabilités pour les images Docker.
+  # et envoie le rapport sur un salon Discord.
+
+    pa11y-report:
+    name: Rapport Accessibilité (PA11y)
+    runs-on: ubuntu-latest
+    needs: [start-services]
 
     steps:
       - name: Checkout code
@@ -339,13 +130,189 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install pa11y
+        run: npm install
 
       - name: Run pa11y script
         run: node pa11y-script.js
 
-      - name: Upload artifact
+      - name: Upload Pa11y report
         uses: actions/upload-artifact@v4
         with:
           name: pa11y-accessibility-report
           path: pa11y-output/pa11y-report.txt
+
+
+  notification-security:
+    name: Security Report
+    runs-on: ubuntu-latest
+    needs: [start-services]
+
+    env:
+      DISCORD_SECURITY_WEBHOOK: ${{ secrets.DISCORD_SECURITY_WEBHOOK }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Pull Docker Image To Scan
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test
+
+      - name: Installer Docker Scout CLI
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh | sh -s --
+
+      - name: Run Docker Scout quickview
+        run: |
+          docker scout quickview ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > quickview.txt
+          cat quickview.txt
+
+      - name: Run Docker Scout recommendations
+        run: |
+          docker scout recommendations ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test > recommendations.txt
+          cat recommendations.txt
+
+      - name: Send Docker Scout quickview to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat quickview.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+      - name: Send Docker Scout recommendations to Discord
+        run: |
+          content=$(printf '```\n%s\n```' "$(cat recommendations.txt)" | jq -Rs .)
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": ${content} }" \
+            "$DISCORD_SECURITY_WEBHOOK"
+
+  # Ce job envoie une notification Discord pour indiquer que le workflow s'est bien executé
+  # On s'appuie sur un workflow externe pour envoyer la notification.
+  # Le dépot est ici : https://github.com/emvakar/discord-notification-action
+  notification-integration:
+    name: Integration Notification
+    runs-on: ubuntu-latest
+    needs: [start-services]
+    steps:
+      - name: Discord Notification
+        uses: emvakar/discord-notification-action@v2
+        with:
+          title: "✅ Pull request déclenchée par ${{ github.actor }} sur ${{ github.ref_name }}. Succés du workflow !"
+          status: "success"
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+
+  deploy-api:
+    name: Deploy API to Fly
+    runs-on: ubuntu-latest
+    needs: [start-services, notification-security, notification-integration]
+    # La ligne du dessous sert à ne déployer que sur la branche master
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy to Fly.io
+        uses: superfly/flyctl-actions@v1
+        with:
+          # Ici, on déploie l'image Docker qu'on a construite dans le job build et qu'on a stocké dans le registry
+          args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr:test --app ${{ secrets.FLY_APP_NAME }}"
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  
+  deploy-frontend:
+    name: Deploy Frontend to Fly
+    runs-on: ubuntu-latest
+    needs: [build-frontend, start-services, notification-security, notification-integration]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Deploy Frontend
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}     
+        uses: superfly/flyctl-actions@v1
+        with:
+          # Ici, on déploie l'image Docker qu'on a construite dans le job build-frontend et qu'on a stocké dans le registry
+          args: "deploy --image ${{ secrets.DOCKER_USERNAME }}/covid-mspr-front:test --app ${{ secrets.FLY_FRONT }}"
+      
+      - name: Install Flyctl (pour logs)
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          export FLYCTL_INSTALL="$HOME/.fly"
+          echo "$FLYCTL_INSTALL/bin" >> $GITHUB_PATH
+          
+      - name: Fly logs for frontend 
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_FRONT_TOKEN }}
+        run: flyctl logs -a ${{ secrets.FLY_FRONT }} --num-lines 50
+
+
+
+  notify-deployment-api-success:
+    name: Successful Deployment for API
+    runs-on: ubuntu-latest
+    needs: [deploy-api]
+
+    # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
+    # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
+    steps:
+      - name: Discord Notification For API
+        run: |
+          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_APP_NAME }}.fly.dev/" '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
+
+  notify-deployment-api-failure:
+    name: Failed Deployment for API
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/master'
+    needs: [deploy-api]
+
+    steps:
+      - name: Discord Notification For API
+        run: |
+          content=$(jq -Rn --arg txt "❌ Échec du déploiement de l'API." '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_WEBHOOK }}"
+  
+
+  notify-deployment-front-success:
+    name: Successful Deployment for Frontend
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend]
+
+    # On fait un simple CURL, car l'action emvakar/discord-notification-action ne permet pas de personnaliser assez le message
+    # On utilise donc un webhook Discord pour envoyer une notification de déploiement dans le salon associé.
+    steps:
+      - name: Discord Notification For Frontend
+        run: |
+          content=$(jq -Rn --arg txt "✅ Déploiement effectué avec succès. L'application est disponible ici : https://${{ secrets.FLY_FRONT }}.fly.dev/" '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
+
+  notify-deployment-front-failure:
+    name: Failed Deployment for Frontend
+    runs-on: ubuntu-latest
+    if: failure() && github.ref == 'refs/heads/master'
+    needs: [deploy-frontend]
+
+    steps:
+      - name: Discord Notification For Frontend
+        run: |
+          content=$(jq -Rn --arg txt "❌ Échec du déploiement du client." '{"content": $txt}')
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$content" \
+               "${{ secrets.DISCORD_DEPLOYMENT_FRONT_WEBHOOK }}"
+
+
