@@ -119,7 +119,7 @@ jobs:
   pa11y-report:
     name: Rapport Accessibilité (PA11y)
     runs-on: ubuntu-latest
-    needs: [start-services]
+    # needs: [start-services]
 
     steps:
       - name: Checkout code
