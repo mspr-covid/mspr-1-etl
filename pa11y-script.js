@@ -3,7 +3,7 @@ const pa11y = require('pa11y');
 const fs = require('fs');
 
 (async () => {
-  const results = await pa11y('http://host.docker.internal:5173/login', {
+  const results = await pa11y('https://analyze-it-app.fly.dev/login', {
     chromeLaunchConfig: {
       args: ['--no-sandbox']
     }
