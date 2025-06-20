@@ -133,7 +133,7 @@ jobs:
         run: npm install
 
       - name: Run pa11y script
-        run: node .github\scripts\pa11y-script.js
+        run: node .github/scripts/pa11y-script.js
 
       - name: Upload Pa11y report
         uses: actions/upload-artifact@v4
