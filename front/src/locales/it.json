@@ -9,9 +9,11 @@
 		"countries": "Paesi",
 		"manage": "Gestisci Dati",
 		"predict": "Previsione",
+		"global_data": "Dati Globali",
 		"login": "Accesso",
 		"logout": "Uscita",
-		"data_visualization": "Visualizzazione Dati"
+		"data_visualization": "Visualizzazione Dati",
+		"machine_learning": "Apprendimento Delle Macchine"
 	},
 	"languages": {
 		"en": "Inglese",
@@ -107,6 +109,20 @@
 		"title_pie": "Tasso di casi di COVID-19 per continente",
 		"pie_no_data": "Nessun dato disponibile per il grafico a torta"
 	},
+	"machine_learning": {
+		"analyze": "Analisi dei dati in corso ...",
+		"global_title": "Analisi delle Prestazioni",
+		"global_description": "Visualizzazione delle curve di apprendimento e dei residui per la valutazione dei modelli",
+		"learning_curve_title": "Curve di Apprendimento",
+		"learning_curve_description": "Evoluzione delle prestazioni durante l'addestramento",
+		"plot_title": "Modello",
+		"no_plot": "Nessuna curva di apprendimento disponibile",
+		"residual_plot_title": "Grafici dei Residui",
+		"residual_plot_description": "Analisi della qualità delle previsioni",
+		"residual_plot_information": "Residui - Modello",
+		"about": "Dati sicuri e conformi agli standard sanitari",
+		"about_date": "Ultimo aggiornamento:"
+	},
 	"country_form": {
 		"informations": "Informazioni generali sul paese",
 		"demography": "Demografia",
@@ -124,7 +140,9 @@
 		"clear_selection": "Pulisci selezione",
 		"show_lowest_cases": "Mostra Paesi con meno casi",
 		"show_highest_cases": "Mostra Paesi con più casi",
-		"analyze": "Analizzare"
+		"analyze": "Analizzare",
+		"refresh": "Aggiorna i dati",
+		"close": "Chiudi"
 	},
 	"covid": {
 		"dashboard": "Dashboard COVID"

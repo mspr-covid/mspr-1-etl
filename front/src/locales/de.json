@@ -9,9 +9,11 @@
 		"countries": "Länder",
 		"manage": "Daten verwalten",
 		"predict": "Vorhersage",
+		"global_data": "Globale Daten",
 		"login": "Anmelden",
 		"logout": "Abmelden",
-		"data_visualization": "Datenvisualisierung"
+		"data_visualization": "Datenvisualisierung",
+		"machine_learning": "Maschinelles Lernen"
 	},
 	"languages": {
 		"en": "Englisch",
@@ -107,6 +109,20 @@
 		"title_pie": "Kreisdiagramm der Fälle nach Kontinent",
 		"pie_no_data": "Keine Daten für dieses Diagramm verfügbar"
 	},
+	"machine_learning": {
+		"analyze": "Datenanalyse läuft ...",
+		"global_title": "Leistungsanalyse",
+		"global_description": "Visualisierung von Lernkurven und Residuen zur Modellbewertung",
+		"learning_curve_title": "Lernkurven",
+		"learning_curve_description": "Leistungsentwicklung während des Trainings",
+		"plot_title": "Modell",
+		"no_plot": "Keine Lernkurven verfügbar",
+		"residual_plot_title": "Residuen-Diagramme",
+		"residual_plot_description": "Analyse der Vorhersagequalität",
+		"residual_plot_information": "Residuen – Modell",
+		"about": "Sichere Daten, konform mit Gesundheitsstandards",
+		"about_date": "Letzte Aktualisierung:"
+	},
 	"country_form": {
 		"informations": "Allgemeine Informationen über das Land",
 		"demography": "Demografie",
@@ -124,7 +140,9 @@
 		"clear_selection": "Auswahl löschen",
 		"show_lowest_cases": "Länder mit den wenigsten Fällen anzeigen",
 		"show_highest_cases": "Länder mit den meisten Fällen anzeigen",
-		"analyze": "Analysiere"
+		"analyze": "Analysiere",
+		"refresh": "Daten aktualisieren",
+		"close": "Schließen"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"

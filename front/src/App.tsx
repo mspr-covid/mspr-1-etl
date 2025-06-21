@@ -8,6 +8,7 @@ import CountryFormPage from "./pages/CountryFormPage";
 import PredictionPage from "./pages/PredictionPage";
 import DataVisualization from "./pages/DataVisualization";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import PlotVisualization from "./pages/PlotVisualization";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	const { isAuthenticated } = useAuth();
@@ -53,6 +54,15 @@ function AppContent() {
 						element={
 							<ProtectedRoute>
 								<DataVisualization />
+							</ProtectedRoute>
+						}
+					/>
+
+					<Route
+						path="/ml-visualization"
+						element={
+							<ProtectedRoute>
+								<PlotVisualization />
 							</ProtectedRoute>
 						}
 					/>

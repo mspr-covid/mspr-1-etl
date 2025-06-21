@@ -15,14 +15,16 @@ const api = axios.create({
 api.interceptors.response.use(
 	(response) => response,
 	(error) => {
-		if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+		if (
+			error.response &&
+			(error.response.status === 401 || error.response.status === 403)
+		) {
 			localStorage.removeItem("token");
 			window.location.href = "/login";
 		}
 		return Promise.reject(error);
 	}
 );
-
 
 // Add token to requests if available
 api.interceptors.request.use((config) => {
@@ -89,4 +91,21 @@ export const getPredictionV2 = async (data: CountryInputPredict) => {
 	return response.data;
 };
 
+export const getLearningCurves = async () => {
+	const response = await api.get("/learning_curve");
+	console.log(response.data);
+	console.log(
+		"Test image URL:",
+		"https://covid-app.fly.dev/static/plots/learning_curve_linear_regression.png"
+	);
+
+	return response.data;
+};
+
+export const getResidualPlots = async () => {
+	const response = await api.get("/residual_plot");
+	return response.data;
+};
+
 export default api;
+export { API_URL };
