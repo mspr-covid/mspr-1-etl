@@ -2,16 +2,19 @@
 	"app": {
 		"title": "Analyze IT app",
 		"loading": "Chargement...",
-		"error": "Une erreur est survenue"
+		"error": "Une erreur est survenue",
+		"retry": "Réessayer"
 	},
 	"nav": {
 		"home": "Accueil",
 		"countries": "Pays",
-		"manage": "Gérer les données",
+		"manage": "Gérer Les Données",
 		"predict": "Prédiction",
+		"global_data": "Données Globale",
 		"login": "Connexion",
 		"logout": "Déconnexion",
-		"data_visualization": "Visualisation des données"
+		"data_visualization": "Visualisation Des Données",
+		"machine_learning": "Modèle Apprentissage"
 	},
 	"languages": {
 		"en": "Anglais",
@@ -107,6 +110,20 @@
 		"title_pie": "Taux de cas de COVID-19 par continent",
 		"pie_no_data": "Aucune donnée disponible pour le graphique circulaire"
 	},
+	"machine_learning": {
+		"analyze": "Analyse des données en cours ...",
+		"global_title": "Analyse des Performances",
+		"global_description": "Visualisation des courbes d'apprentissage et des résidus pour l'évaluation des modèles",
+		"learning_curve_title": "Courbes d'Apprentissage",
+		"learning_curve_description": "Évolution des performances durant l'entraînement",
+		"plot_title": "Modèle",
+		"no_plot": "Aucune courbe disponible",
+		"residual_plot_title": "Graphiques des Résidus",
+		"residual_plot_description": "Analyse de la qualité des prédictions",
+		"residual_plot_information": "Résidus - Modèle",
+		"about": "Données sécurisées et conformes aux standards de santé",
+		"about_date": "Dernière mise à jour :"
+	},
 	"country_form": {
 		"informations": "Informations générales sur le pays",
 		"demography": "Démographie",
@@ -124,7 +141,9 @@
 		"clear_selection": "Effacer la sélection",
 		"show_lowest_cases": "Afficher les pays avec le moins de cas",
 		"show_highest_cases": "Afficher les pays avec le plus de cas",
-		"analyze": "Analyser"
+		"analyze": "Analyser",
+		"refresh": "Actualiser les données",
+		"close": "Fermer"
 	},
 	"covid": {
 		"dashboard": "Tableau de Bord COVID"

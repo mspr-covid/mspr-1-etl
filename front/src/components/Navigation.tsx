@@ -1,4 +1,4 @@
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Container } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
@@ -42,13 +42,20 @@ const Navigation = () => {
 								>
 									{t("nav.manage")}
 								</Nav.Link>
-								<Nav.Link
-									as={Link}
-									to="/datavisualization"
-									active={location.pathname === "/datavisualization"}
+								<NavDropdown
+									title={t("nav.global_data")}
+									id="global-data-dropdown"
+									className={
+										location.pathname === "/datavisualization" ? "active" : ""
+									}
 								>
-									{t("nav.data_visualization")}
-								</Nav.Link>
+									<NavDropdown.Item as={Link} to="/datavisualization">
+										{t("nav.data_visualization")}
+									</NavDropdown.Item>
+									<NavDropdown.Item as={Link} to="/ml-visualization">
+										{t("nav.machine_learning")}
+									</NavDropdown.Item>
+								</NavDropdown>
 								<Nav.Link
 									as={Link}
 									to="/predict"

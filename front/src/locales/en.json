@@ -9,9 +9,11 @@
 		"countries": "Countries",
 		"manage": "Manage Data",
 		"predict": "Prediction",
+		"global_data": "Global Data",
 		"login": "Login",
 		"logout": "Logout",
-		"data_visualization": "Data Visualization"
+		"data_visualization": "Data Visualization",
+		"machine_learning": "Machine Learning"
 	},
 	"languages": {
 		"en": "English",
@@ -105,6 +107,20 @@
 		"title_pie": "Pie Chart of Cases by Continent",
 		"pie_no_data": "No data available for this chart"
 	},
+	"machine_learning": {
+		"analyze": "Analyzing data ...",
+		"global_title": "Performance Analysis",
+		"global_description": "Visualization of learning curves and residuals for model evaluation",
+		"learning_curve_title": "Learning Curves",
+		"learning_curve_description": "Performance evolution during training",
+		"plot_title": "Model",
+		"no_plot": "No learning curves available",
+		"residual_plot_title": "Residual Plots",
+		"residual_plot_description": "Analysis of prediction quality",
+		"residual_plot_information": "Residuals – Model",
+		"about": "Secure data compliant with healthcare standards",
+		"about_date": "Last updated:"
+	},
 	"country_form": {
 		"informations": "General Informations about the Country",
 		"demography": "Demography",
@@ -122,7 +138,9 @@
 		"clear_selection": "Clear Selection",
 		"show_lowest_cases": "Show Countries with Lowest Cases",
 		"show_highest_cases": "Show Countries with Highest Cases",
-		"analyze": "Analyze"
+		"analyze": "Analyze",
+		"refresh": "Refresh data",
+		"close": "Close"
 	},
 	"covid": {
 		"dashboard": "COVID Dashboard"
