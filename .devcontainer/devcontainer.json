@@ -1,7 +1,7 @@
 {
 	"name": "MSPR ETL - Dev Container",
 	"dockerComposeFile": "../docker-compose.yml",
-	"service": "frontend-dev",
+	"service": "backend",
 	"workspaceFolder": "/app",
 	"runServices": ["db", "grafana", "backend"],
 	"forwardPorts": [8000, 5432, 3000, 5173],
