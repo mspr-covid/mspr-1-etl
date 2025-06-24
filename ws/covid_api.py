@@ -4,6 +4,8 @@ import psycopg2
 import numpy as np
 import pandas as pd
 import pathlib
+import json
+
 
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -474,6 +476,21 @@ def list_residual(current_user: str = Depends(get_current_user)):
         return {"plots": urls}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Access error to graphics : {str(e)}")
+    
+@app.get("/metrics", tags=["visualization"])
+def get_metrics(current_user: str = Depends(get_current_user)):
+    metrics_path = os.path.join(os.path.dirname(__file__), "../mspr1/machine_learning/static/metrics.json")
+    try:
+        with open(metrics_path, "r") as f:
+            metrics = json.load(f)
+        return {"metrics": metrics}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Metrics files not found.")
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Error decoding JSON file.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading metrics: {str(e)}")
+
 
 
 

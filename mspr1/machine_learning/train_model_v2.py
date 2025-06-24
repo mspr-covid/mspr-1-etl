@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import missingno as msno
+import json
 
 from sklearn.model_selection import (
     train_test_split, GridSearchCV, RandomizedSearchCV, learning_curve, ShuffleSplit
@@ -13,7 +14,7 @@ from sklearn.linear_model import LinearRegression, Ridge
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 from sklearn.base import clone
 
 from scipy.stats import uniform, randint
@@ -131,6 +132,8 @@ def plot_residuals(y_true, y_pred, model_name):
     plt.savefig(f"mspr1/machine_learning/static/plots/residuals_{model_name}.png")
     plt.close()
 
+metrics_summary = {}
+
 # === Entraînement des modèles ===
 for name, config in models.items():
     print(f"\n🔍 RandomizedSearchCV pour : {name}")
@@ -163,9 +166,11 @@ for name, config in models.items():
     y_pred_test = best_model.predict(X_test)
     r2_test = r2_score(y_test, y_pred_test)
     rmse_test = mean_squared_error(y_test, y_pred_test) ** 0.5
+    mae_test = mean_absolute_error(y_test, y_pred_test)
 
     print(f"📊 R² sur test : {r2_test:.4f}")
     print(f"📊 RMSE sur test : {rmse_test:.4f}")
+    print(f"📊 MAE sur test : {mae_test:.4f}")
 
     print(f"📉 Courbe des résidus pour : {name}")
     plot_residuals(y_test, y_pred_test, name)
@@ -186,6 +191,17 @@ for name, config in models.items():
         'rmse_test': rmse_test,
         'best_params': search.best_params_ if param_dist else None
     }
+
+    metrics_summary[name] = {
+        'r2': r2_test,
+        'rmse': rmse_test,
+        'mae': mae_test
+    }
+    
+os.makedirs("mspr1/machine_learning/static", exist_ok=True)
+with open("mspr1/machine_learning/static/metrics.json", "w") as f:
+    json.dump(metrics_summary, f, indent=4)
+print("✅ Metrics sauvegardées dans : mspr1/machine_learning/static/metrics.json")
 
 # === Meilleur modèle global ===
 best_model_name = max(best_models, key=lambda name: best_models[name]['r2_test'])

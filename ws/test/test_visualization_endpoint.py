@@ -1,4 +1,6 @@
 import pytest
+import os
+import json
 from fastapi.testclient import TestClient
 from ws.covid_api import app, get_db
 
@@ -87,3 +89,37 @@ class TestVisualizationAPI:
         for url in data["plots"]:
             assert url.startswith("/static/plots/residuals")
             assert url.endswith(".png")
+
+    @pytest.mark.visualization
+    def test_metrics_requires_auth(self):
+        """Pour vérifier que la route /metrics sans token retourne 401"""
+        response = client.get("/metrics")
+        assert response.status_code == 401
+
+    @pytest.mark.visualization
+    def test_metrics_authenticated(self):
+        """Accès authentifié à /metrics, pour vérifier que les données JSON sont présentes et bien formées"""
+        headers = self.get_auth_headers()
+
+        # Pour éviter erreur si le fichier metrics.json n'existe pas, on crée un fichier temporaire minimal
+        metrics_path = os.path.join(os.path.dirname(__file__), "../mspr1/machine_learning/static/metrics.json")
+        os.makedirs(os.path.dirname(metrics_path), exist_ok=True)
+        sample_metrics = {
+            "linear_regression": {"r2": 0.5, "rmse": 10.0, "mae": 8.0}
+        }
+        with open(metrics_path, "w") as f:
+            json.dump(sample_metrics, f)
+
+        response = client.get("/metrics", headers=headers)
+        assert response.status_code == 200
+
+        data = response.json()
+        assert "metrics" in data
+        assert isinstance(data["metrics"], dict)
+        assert "linear_regression" in data["metrics"]
+        assert "r2" in data["metrics"]["linear_regression"]
+        assert "rmse" in data["metrics"]["linear_regression"]
+        assert "mae" in data["metrics"]["linear_regression"]
+
+        # Nettoyage après test
+        os.remove(metrics_path)
