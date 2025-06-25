@@ -120,6 +120,7 @@
 		"residual_plot_title": "Grafici dei Residui",
 		"residual_plot_description": "Analisi della qualità delle previsioni",
 		"residual_plot_information": "Residui - Modello",
+		"title_model_comparison": "Confronto Delle Prestazioni Dei Modelli",
 		"about": "Dati sicuri e conformi agli standard sanitari",
 		"about_date": "Ultimo aggiornamento:"
 	},

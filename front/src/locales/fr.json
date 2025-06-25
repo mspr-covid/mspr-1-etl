@@ -121,6 +121,7 @@
 		"residual_plot_title": "Graphiques des Résidus",
 		"residual_plot_description": "Analyse de la qualité des prédictions",
 		"residual_plot_information": "Résidus - Modèle",
+		"title_model_comparison": "Performance Des Modèles",
 		"about": "Données sécurisées et conformes aux standards de santé",
 		"about_date": "Dernière mise à jour :"
 	},

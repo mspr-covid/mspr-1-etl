@@ -120,6 +120,7 @@
 		"residual_plot_title": "Residuen-Diagramme",
 		"residual_plot_description": "Analyse der Vorhersagequalität",
 		"residual_plot_information": "Residuen – Modell",
+		"title_model_comparison": "Modellleistung",
 		"about": "Sichere Daten, konform mit Gesundheitsstandards",
 		"about_date": "Letzte Aktualisierung:"
 	},
