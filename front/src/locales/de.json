@@ -31,6 +31,21 @@
 		"loginError": "Ungültiger Benutzername oder Passwort",
 		"loginSuccess": "Anmeldung erfolgreich"
 	},
+	"homepage": {
+		"global_title": "Analyze IT – COVID-19-Daten",
+		"global_description": "Analyse, Visualisierung und Vorhersage im Zusammenhang mit COVID-19-Daten.",
+		"long_description": "Diese Plattform ermöglicht die Visualisierung der Ergebnisse von <strong>Machine-Learning</strong>-Modellen, die auf einem COVID-19-Datensatz von <kaggle>Kaggle</kaggle> basieren. Sie erleichtert den Vergleich verschiedener Algorithmen des maschinellen Lernens mit dem Ziel, die <strong>Sterblichkeit im Zusammenhang mit COVID-19</strong> weltweit vorherzusagen.",
+		"section1_title": "1. ETL-Pipeline",
+		"section1_description": "Rohdaten werden automatisch über eine <strong>ETL</strong>-Pipeline (Extract, Transform, Load) gesammelt, bereinigt, transformiert und angereichert. Die Pipeline stellt die Konsistenz und Qualität der Daten sicher, bevor sie für maschinelles Lernen verwendet werden.",
+		"section2_title": "2. Visualisierung",
+		"section2_description": "Für jedes Modell werden interaktive Grafiken generiert: <strong>Lernkurven</strong>, <strong>Residuenkurven</strong> und <strong>Leistungsmetriken</strong> (MAE, RMSE, R²). Diese klaren und zugänglichen Visualisierungen ermöglichen es, die Relevanz und Stabilität der Modelle zu analysieren.",
+		"section3_title": "3. Modellierung",
+		"section3_description": "Eine Vielzahl von Modellen wurde trainiert, getestet und verglichen: <strong>lineare Regressionen</strong>, <strong>Entscheidungsbäume</strong>, <strong>Zufallswälder</strong>, <strong>Gradient Boosting</strong> und mehr. Das beste Modell wird automatisch anhand mehrerer Leistungskennzahlen ausgewählt.",
+		"section4_title": "4. Länderspezifische Vorhersagen",
+		"section4_description": "Mit dem ausgewählten Modell können Sie die Sterblichkeitsvorhersagen für jedes Land visualisieren. Die Benutzeroberfläche ermöglicht den Vergleich zwischen Ländern, die Identifikation von Risikogebieten und die Bewertung der Vorhersagegenauigkeit.",
+		"section5_title": "5. Sicherer Login",
+		"section5_description": "Melden Sie sich an, um auf alle Funktionen zuzugreifen: Exploration, Visualisierungen, Modellvergleiche und Vorhersagen."
+	},
 	"countries": {
 		"title": "COVID-Daten der Länder",
 		"search": "Länder suchen",

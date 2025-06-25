@@ -31,6 +31,21 @@
 		"loginError": "Invalid username or password",
 		"loginSuccess": "Login successful"
 	},
+	"homepage": {
+		"global_title": "Analyze IT – COVID-19 Data",
+		"global_description": "Analysis, visualization, and prediction based on COVID-19 data.",
+		"long_description": "This platform allows you to visualize the results of <strong>machine learning</strong> models applied to a COVID-19 dataset extracted from <kaggle>Kaggle</kaggle>. It facilitates the comparative analysis of various machine learning algorithms with the goal of predicting <strong>COVID-19-related mortality</strong> on a global scale.",
+		"section1_title": "1. ETL Pipeline",
+		"section1_description": "Raw data is collected, cleaned, transformed, and enriched automatically through an <strong>ETL</strong> (Extract, Transform, Load) pipeline. The pipeline ensures data consistency and quality before it is used for machine learning.",
+		"section2_title": "2. Visualization",
+		"section2_description": "Interactive charts are generated for each model: <strong>learning curves</strong>, <strong>residual plots</strong>, and <strong>performance metrics</strong> (MAE, RMSE, R²). These clear and accessible visualizations help explore the relevance and stability of the models.",
+		"section3_title": "3. Modeling",
+		"section3_description": "A variety of models have been trained, tested, and compared: <strong>linear regressions</strong>, <strong>decision trees</strong>, <strong>random forests</strong>, <strong>gradient boosting</strong>, and more. The best model is automatically selected based on several performance indicators.",
+		"section4_title": "4. Country-Level Predictions",
+		"section4_description": "Thanks to the selected model, you can view mortality predictions for each country. The interface allows for comparison between countries, identification of high-risk areas, and evaluation of prediction reliability.",
+		"section5_title": "5. Secure Login",
+		"section5_description": "Log in to access all features: exploration, visualizations, model comparison, and predictions."
+	},
 	"countries": {
 		"title": "Countries COVID Data",
 		"search": "Search countries",
