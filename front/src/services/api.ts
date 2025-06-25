@@ -107,5 +107,10 @@ export const getResidualPlots = async () => {
 	return response.data;
 };
 
+export const getModelMetrics = async () => {
+	const response = await api.get("/metrics");
+	return response.data;
+};
+
 export default api;
 export { API_URL };
