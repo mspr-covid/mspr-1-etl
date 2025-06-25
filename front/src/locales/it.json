@@ -31,6 +31,21 @@
 		"loginError": "Nome utente o password non validi",
 		"loginSuccess": "Accesso riuscito"
 	},
+	"homepage": {
+		"global_title": "Analyze IT - Dati COVID-19",
+		"global_description": "Analisi, visualizzazione e previsione sui dati COVID-19.",
+		"long_description": "Questa piattaforma consente di visualizzare i risultati di modelli di <strong>machine learning</strong> applicati a un set di dati COVID-19 estratto da <kaggle>Kaggle</kaggle>. Facilita l’analisi comparativa di diversi algoritmi di apprendimento automatico con l'obiettivo di prevedere la <strong>mortalità associata al COVID-19</strong> a livello globale.",
+		"section1_title": "1. Pipeline ETL",
+		"section1_description": "I dati grezzi vengono raccolti, puliti, trasformati e arricchiti automaticamente tramite una pipeline <strong>ETL</strong> (Extract, Transform, Load). La pipeline garantisce la coerenza e la qualità dei dati prima del loro utilizzo per il machine learning.",
+		"section2_title": "2. Visualizzazione",
+		"section2_description": "Grafici interattivi vengono generati per ogni modello: <strong>curve di apprendimento</strong>, <strong>curve dei residui</strong> e <strong>metriche di performance</strong> (MAE, RMSE, R²). È possibile esplorare la rilevanza e la stabilità dei modelli grazie a queste visualizzazioni chiare e accessibili.",
+		"section3_title": "3. Modellazione",
+		"section3_description": "È stata addestrata, testata e confrontata una varietà di modelli: <strong>regressioni lineari</strong>, <strong>alberi decisionali</strong>, <strong>foreste casuali</strong>, <strong>gradient boosting</strong> e altri ancora. Il modello migliore viene selezionato automaticamente in base a diversi indicatori di performance.",
+		"section4_title": "4. Previsioni per paese",
+		"section4_description": "Grazie al modello selezionato, è possibile visualizzare le previsioni di mortalità per ogni paese. L'interfaccia consente di confrontare i risultati tra i paesi, identificare aree a rischio e valutare l'affidabilità delle previsioni.",
+		"section5_title": "5. Accesso sicuro",
+		"section5_description": "Accedi per usufruire di tutte le funzionalità: esplorazione, visualizzazioni, confronto tra modelli e previsioni."
+	},
 	"countries": {
 		"title": "Dati COVID dei Paesi",
 		"search": "Cerca paesi",

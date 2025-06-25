@@ -32,6 +32,21 @@
 		"loginError": "Nom d'utilisateur ou mot de passe invalide",
 		"loginSuccess": "Connexion réussie"
 	},
+	"homepage": {
+		"global_title": "Analyze IT - Données COVID-19",
+		"global_description": "Analyse, visualisation et prédiction autour des données COVID-19.",
+		"long_description": "Cette plateforme permet de visualiser les résultats de modèles de <strong>machine learning</strong> appliqués à un jeu de données COVID-19 extrait de <kaggle>Kaggle</kaggle>. Elle facilite l’analyse comparative de plusieurs algorithmes d’apprentissage automatique dans le but de prédire la <strong>mortalité associée au COVID-19</strong> à l’échelle mondiale.",
+		"section1_title": "1. Pipeline ETL",
+		"section1_description": "Les données brutes sont collectées, nettoyées, transformées et enrichies automatiquement via un pipeline <strong>ETL</strong> (Extract, Transform, Load). Le pipeline s’assure de la cohérence et de la qualité des données avant leur utilisation pour l’apprentissage automatique.",
+		"section2_title": "2. Visualisation",
+		"section2_description": "Des graphiques interactifs sont générés pour chaque modèle : <strong>courbes d’apprentissage</strong>, <strong>courbes des résidus</strong> et <strong>métriques de performance</strong> (MAE, RMSE, R²). Vous pouvez explorer la pertinence et la stabilité des modèles grâce à ces visualisations claires et accessibles.",
+		"section3_title": "3. Modélisation",
+		"section3_description": "Une variété de modèles ont été entraînés, testés et comparés : <strong>régressions linéaires</strong>, <strong>arbres de décision</strong>, <strong>forêts aléatoires</strong>, <strong>gradient boosting</strong> et plus encore. Le meilleur modèle est sélectionné automatiquement en fonction de plusieurs indicateurs de performance.",
+		"section4_title": "4. Prédictions par pays",
+		"section4_description": "Grâce au modèle choisi, vous pouvez visualiser les prédictions de mortalité pour chaque pays. L’interface permet de comparer les résultats entre pays, d’identifier des zones à risque, et d’évaluer la fiabilité des prédictions.",
+		"section5_title": "5. Connexion sécurisée",
+		"section5_description": "Connectez-vous pour accéder à l’ensemble des fonctionnalités : exploration, visualisations, comparaison des modèles et prédictions."
+	},
 	"countries": {
 		"title": "Données COVID des Pays",
 		"search": "Rechercher des pays",
