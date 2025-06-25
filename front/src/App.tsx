@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
-import { useTranslation } from "react-i18next";
 import Navigation from "./components/Navigation";
 import LoginPage from "./pages/LoginPage";
 import CountriesPage from "./pages/CountriesPage";
@@ -9,6 +8,7 @@ import PredictionPage from "./pages/PredictionPage";
 import DataVisualization from "./pages/DataVisualization";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import PlotVisualization from "./pages/PlotVisualization";
+import Footer from "./components/Footer";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 	const { isAuthenticated } = useAuth();
@@ -22,7 +22,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 function AppContent() {
 	const { isAuthenticated } = useAuth();
-	const { t } = useTranslation();
 
 	return (
 		<div className="d-flex flex-column min-vh-100">
@@ -78,15 +77,8 @@ function AppContent() {
 					<Route path="*" element={<Navigate to="/" />} />
 				</Routes>
 			</Container>
-			<footer className="bg-light py-3 border-top">
-				<Container>
-					<div className="d-flex justify-content-between align-items-center">
-						<p className="mb-0 text-muted">
-							&copy; 2025 {t("covid.dashboard")}
-						</p>
-					</div>
-				</Container>
-			</footer>
+
+			<Footer />
 		</div>
 	);
 }

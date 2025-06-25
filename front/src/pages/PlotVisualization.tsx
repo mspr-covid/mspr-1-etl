@@ -6,10 +6,11 @@ import {
 	getLearningCurves,
 	getResidualPlots,
 	getModelMetrics,
-	API_URL,
 } from "../services/api";
 import { useTranslation } from "react-i18next";
-import ModelMetricCard from "../components/DataVisualization/ModelMetricCards";
+import PlotCards from "../components/MachineLearningVisualization/PlotCards";
+import ImageModal from "../components/ImageModal";
+import ModelComparisonChart from "../components/MachineLearningVisualization/ModelComparisonChart";
 
 const PlotVisualization: React.FC = () => {
 	const [learningPlots, setLearningPlots] = useState<string[]>([]);
@@ -25,9 +26,18 @@ const PlotVisualization: React.FC = () => {
 		title: string;
 	} | null>(null);
 
-	const [visibleMetricsModel, setVisibleMetricsModel] = useState<string | null>(
-		null
-	);
+	const [visibleMetricsModelLearning, setVisibleMetricsModelLearning] =
+		useState<string | null>(null);
+	const [visibleMetricsModelResidual, setVisibleMetricsModelResidual] =
+		useState<string | null>(null);
+
+	// Je me suis basé sur l'index au départ pour trier les courbes par nom de modèle mais l'ordre n'était pas toujours cohérent.
+	// J'ai donc créé une fonction pour extraire le nom du modèle à partir de l'URL.
+	// Mais l'idéal serait d'ajouter une clé `modelName` dans les données renvoyées par l'API pour éviter de devoir parser les URLs.
+	const extractModelNameFromUrl = (url: string): string => {
+		const match = url.match(/(?:learning_curve_|residual_plot_)(.*)\.png$/);
+		return match ? match[1] : url;
+	};
 
 	const fetchPlots = async () => {
 		try {
@@ -40,9 +50,15 @@ const PlotVisualization: React.FC = () => {
 				getModelMetrics(),
 			]);
 
-			setLearningPlots(learning.plots ?? []);
-			setResidualPlots(residuals.plots ?? []);
 			setMetrics(metricsDataRaw.metrics ?? {});
+
+			const sortByModelName = (urls: string[]) =>
+				urls.sort((a, b) =>
+					extractModelNameFromUrl(a).localeCompare(extractModelNameFromUrl(b))
+				);
+
+			setLearningPlots(sortByModelName(learning.plots ?? []));
+			setResidualPlots(sortByModelName(residuals.plots ?? []));
 		} catch (err) {
 			setError("Failed to fetch plot images.");
 			console.error(err);
@@ -63,7 +79,7 @@ const PlotVisualization: React.FC = () => {
 		fetchPlots();
 	}, []);
 
-	if (loading)
+	if (loading) {
 		return (
 			<div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
 				<div className="text-center">
@@ -79,8 +95,9 @@ const PlotVisualization: React.FC = () => {
 				</div>
 			</div>
 		);
+	}
 
-	if (error)
+	if (error) {
 		return (
 			<div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
 				<div className="text-center">
@@ -104,10 +121,52 @@ const PlotVisualization: React.FC = () => {
 				</div>
 			</div>
 		);
+	}
+
+	const renderCard = (
+		url: string,
+		index: number,
+		type: "learning" | "residual"
+	) => {
+		const modelName = extractModelNameFromUrl(url);
+		const title =
+			type === "learning"
+				? `${t("machine_learning.plot_title")} ${index + 1}`
+				: `${t("machine_learning.residual_plot_information")} ${index + 1}`;
+
+		const isLearning = type === "learning";
+		const visibleModel = isLearning
+			? visibleMetricsModelLearning
+			: visibleMetricsModelResidual;
+		const setVisibleModel = isLearning
+			? setVisibleMetricsModelLearning
+			: setVisibleMetricsModelResidual;
+
+		const isVisible = visibleModel === modelName;
+
+		const onToggleVisible = () => {
+			setVisibleModel(visibleModel === modelName ? null : modelName);
+		};
+
+		return (
+			<PlotCards
+				key={index}
+				url={url}
+				index={index}
+				type={type}
+				title={title}
+				modelName={modelName}
+				metrics={metrics}
+				isVisible={isVisible}
+				onToggleVisible={onToggleVisible}
+				onOpenImageModal={openImageModal}
+			/>
+		);
+	};
 
 	return (
 		<div className="bg-light min-vh-100">
-			{/* Header Section */}
+			{/* Header */}
 			<div className="bg-primary text-white py-2 rounded-3">
 				<div className="container">
 					<div className="row align-items-center">
@@ -129,21 +188,20 @@ const PlotVisualization: React.FC = () => {
 				</div>
 			</div>
 
-			{/* Action Button */}
-			<div className="container mt-4">
-				<div className="text-center">
-					<button
-						className="btn btn-primary me-3 px-4 py-2 rounded-pill fw-medium"
-						onClick={fetchPlots}
-					>
-						<i className="bi bi-arrow-clockwise me-2"></i>
-						{t("buttons.refresh")}
-					</button>
-				</div>
+			{/* Refresh button */}
+			<div className="container mt-4 text-center">
+				<button
+					className="btn btn-primary me-3 px-4 py-2 rounded-pill fw-medium"
+					onClick={fetchPlots}
+				>
+					<i className="bi bi-arrow-clockwise me-2"></i>
+					{t("buttons.refresh")}
+				</button>
 			</div>
 
+			{/* Plots */}
 			<div className="container py-5">
-				{/* Learning Curves Section */}
+				{/* Learning */}
 				<div className="mb-5">
 					<div className="d-flex align-items-center mb-4">
 						<div className="bg-primary rounded-circle p-3 me-3">
@@ -158,85 +216,21 @@ const PlotVisualization: React.FC = () => {
 							</p>
 						</div>
 					</div>
-
 					{learningPlots.length > 0 ? (
 						<div className="row g-4">
-							{learningPlots.map((url, index) => {
-								const modelName = Object.keys(metrics)[index];
-								return (
-									<div key={index} className="col-lg-6">
-										<div className="card border-0 shadow-sm h-100 overflow-hidden">
-											<div className="card-header bg-white border-0 py-3">
-												<h6 className="card-title mb-0 text-primary fw-semibold">
-													<i className="bi bi-bar-chart me-2"></i>
-													{t("machine_learning.plot_title")} {index + 1}
-												</h6>
-											</div>
-											<div className="position-relative">
-												<img
-													src={`${API_URL}${url}`}
-													alt={`Learning Curve ${index + 1}`}
-													className="card-img-top"
-													style={{ height: "300px", objectFit: "contain" }}
-												/>
-												<div className="position-absolute top-0 end-0 m-3 d-flex flex-column align-items-end">
-													<button
-														className="btn btn-sm btn-outline-primary rounded-pill mb-2"
-														onClick={() =>
-															openImageModal(
-																`${API_URL}${url}`,
-																t("machine_learning.plot_title")
-															)
-														}
-													>
-														<i className="bi bi-arrows-fullscreen"></i>
-													</button>
-
-													<button
-														className="btn btn-sm btn-outline-primary rounded-pill mb-2"
-														onClick={() =>
-															setVisibleMetricsModel(
-																visibleMetricsModel === modelName
-																	? null
-																	: modelName
-															)
-														}
-														aria-label={
-															visibleMetricsModel === modelName
-																? "Hide metrics"
-																: "Show metrics"
-														}
-														type="button"
-													>
-														<i className="bi bi-info-circle-fill"></i>
-													</button>
-												</div>
-											</div>
-											{visibleMetricsModel === modelName &&
-												metrics[modelName] && (
-													<div className="p-3">
-														<ModelMetricCard
-															modelName={modelName}
-															metrics={metrics[modelName]}
-														/>
-													</div>
-												)}
-										</div>
-									</div>
-								);
-							})}
+							{learningPlots.map((url, index) =>
+								renderCard(url, index, "learning")
+							)}
 						</div>
 					) : (
-						<div className="text-center py-5">
-							<div className="text-muted">
-								<i className="bi bi-graph-up fs-1 mb-3 d-block"></i>
-								<p>{t("machine_learning.no_plot")}</p>
-							</div>
+						<div className="text-center py-5 text-muted">
+							<i className="bi bi-graph-up fs-1 mb-3 d-block"></i>
+							<p>{t("machine_learning.no_plot")}</p>
 						</div>
 					)}
 				</div>
 
-				{/* Residual Plots Section */}
+				{/* Residuals */}
 				<div>
 					<div className="d-flex align-items-center mb-4">
 						<div className="bg-primary rounded-circle p-3 me-3">
@@ -251,149 +245,33 @@ const PlotVisualization: React.FC = () => {
 							</p>
 						</div>
 					</div>
-
 					{residualPlots.length > 0 ? (
 						<div className="row g-4">
-							{residualPlots.map((url, index) => {
-								const modelName = Object.keys(metrics)[index];
-								return (
-									<div key={index} className="col-lg-6">
-										<div className="card border-0 shadow-sm h-100 overflow-hidden">
-											<div className="card-header bg-white border-0 py-3">
-												<h6 className="card-title mb-0 text-primary fw-semibold">
-													<i className="bi bi-scatter-chart me-2"></i>
-													{t("machine_learning.residual_plot_information")}{" "}
-													{index + 1}
-												</h6>
-											</div>
-											<div className="position-relative">
-												<img
-													src={`${API_URL}${url}`}
-													alt={`Residual Plot ${index + 1}`}
-													className="card-img-top"
-													style={{ height: "300px", objectFit: "contain" }}
-												/>
-												<div className="position-absolute top-0 end-0 m-3 d-flex flex-column align-items-end">
-													<button
-														className="btn btn-sm btn-outline-primary rounded-pill mb-2"
-														onClick={() =>
-															openImageModal(
-																`${API_URL}${url}`,
-																`Graphique des résidus - Modèle ${index + 1}`
-															)
-														}
-													>
-														<i className="bi bi-arrows-fullscreen"></i>
-													</button>
-
-													<button
-														className="btn btn-sm btn-outline-primary rounded-pill mb-2"
-														onClick={() =>
-															setVisibleMetricsModel(
-																visibleMetricsModel === modelName
-																	? null
-																	: modelName
-															)
-														}
-														aria-label={
-															visibleMetricsModel === modelName
-																? "Hide metrics"
-																: "Show metrics"
-														}
-														type="button"
-													>
-														<i className="bi bi-info-circle-fill"></i>
-													</button>
-												</div>
-											</div>
-											{visibleMetricsModel === modelName &&
-												metrics[modelName] && (
-													<div className="p-3">
-														<ModelMetricCard
-															modelName={modelName}
-															metrics={metrics[modelName]}
-														/>
-													</div>
-												)}
-										</div>
-									</div>
-								);
-							})}
+							{residualPlots.map((url, index) =>
+								renderCard(url, index, "residual")
+							)}
 						</div>
 					) : (
-						<div className="text-center py-5">
-							<div className="text-muted">
-								<i className="bi bi-scatter-chart fs-1 mb-3 d-block"></i>
-								<p>{t("machine_learning.no_plot")}</p>
-							</div>
+						<div className="text-center py-5 text-muted">
+							<i className="bi bi-scatter-chart fs-1 mb-3 d-block"></i>
+							<p>{t("machine_learning.no_plot")}</p>
 						</div>
 					)}
 				</div>
+
+				<ModelComparisonChart
+					metrics={metrics}
+					title={t("machine_learning.title_model_comparison")}
+				/>
 			</div>
 
-			{/* Modal pour agrandir les images */}
 			{selectedImage && (
-				<div
-					className="modal fade show d-block"
-					tabIndex={-1}
-					style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
-				>
-					<div className="modal-dialog modal-xl modal-dialog-centered">
-						<div className="modal-content">
-							<div className="modal-header border-0">
-								<h5 className="modal-title text-primary fw-semibold">
-									<i className="bi bi-graph-up me-2"></i>
-									{selectedImage.title}
-								</h5>
-								<button
-									type="button"
-									className="btn-close"
-									onClick={closeImageModal}
-									aria-label="Close"
-								></button>
-							</div>
-							<div className="modal-body p-0">
-								<img
-									src={selectedImage.url || "/placeholder.svg"}
-									alt={selectedImage.title}
-									className="img-fluid w-100"
-									style={{ maxHeight: "80vh", objectFit: "contain" }}
-								/>
-							</div>
-							<div className="modal-footer border-0 justify-content-center">
-								<button
-									type="button"
-									className="btn btn-outline-primary rounded-pill px-4"
-									onClick={closeImageModal}
-								>
-									<i className="bi bi-x-lg me-2"></i>
-									{t("buttons.close")}
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
+				<ImageModal
+					url={selectedImage.url}
+					title={selectedImage.title}
+					onClose={closeImageModal}
+				/>
 			)}
-
-			{/* Footer */}
-			<div className="bg-white border-top py-4 mt-5">
-				<div className="container">
-					<div className="row align-items-center">
-						<div className="col-md-6">
-							<p className="text-muted mb-0">
-								<i className="bi bi-shield-check me-2 text-primary"></i>
-								{t("machine_learning.about")}
-							</p>
-						</div>
-						<div className="col-md-6 text-md-end">
-							<small className="text-muted">
-								{t("machine_learning.about_date")}{" "}
-								{new Date().toLocaleDateString("fr-FR")}
-							</small>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	);
 };

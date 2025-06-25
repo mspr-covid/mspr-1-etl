@@ -118,6 +118,7 @@
 		"residual_plot_title": "Residual Plots",
 		"residual_plot_description": "Analysis of prediction quality",
 		"residual_plot_information": "Residuals – Model",
+		"title_model_comparison": "Models Performance",
 		"about": "Secure data compliant with healthcare standards",
 		"about_date": "Last updated:"
 	},
