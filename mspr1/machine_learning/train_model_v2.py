@@ -46,7 +46,11 @@ preprocessor = ColumnTransformer([
 # === Données ===
 X = df[categorical_features + numerical_features]
 y = df['total_deaths']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 🔁 MODIFICATION: transformation logarithmique (avec 1 pour éviter log(0))
+y_log = np.log1p(y)
+
+X_train, X_test, y_train_log, y_test_log = train_test_split(X, y_log, test_size=0.2, random_state=42)
 
 # === Modèles et hyperparamètres ===
 param_distributions = {
@@ -115,7 +119,7 @@ def plot_learning_curve(estimator, title, X, y, cv=5, scoring='r2', filename=Non
 def plot_residuals(y_true, y_pred, model_name):
     """
     Trace et sauvegarde la courbe des résidus dans le dossier static/.
-    - Ça montre les erreurs (pour rappel le résidus = y_true - y_pred) en fonction des prédictions.
+    - Ça montre les erreurs (résidu = y_true - y_pred) en fonction des prédictions.
     """
     residuals = y_true - y_pred
 
@@ -154,16 +158,20 @@ for name, config in models.items():
             random_state=42,
             verbose=1
         )
-        search.fit(X_train, y_train)
+        search.fit(X_train, y_train_log)
         best_model = search.best_estimator_
         print(f"🏅 Meilleurs paramètres : {search.best_params_}")
         print(f"⭐ Meilleur score R² (train cv) : {search.best_score_:.4f}")
     else:
-        pipeline.fit(X_train, y_train)
+        pipeline.fit(X_train, y_train_log)
         best_model = pipeline
         print("Pas d'hyperparamètre à tuner.")
 
-    y_pred_test = best_model.predict(X_test)
+    # 🔁 MODIFICATION: inverse log1p après prédiction pour retour à l’échelle originale
+    y_pred_test_log = best_model.predict(X_test)
+    y_pred_test = np.expm1(y_pred_test_log)
+    y_test = np.expm1(y_test_log)
+
     r2_test = r2_score(y_test, y_pred_test)
     rmse_test = mean_squared_error(y_test, y_pred_test) ** 0.5
     mae_test = mean_absolute_error(y_test, y_pred_test)
@@ -180,7 +188,7 @@ for name, config in models.items():
         best_model,
         f"Learning Curve - {name}",
         X_train,
-        y_train,
+        y_train_log,
         cv=cv_learning,
         filename=f"learning_curve_{name}"
     )
@@ -197,7 +205,7 @@ for name, config in models.items():
         'rmse': rmse_test,
         'mae': mae_test
     }
-    
+
 os.makedirs("mspr1/machine_learning/static", exist_ok=True)
 with open("mspr1/machine_learning/static/metrics.json", "w") as f:
     json.dump(metrics_summary, f, indent=4)
@@ -208,3 +216,43 @@ best_model_name = max(best_models, key=lambda name: best_models[name]['r2_test']
 final_model = best_models[best_model_name]['best_estimator']
 joblib.dump(final_model, f'model/best_model_{best_model_name}.pkl')
 print(f"\n✅ Meilleur modèle sauvegardé sous : models/best_model_{best_model_name}.pkl")
+
+
+# L'idée dans les étapes suivantes est de trouver le pays avec le plus gros résidu (erreur de prédiction) pour le modèle XGBoost afin de comprendre où il se trompe le plus.
+
+
+if name == 'xgboost':
+    print("\n🔎 Recherche des plus gros résidus pour XGBoost")
+    X_test_reset = X_test.reset_index(drop=True)
+    y_test_reset = np.expm1(y_test_log.reset_index(drop=True))
+    y_pred_log = final_model.predict(X_test_reset)
+    y_pred = np.expm1(y_pred_log)
+    residuals = y_test_reset - y_pred
+
+    # Trouver l'index du plus gros résidu
+    abs_residuals = np.abs(residuals)
+    max_idx = abs_residuals.argmax()
+    max_country_data = X_test_reset.iloc[max_idx]
+    
+    print(f"\n📍 Plus gros résidu pour XGBoost :")
+    print(f"Pays : {max_country_data['country']}")
+    print(f"Valeur réelle (y_test) : {y_test_reset.iloc[max_idx]:,.0f}")
+    print(f"Valeur prédite : {y_pred[max_idx]:,.0f}")
+    print(f"Résidu : {residuals.iloc[max_idx]:,.0f}")
+    print(f"\n🔎 Données associées :\n{max_country_data}")
+
+if name == "xgboost":
+    residuals = y_test - y_pred_test
+
+    max_residual_idx = np.argmax(np.abs(residuals))
+
+    print("\Plus gros résidu pour XGBoost :")
+    print(f"Pays : {X_test.iloc[max_residual_idx]['country']}")
+    print(f"Valeur réelle (y_test) : {y_test.iloc[max_residual_idx]:,.0f}")
+    print(f"Valeur prédite : {y_pred_test[max_residual_idx]:,.0f}")
+    print(f"Résidu : {residuals.iloc[max_residual_idx]:,.0f}")
+
+    print("Données associées :")
+    print(X_test.iloc[max_residual_idx])
+
+
