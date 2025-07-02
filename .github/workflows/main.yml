@@ -124,15 +124,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-      - name: Installer PA11y
-        run: npm install -g pa11y
+      - name: Install dependencies
+        run: npm install
 
-      - name: Run Pa11y with --no-sandbox
-        run: |
-          pa11y https://analyze-it-app.fly.dev/login \
-            --chrome-launch-options="--no-sandbox" \
-            > pa11y-report.txt || true
+      - name: Run pa11y script
+        run: node .github/scripts/pa11y-script.js
+
+      - name: Upload Pa11y report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pa11y-accessibility-report
+          path: pa11y-output/pa11y-report.txt
 
 
   notification-security:
