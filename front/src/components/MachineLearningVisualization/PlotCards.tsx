@@ -43,10 +43,10 @@ const PlotCard: React.FC<PlotCardProps> = ({
 					<img
 						src={`${API_URL}${url}`}
 						alt={`${type} plot ${index + 1}`}
-						className="card-img-top"
+						className="card-img-top mt-3"
 						style={{ height: "300px", objectFit: "contain" }}
 					/>
-					<div className="position-absolute top-0 end-0 m-3 d-flex flex-column align-items-end">
+					<div className="position-absolute top-0 end-0 me-2 me-md-5 d-flex flex-column align-items-end">
 						<button
 							className="btn btn-sm btn-outline-primary rounded-pill mb-2"
 							onClick={() => onOpenImageModal(`${API_URL}${url}`, title)}
